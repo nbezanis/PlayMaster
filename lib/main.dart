@@ -38,9 +38,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   //tells us which list to display
   bool displaySongs = true;
-  Color _songsColor = Colors.blue;
+  Color _songsColor = Colors.white;
   Color _plColor = Colors.transparent;
-  Color _selected = Colors.blue;
+  Color _selected = Colors.white;
   Color _unselected = Colors.transparent;
   //used to set each music object's id
   int idTotal = 0;
@@ -49,7 +49,7 @@ class _HomePageState extends State<HomePage> {
   //the list of their songs and the list of their playlists
   Widget _getSPViewSwitcher() {
     return Container(
-      color: Colors.black12,
+      color: Colors.transparent,
       child: Row(
         children: <Widget>[
           Container(
@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> {
                   highlightColor: Colors.transparent,
                   child: Text(
                     'Songs',
-                    style: TextStyle(fontSize: 20.0),
+                    style: TextStyle(fontSize: 20.0, color: Colors.white),
                   ),
                   onPressed: () {
                     setState(() {
@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage> {
                 highlightColor: Colors.transparent,
                 child: Text(
                   'Play Lists',
-                  style: TextStyle(fontSize: 20.0),
+                  style: TextStyle(fontSize: 20.0, color: Colors.white),
                 ),
                 onPressed: () {
                   setState(() {
@@ -141,7 +141,7 @@ class _HomePageState extends State<HomePage> {
       create: (context) => MLDInfo(),
       child: Scaffold(
           appBar: AppBar(
-            title: Text('Play Master'),
+            title: _getSPViewSwitcher(),
             actions: <Widget>[
               //this icon button is used to add playlists
               //using flutter file picker
@@ -164,10 +164,7 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
           body: Column(
-            children: <Widget>[
-              _getSPViewSwitcher(),
-              _displayContent(displaySongs)
-            ],
+            children: <Widget>[_displayContent(displaySongs)],
           )),
     );
   }
