@@ -6,7 +6,7 @@ import 'package:stereo/stereo.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 import 'music_list_display.dart';
-import 'sp_view_switcher.dart';
+import 'main_music_display.dart';
 
 void main() => runApp(PlayMaster());
 
@@ -21,7 +21,10 @@ class PlayMaster extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Play Master',
-      home: HomePage(),
+      home: ChangeNotifierProvider(
+        create: (context) => MLDInfo(),
+        child: HomePage(),
+      ),
     );
   }
 }
@@ -44,6 +47,7 @@ class _HomePageState extends State<HomePage> {
   Color _unselected = Colors.transparent;
   //used to set each music object's id
   int idTotal = 0;
+  List<Widget> stack = [];
 
   //returns a widget that allows user to switch between
   //the list of their songs and the list of their playlists
@@ -67,7 +71,7 @@ class _HomePageState extends State<HomePage> {
                   highlightColor: Colors.transparent,
                   child: Text(
                     'Songs',
-                    style: TextStyle(fontSize: 20.0, color: Colors.white),
+                    style: TextStyle(fontSize: 22.0, color: Colors.white),
                   ),
                   onPressed: () {
                     setState(() {
@@ -92,7 +96,7 @@ class _HomePageState extends State<HomePage> {
                 highlightColor: Colors.transparent,
                 child: Text(
                   'Play Lists',
-                  style: TextStyle(fontSize: 20.0, color: Colors.white),
+                  style: TextStyle(fontSize: 22.0, color: Colors.white),
                 ),
                 onPressed: () {
                   setState(() {
@@ -115,16 +119,12 @@ class _HomePageState extends State<HomePage> {
     return displaySongs
         ? Expanded(
             child: ListView.builder(
-              itemCount: PlayMaster.music.length,
-              itemBuilder: (context, index) => ListTile(
-                title: PlayMaster.music[index],
-              ),
-            ),
+                itemCount: PlayMaster.music.length,
+                itemBuilder: (context, index) => PlayMaster.music[index]),
           )
         : Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-//            crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Text(
                   'PLAYLISTS HERE',
@@ -135,37 +135,54 @@ class _HomePageState extends State<HomePage> {
           );
   }
 
+  //returns the main page which should always be the bototm of the stack widget
+  Widget _getBottomOfStack() {
+    return Scaffold(
+      appBar: AppBar(
+        title: _getSPViewSwitcher(),
+        actions: <Widget>[
+          //this icon button is used to add songs and playlists
+          //using flutter file picker
+          IconButton(
+              icon: Icon(Icons.add),
+              iconSize: 40.0,
+              onPressed: () {
+                //pick files from phone and add them to list of music
+                pickFiles().then((map) {
+                  setState(() {
+                    map.forEach((name, path) {
+                      PlayMaster.music
+                          .add(MusicListDisplay(path, name, idTotal));
+                      //add 1 to idTotal so that every song gets its own id
+                      idTotal++;
+                    });
+                  });
+                });
+              }),
+        ],
+      ),
+      body: Column(
+        children: <Widget>[
+          //list of songs or playlists
+          _displayContent(displaySongs),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => MLDInfo(),
-      child: Scaffold(
-          appBar: AppBar(
-            title: _getSPViewSwitcher(),
-            actions: <Widget>[
-              //this icon button is used to add playlists
-              //using flutter file picker
-              IconButton(
-                  icon: Icon(Icons.add),
-                  iconSize: 40.0,
-                  onPressed: () {
-                    //pick files from phone and add them to list of music
-                    pickFiles().then((map) {
-                      setState(() {
-                        map.forEach((name, path) {
-                          PlayMaster.music
-                              .add(MusicListDisplay(path, name, idTotal));
-                          //add 1 to idTotal so that every song gets its own id
-                          idTotal++;
-                        });
-                      });
-                    });
-                  }),
-            ],
-          ),
-          body: Column(
-            children: <Widget>[_displayContent(displaySongs)],
-          )),
+    var info = Provider.of<MLDInfo>(context);
+    //use a stack so that we can display the main music display above
+    //the main app display. The stack should only ever have at most 2 widgets
+    //in it at any given time
+    stack.clear();
+    stack.add(_getBottomOfStack());
+    if (info.name != '') {
+      stack.add(MainMusicDisplay(info.name));
+    }
+    return Stack(
+      children: stack,
     );
   }
 }

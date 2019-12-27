@@ -13,16 +13,37 @@ class MLDInfo extends ChangeNotifier {
   int _id = -1;
   int _prevId = -1;
   bool _playing = false;
+  bool _stopped = false;
+  String _name = '';
+  String _path = '';
 
   int get id => _id;
   int get prevId => _prevId;
   bool get playing => _playing;
+  bool get stopped => _stopped;
+  String get name => _name;
 
+  set path(String path) => _path = path;
   set playing(bool playing) => _playing = playing;
+  set name(String name) => _name = name;
   set id(int id) {
     _prevId = _id;
     _id = id;
     notifyListeners();
+  }
+
+  void update() {
+    notifyListeners();
+  }
+
+  //plays the audio of this widget
+  void play() async {
+    await PlayMaster.player.play(_path, isLocal: true);
+  }
+
+  //pauses the audio of this widget
+  void pause() async {
+    await PlayMaster.player.pause();
   }
 }
 
@@ -49,7 +70,6 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
   //differs from the one in MLDInfo because it doesn't necessarily
   //refer to the song that's playing at any given time
   bool _paused = true;
-  Icon _buttonIcon = Icon(Icons.play_arrow);
   Color bgColor = Colors.white;
 
   @override
@@ -64,16 +84,6 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
 //      await player.setReleaseMode(ReleaseMode.LOOP);
 //  }
 
-  //plays the audio of this widget
-  void _play() async {
-    await PlayMaster.player.play(widget._path, isLocal: true);
-  }
-
-  //pauses the audio of this widget
-  void _pause() async {
-    await PlayMaster.player.pause();
-  }
-
   @override
   Widget build(BuildContext context) {
     var info = Provider.of<MLDInfo>(context);
@@ -84,30 +94,28 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
       //this handles the edge case where the widget is unloaded and everything
       //gets reinitialized yet the music is still playing
       if (info.playing) {
-        _buttonIcon = Icon(Icons.pause);
         _paused = false;
       }
-      bgColor = Colors.grey;
+      bgColor = Colors.black12;
     } else {
       bgColor = Colors.white;
-      _buttonIcon = Icon(Icons.play_arrow);
       _paused = true;
     }
     return GestureDetector(
       onTap: () {
         //pause or play the music depending on if the music is playing or not
         //and set the id of the current playing song to this one
+        info.name = widget.name;
+        info.id = widget._id;
+        info.path = widget._path;
         if (_paused) {
-          _play();
+          info.play();
           info.playing = true;
-          _buttonIcon = Icon(Icons.pause);
         } else {
-          _pause();
+          info.pause();
           info.playing = false;
-          _buttonIcon = Icon(Icons.play_arrow);
         }
         _paused = !_paused;
-        info.id = widget._id;
       },
       child: SizedBox(
         width: double.infinity,
@@ -115,11 +123,22 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
           padding: EdgeInsets.all(20.0),
           child: Row(
             children: <Widget>[
-              _buttonIcon,
-              Text(widget._name),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 0.0),
+                child: Icon(Icons.music_note),
+              ),
+              Text(
+                widget._name,
+                style: TextStyle(fontSize: 20.0),
+              ),
             ],
           ),
-          decoration: BoxDecoration(border: Border.all(), color: bgColor),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: Colors.grey),
+            ),
+            color: bgColor,
+          ),
         ),
       ),
     );
