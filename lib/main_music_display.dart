@@ -51,47 +51,53 @@ class _MainMusicDisplayState extends State<MainMusicDisplay> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text(
-                widget.name,
-                style: TextStyle(
-                    fontWeight: FontWeight.normal,
-                    fontFamily: 'roboto',
-                    fontSize: 25.0,
-                    color: Colors.black,
-                    decoration: TextDecoration.none),
+              Expanded(
+                flex: 7,
+                child: Text(
+                  widget.name,
+                  style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontFamily: 'roboto',
+                      fontSize: 25.0,
+                      color: Colors.black,
+                      decoration: TextDecoration.none),
+                ),
               ),
-              Row(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0.0, 0.0, 16.0, 0.0),
-                    child: GestureDetector(
+              Expanded(
+                flex: 3,
+                child: Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0.0, 0.0, 16.0, 0.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          //pause or play the song depending on if the song is
+                          //currently paused or playing
+                          info.playing ? info.pause() : info.play();
+                          info.playing = !info.playing;
+                          info.update();
+                        },
+                        child: _buttonIcon,
+                      ),
+                    ),
+                    GestureDetector(
                       onTap: () {
-                        //pause or play the song depending on if the song is
-                        //currently paused or playing
-                        info.playing ? info.pause() : info.play();
-                        info.playing = !info.playing;
+                        //stop the music and set name, path, and id back to their
+                        //default values. setting info.name to '' also removes this
+                        //widget from the stack since the homepage gets rebuilt
+                        PlayMaster.player.stop();
+                        info.name = '';
+                        info.path = '';
+                        info.id = -1;
                         info.update();
                       },
-                      child: _buttonIcon,
+                      child: Icon(
+                        Icons.clear,
+                        size: 40.0,
+                      ),
                     ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      //stop the music and set name, path, and id back to their
-                      //default values. setting info.name to '' also removes this
-                      //widget from the stack since the homepage gets rebuilt
-                      PlayMaster.player.stop();
-                      info.name = '';
-                      info.path = '';
-                      info.id = -1;
-                      info.update();
-                    },
-                    child: Icon(
-                      Icons.clear,
-                      size: 40.0,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
