@@ -7,6 +7,7 @@ import 'package:audioplayers/audioplayers.dart';
 
 import 'music_list_display.dart';
 import 'main_music_display.dart';
+import 'music_utils.dart';
 
 void main() => runApp(PlayMaster());
 
@@ -152,7 +153,7 @@ class _HomePageState extends State<HomePage> {
                   setState(() {
                     map.forEach((name, path) {
                       PlayMaster.music
-                          .add(MusicListDisplay(path, name, idTotal));
+                          .add(MusicListDisplay(Song(path, idTotal)));
                       //add 1 to idTotal so that every song gets its own id
                       idTotal++;
                     });
@@ -185,13 +186,6 @@ class _HomePageState extends State<HomePage> {
       children: stack,
     );
   }
-}
-
-//isolates a song's name given the path to the mp3 file
-String getSongName(String path) {
-  String name;
-  name = path.substring(path.lastIndexOf('/') + 1, path.indexOf('.mp3'));
-  return name;
 }
 
 //uses flutter file picker to allow the user to import audio files from elsewhere

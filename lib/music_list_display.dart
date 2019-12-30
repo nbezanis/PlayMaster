@@ -6,6 +6,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:audioplayers/audio_cache.dart';
 
 import 'main.dart';
+import 'music_utils.dart';
 
 //this class is used along with provider to store info about which song is
 //playing and whether it's paused or not
@@ -49,14 +50,15 @@ class MLDInfo extends ChangeNotifier {
 
 //this widget is used as an item in the user's list of widgets
 class MusicListDisplay extends StatefulWidget {
-  final String _path;
-  final String _name;
-  final int _id;
+//  final String _path;
+//  final String _name;
+//  final int _id;
+  final Song song;
 
-  MusicListDisplay(this._path, this._name, this._id);
+  MusicListDisplay(this.song);
 
-  int get id => _id;
-  String get name => _name;
+//  int get id => _id;
+//  String get name => _name;
 
   @override
   State<StatefulWidget> createState() {
@@ -90,7 +92,7 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
 
     //if the widget that is currently playing music is this widget, change the
     //background color to grey, else make sure the background color is white
-    if (info.id == widget._id) {
+    if (info.id == widget.song.id) {
       //this handles the edge case where the widget is unloaded and everything
       //gets reinitialized yet the music is still playing
       if (info.playing) {
@@ -105,9 +107,9 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
       onTap: () {
         //pause or play the music depending on if the music is playing or not
         //and set the id of the current playing song to this one
-        info.name = widget.name;
-        info.id = widget._id;
-        info.path = widget._path;
+        info.name = widget.song.name;
+        info.id = widget.song.id;
+        info.path = widget.song.path;
         if (_paused) {
           info.play();
           info.playing = true;
@@ -128,7 +130,7 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
                 child: Icon(Icons.music_note),
               ),
               Text(
-                widget._name,
+                widget.song.name,
                 style: TextStyle(fontSize: 20.0),
               ),
             ],
