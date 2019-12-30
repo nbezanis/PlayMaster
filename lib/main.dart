@@ -15,7 +15,7 @@ void main() => runApp(PlayMaster());
 //intended to be used throughout the entire app.
 class PlayMaster extends StatelessWidget {
   static AudioPlayer player = AudioPlayer();
-  static List<MusicListDisplay> music = [];
+  static List<Song> music = [];
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +121,8 @@ class _HomePageState extends State<HomePage> {
         ? Expanded(
             child: ListView.builder(
                 itemCount: PlayMaster.music.length,
-                itemBuilder: (context, index) => PlayMaster.music[index]),
+                itemBuilder: (context, index) =>
+                    MusicListDisplay(PlayMaster.music[index])),
           )
         : Center(
             child: Column(
@@ -152,8 +153,7 @@ class _HomePageState extends State<HomePage> {
                 pickFiles().then((map) {
                   setState(() {
                     map.forEach((name, path) {
-                      PlayMaster.music
-                          .add(MusicListDisplay(Song(path, idTotal)));
+                      PlayMaster.music.add(Song(path, idTotal));
                       //add 1 to idTotal so that every song gets its own id
                       idTotal++;
                     });
@@ -179,8 +179,8 @@ class _HomePageState extends State<HomePage> {
     //in it at any given time
     stack.clear();
     stack.add(_getBottomOfStack());
-    if (info.name != '') {
-      stack.add(MainMusicDisplay(info.name));
+    if (info.song.id != -1) {
+      stack.add(MainMusicDisplay(info.song, Playlist(PlayMaster.music)));
     }
     return Stack(
       children: stack,

@@ -4,6 +4,11 @@ class Song {
   String _path;
   String _name;
   int _id;
+  Song.init() {
+    _path = '';
+    _name = '';
+    _id = -1;
+  }
   Song(this._path, this._id) {
     _name = _getSongName(_path);
   }

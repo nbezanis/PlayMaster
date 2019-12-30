@@ -11,25 +11,17 @@ import 'music_utils.dart';
 //this class is used along with provider to store info about which song is
 //playing and whether it's paused or not
 class MLDInfo extends ChangeNotifier {
-  int _id = -1;
-  int _prevId = -1;
+  Song _song = Song.init();
   bool _playing = false;
   bool _stopped = false;
-  String _name = '';
-  String _path = '';
 
-  int get id => _id;
-  int get prevId => _prevId;
+  Song get song => _song;
   bool get playing => _playing;
   bool get stopped => _stopped;
-  String get name => _name;
 
-  set path(String path) => _path = path;
   set playing(bool playing) => _playing = playing;
-  set name(String name) => _name = name;
-  set id(int id) {
-    _prevId = _id;
-    _id = id;
+  set song(Song song) {
+    _song = song;
     notifyListeners();
   }
 
@@ -39,7 +31,7 @@ class MLDInfo extends ChangeNotifier {
 
   //plays the audio of this widget
   void play() async {
-    await PlayMaster.player.play(_path, isLocal: true);
+    await PlayMaster.player.play(song.path, isLocal: true);
   }
 
   //pauses the audio of this widget
@@ -50,15 +42,9 @@ class MLDInfo extends ChangeNotifier {
 
 //this widget is used as an item in the user's list of widgets
 class MusicListDisplay extends StatefulWidget {
-//  final String _path;
-//  final String _name;
-//  final int _id;
   final Song song;
 
   MusicListDisplay(this.song);
-
-//  int get id => _id;
-//  String get name => _name;
 
   @override
   State<StatefulWidget> createState() {
@@ -92,7 +78,7 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
 
     //if the widget that is currently playing music is this widget, change the
     //background color to grey, else make sure the background color is white
-    if (info.id == widget.song.id) {
+    if (info.song.id == widget.song.id) {
       //this handles the edge case where the widget is unloaded and everything
       //gets reinitialized yet the music is still playing
       if (info.playing) {
@@ -107,9 +93,7 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
       onTap: () {
         //pause or play the music depending on if the music is playing or not
         //and set the id of the current playing song to this one
-        info.name = widget.song.name;
-        info.id = widget.song.id;
-        info.path = widget.song.path;
+        info.song = widget.song;
         if (_paused) {
           info.play();
           info.playing = true;

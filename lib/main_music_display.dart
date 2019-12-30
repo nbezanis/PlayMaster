@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'main.dart';
 import 'music_list_display.dart';
+import 'music_utils.dart';
 
 //this is used for displying all the information about the song that is currently
 //playing such as whether it's paused, what song is next in the playlist etc. It
@@ -11,9 +12,10 @@ import 'music_list_display.dart';
 //song, skip to the next song, and stop the song, there is also a large version
 //which takes up all of the screen and has all the other information
 class MainMusicDisplay extends StatefulWidget {
-  final String name;
+  final Song song;
+  final Playlist pl;
 
-  MainMusicDisplay(this.name);
+  MainMusicDisplay(this.song, this.pl);
 
   @override
   _MainMusicDisplayState createState() => _MainMusicDisplayState();
@@ -54,7 +56,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay> {
               Expanded(
                 flex: 7,
                 child: Text(
-                  widget.name,
+                  widget.song.name,
                   style: TextStyle(
                       fontWeight: FontWeight.normal,
                       fontFamily: 'roboto',
@@ -86,9 +88,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay> {
                         //default values. setting info.name to '' also removes this
                         //widget from the stack since the homepage gets rebuilt
                         PlayMaster.player.stop();
-                        info.name = '';
-                        info.path = '';
-                        info.id = -1;
+                        info.song = Song.init();
                         info.update();
                       },
                       child: Icon(
