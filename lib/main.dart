@@ -153,7 +153,8 @@ class _HomePageState extends State<HomePage> {
                 pickFiles().then((map) {
                   setState(() {
                     map.forEach((name, path) {
-                      PlayMaster.music.add(Song(path, idTotal));
+                      PlayMaster.music
+                          .add(Song(path, idTotal, PlayMaster.music.length));
                       //add 1 to idTotal so that every song gets its own id
                       idTotal++;
                     });
@@ -180,7 +181,7 @@ class _HomePageState extends State<HomePage> {
     stack.clear();
     stack.add(_getBottomOfStack());
     if (info.song.id != -1) {
-      stack.add(MainMusicDisplay(info.song, Playlist(PlayMaster.music)));
+      stack.add(MainMusicDisplay(Playlist(PlayMaster.music), info.song.index));
     }
     return Stack(
       children: stack,

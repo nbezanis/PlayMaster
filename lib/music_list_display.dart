@@ -22,6 +22,9 @@ class MLDInfo extends ChangeNotifier {
   set playing(bool playing) => _playing = playing;
   set song(Song song) {
     _song = song;
+    if (song.id != -1) {
+      play();
+    }
     notifyListeners();
   }
 

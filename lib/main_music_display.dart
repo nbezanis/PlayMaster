@@ -12,16 +12,20 @@ import 'music_utils.dart';
 //song, skip to the next song, and stop the song, there is also a large version
 //which takes up all of the screen and has all the other information
 class MainMusicDisplay extends StatefulWidget {
-  final Song song;
   final Playlist pl;
+  final int index;
 
-  MainMusicDisplay(this.song, this.pl);
+  MainMusicDisplay(this.pl, this.index) {
+    pl.index = index;
+  }
 
   @override
   _MainMusicDisplayState createState() => _MainMusicDisplayState();
 }
 
 class _MainMusicDisplayState extends State<MainMusicDisplay> {
+  final double ICON_SIZE = 35.0;
+
   @override
   Widget build(BuildContext context) {
     var info = Provider.of<MLDInfo>(context);
@@ -29,11 +33,11 @@ class _MainMusicDisplayState extends State<MainMusicDisplay> {
     Icon _buttonIcon = info.playing
         ? Icon(
             Icons.pause,
-            size: 40.0,
+            size: ICON_SIZE,
           )
         : Icon(
             Icons.play_arrow,
-            size: 40.0,
+            size: ICON_SIZE,
           );
     return Align(
       alignment: FractionalOffset.bottomCenter,
@@ -54,9 +58,9 @@ class _MainMusicDisplayState extends State<MainMusicDisplay> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Expanded(
-                flex: 7,
+                flex: 6,
                 child: Text(
-                  widget.song.name,
+                  widget.pl.song.name,
                   style: TextStyle(
                       fontWeight: FontWeight.normal,
                       fontFamily: 'roboto',
@@ -66,11 +70,12 @@ class _MainMusicDisplayState extends State<MainMusicDisplay> {
                 ),
               ),
               Expanded(
-                flex: 3,
+                flex: 4,
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(0.0, 0.0, 16.0, 0.0),
+                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 0.0),
                       child: GestureDetector(
                         onTap: () {
                           //pause or play the song depending on if the song is
@@ -82,18 +87,32 @@ class _MainMusicDisplayState extends State<MainMusicDisplay> {
                         child: _buttonIcon,
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0.0, 0.0, 16.0, 0.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          widget.pl.next();
+                          info.song = widget.pl.song;
+                        },
+                        child: Icon(
+                          Icons.skip_next,
+                          size: ICON_SIZE,
+                        ),
+                      ),
+                    ),
                     GestureDetector(
                       onTap: () {
                         //stop the music and set name, path, and id back to their
-                        //default values. setting info.name to '' also removes this
-                        //widget from the stack since the homepage gets rebuilt
+                        //default values. setting info.song to Song.init() also
+                        // removes this widget from the stack since the homepage
+                        // gets rebuilt
                         PlayMaster.player.stop();
                         info.song = Song.init();
                         info.update();
                       },
                       child: Icon(
                         Icons.clear,
-                        size: 40.0,
+                        size: ICON_SIZE,
                       ),
                     ),
                   ],
