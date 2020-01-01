@@ -107,6 +107,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay> {
                         // removes this widget from the stack since the homepage
                         // gets rebuilt
                         PlayMaster.player.stop();
+                        info.playing = false;
                         info.song = Song.init();
                         info.update();
                       },

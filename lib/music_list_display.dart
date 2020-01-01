@@ -22,6 +22,7 @@ class MLDInfo extends ChangeNotifier {
   set playing(bool playing) => _playing = playing;
   set song(Song song) {
     _song = song;
+    _playing = true;
     if (song.id != -1) {
       play();
     }
@@ -86,6 +87,8 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
       //gets reinitialized yet the music is still playing
       if (info.playing) {
         _paused = false;
+      } else {
+        _paused = true;
       }
       bgColor = Colors.black12;
     } else {
