@@ -48,10 +48,10 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
   Widget build(BuildContext context) {
     var info = Provider.of<MLDInfo>(context);
 
-    return _isSmall ? _getSmall(info) : Container();
+    return _isSmall ? _getSmall(info) : _getLarge(info);
   }
 
-  _getSmall(MLDInfo info) {
+  Widget _getSmall(MLDInfo info) {
     final double ICON_SIZE = 35.0;
     //display the right icon depending on whether the song is playing or paused
     Icon _buttonIcon = info.playing
@@ -147,6 +147,22 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _getLarge(MLDInfo info) {
+    animController.forward();
+    return SlideTransition(
+      position: slide,
+      child: ScaleTransition(
+        scale: scale,
+        child: Container(
+          child: Text(
+            'WIDGET HERE',
+            style: TextStyle(fontSize: 30.0),
           ),
         ),
       ),
