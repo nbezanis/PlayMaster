@@ -23,12 +23,36 @@ class MainMusicDisplay extends StatefulWidget {
   _MainMusicDisplayState createState() => _MainMusicDisplayState();
 }
 
-class _MainMusicDisplayState extends State<MainMusicDisplay> {
-  final double ICON_SIZE = 35.0;
+class _MainMusicDisplayState extends State<MainMusicDisplay>
+    with SingleTickerProviderStateMixin {
+  AnimationController animController;
+  Animation<double> scale;
+  Animation<Offset> slide;
+
+  bool _isSmall = true;
+
+  @override
+  void initState() {
+    super.initState();
+    animController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 1),
+    );
+
+    scale = Tween<double>(begin: 0, end: 1).animate(animController);
+    slide = Tween<Offset>(begin: Offset(0.0, 1.0), end: Offset.zero)
+        .animate(animController);
+  }
 
   @override
   Widget build(BuildContext context) {
     var info = Provider.of<MLDInfo>(context);
+
+    return _isSmall ? _getSmall(info) : Container();
+  }
+
+  _getSmall(MLDInfo info) {
+    final double ICON_SIZE = 35.0;
     //display the right icon depending on whether the song is playing or paused
     Icon _buttonIcon = info.playing
         ? Icon(
@@ -39,11 +63,14 @@ class _MainMusicDisplayState extends State<MainMusicDisplay> {
             Icons.play_arrow,
             size: ICON_SIZE,
           );
+
     return Align(
       alignment: FractionalOffset.bottomCenter,
       child: GestureDetector(
         onTap: () {
-          //TODO implement large version of this widget
+          setState(() {
+            _isSmall = false;
+          });
         },
         child: Container(
           padding: EdgeInsets.all(16.0),
