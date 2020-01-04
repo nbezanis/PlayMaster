@@ -30,13 +30,14 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
   Animation<Offset> slide;
 
   bool _isSmall = true;
+  double topOffset = 0.0;
 
   @override
   void initState() {
     super.initState();
     animController = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 1),
+      duration: Duration(milliseconds: 100),
     );
 
     scale = Tween<double>(begin: 0, end: 1).animate(animController);
@@ -51,6 +52,19 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
     return _isSmall ? _getSmall(info) : _getLarge(info);
   }
 
+  //returns a text style that makes text look like it
+  //normally does when it is under a material widget
+  TextStyle _materialStyle(double size) {
+    return TextStyle(
+      fontWeight: FontWeight.normal,
+      fontFamily: 'roboto',
+      fontSize: size,
+      color: Colors.black,
+      decoration: TextDecoration.none,
+    );
+  }
+
+  //returns the small version of this widget
   Widget _getSmall(MLDInfo info) {
     final double ICON_SIZE = 35.0;
     //display the right icon depending on whether the song is playing or paused
@@ -88,12 +102,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                 flex: 6,
                 child: Text(
                   widget.pl.song.name,
-                  style: TextStyle(
-                      fontWeight: FontWeight.normal,
-                      fontFamily: 'roboto',
-                      fontSize: 25.0,
-                      color: Colors.black,
-                      decoration: TextDecoration.none),
+                  style: _materialStyle(25.0),
                 ),
               ),
               Expanded(
@@ -153,16 +162,59 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
     );
   }
 
+  //returns the large version of this widget
   Widget _getLarge(MLDInfo info) {
     animController.forward();
-    return SlideTransition(
-      position: slide,
-      child: ScaleTransition(
-        scale: scale,
-        child: Container(
-          child: Text(
-            'WIDGET HERE',
-            style: TextStyle(fontSize: 30.0),
+    return Positioned.fill(
+      top: 40.0 + topOffset,
+      child: GestureDetector(
+        onVerticalDragUpdate: (details) {
+          //update the topOffset so that the widget goes down with the user's finger
+          setState(() {
+            topOffset += details.delta.dy;
+          });
+        },
+        onVerticalDragEnd: (details) {
+          //if the widget is close to where it originally was, we can assume
+          //the user wants to cancel their drag so we return it to it's initial
+          //location
+          if (topOffset < 100.0) {
+            setState(() {
+              topOffset = 0;
+            });
+            return;
+          }
+          //reverse the animation and switch back to the small version of the
+          //widget
+          setState(() {
+            animController.reverse();
+            _isSmall = true;
+          });
+          topOffset = 0;
+        },
+        child: SlideTransition(
+          position: slide,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.black12,
+                    offset: Offset(0.0, -5.0),
+                    blurRadius: 5.0)
+              ],
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(15.0),
+                topLeft: Radius.circular(15.0),
+              ),
+//              border: Border(top: BorderSide(color: Colors.black12),),
+            ),
+            child: Center(
+              child: Text(
+                widget.pl.song.name,
+                style: _materialStyle(30.0),
+              ),
+            ),
           ),
         ),
       ),
