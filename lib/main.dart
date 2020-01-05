@@ -16,6 +16,8 @@ void main() => runApp(PlayMaster());
 class PlayMaster extends StatelessWidget {
   static AudioPlayer player = AudioPlayer();
   static List<Song> music = [];
+  static Color accentColor = Colors.blue;
+  static Color accentColorGradient = Color.fromRGBO(119, 192, 229, 1);
 
   @override
   Widget build(BuildContext context) {

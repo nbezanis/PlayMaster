@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'main.dart';
 import 'music_list_display.dart';
 import 'music_utils.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 //this is used for displying all the information about the song that is currently
 //playing such as whether it's paused, what song is next in the playlist etc. It
@@ -102,6 +103,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                 flex: 6,
                 child: Text(
                   widget.pl.song.name,
+                  overflow: TextOverflow.ellipsis,
                   style: _materialStyle(25.0),
                 ),
               ),
@@ -199,9 +201,10 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                    color: Colors.black12,
-                    offset: Offset(0.0, -5.0),
-                    blurRadius: 5.0)
+                  color: Colors.black12,
+                  offset: Offset(0.0, -5.0),
+                  blurRadius: 5.0,
+                )
               ],
               borderRadius: BorderRadius.only(
                 topRight: Radius.circular(15.0),
@@ -209,11 +212,68 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
               ),
 //              border: Border(top: BorderSide(color: Colors.black12),),
             ),
-            child: Center(
-              child: Text(
-                widget.pl.song.name,
-                style: _materialStyle(30.0),
-              ),
+            child: Column(
+              children: <Widget>[
+                Container(
+                  height: 30.0,
+                  decoration: BoxDecoration(
+                    color: Colors.black12,
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(15.0),
+                      topLeft: Radius.circular(15.0),
+                    ),
+//              border: Border(top: BorderSide(color: Colors.black12),),
+                  ),
+                  child: Center(
+                    child: Container(
+                      margin: EdgeInsets.fromLTRB(150.0, 12.0, 150.0, 12.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(15.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16.0, 8.0, 0.0, 8.0),
+                    child: Text(
+                      widget.pl.song.name,
+                      style: _materialStyle(38.0),
+                    ),
+                  ),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width / 1.5,
+                  height: MediaQuery.of(context).size.width / 1.5,
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        offset: Offset(5.0, -5.0),
+                        blurRadius: 5.0,
+                      )
+                    ],
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: [0.1, 0.9],
+                      colors: [
+                        PlayMaster.accentColor,
+                        PlayMaster.accentColorGradient
+                      ],
+                    ),
+                  ),
+                  child: Padding(
+                    child: SvgPicture.asset('assets/music_note.svg',
+                        semanticsLabel: '${widget.pl.song.name}'),
+                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 16.0, 16.0),
+                  ),
+                )
+              ],
             ),
           ),
         ),
