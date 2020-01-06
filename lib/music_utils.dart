@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:math';
 
 class Song {
   String _path;
@@ -34,7 +35,11 @@ class Playlist {
   List<Song> _songs;
   HashSet<int> _excludedIds = HashSet<int>();
   int _index = 0;
+
   Playlist(this._songs);
+  Playlist.init() {
+    _songs = [];
+  }
 
   List<Song> get songs => _songs;
   Song get song => _songs[_index];
@@ -45,8 +50,7 @@ class Playlist {
     bool found = false;
     int nextIndex = 0;
     for (int i = _index + 1; i < _songs.length; i++) {
-      if (true) {
-        //!_excludedIds.contains(_songs[i].id) PRETTY SURE THIS DOESN'T WORK BECAUSE I NEVER INITIALIZE THE HASH SET
+      if (!_excludedIds.contains(_songs[i].id)) {
         found = true;
         nextIndex = i;
         break;
@@ -69,8 +73,7 @@ class Playlist {
     }
     bool found = false;
     for (int i = _index + 1; i < _songs.length; i++) {
-      if (true) {
-        //!_excludedIds.contains(_songs[i].id)
+      if (!_excludedIds.contains(_songs[i].id)) {
         found = true;
         index = i;
         break;
@@ -90,12 +93,31 @@ class Playlist {
       return;
     }
     for (int i = _index - 1; i > -1; i--) {
-      if (true) {
-        //!_excludedIds.contains(_songs[i].id)
+      if (!_excludedIds.contains(_songs[i].id)) {
         index = i;
         break;
       }
     }
+  }
+
+  void shuffle() {
+    List<Song> newList = [];
+    newList.add(song);
+    List<int> indexes = [];
+    for (int i = 0; i < _songs.length; i++) {
+      if (_songs[i] != song && !(_excludedIds.contains(_songs[i]))) {
+        indexes.add(i);
+      }
+    }
+    Random r = Random();
+    while (indexes.length > 0) {
+      int randomNum = r.nextInt(indexes.length);
+      int randomIndex = indexes[randomNum];
+      newList.add(_songs[randomIndex]);
+      indexes.removeAt(randomNum);
+    }
+    _songs = newList;
+    _index = 0;
   }
 
   //add the song to the hashset of songs that the user wants to exclude from

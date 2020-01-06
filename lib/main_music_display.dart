@@ -293,6 +293,11 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                         width: 30.0,
                         height: 30.0,
                       ),
+                      onTap: () {
+                        setState(() {
+                          widget.pl.shuffle();
+                        });
+                      },
                     ),
                     GestureDetector(
                       child: SvgPicture.asset(
@@ -337,6 +342,9 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                         width: 30.0,
                         height: 30.0,
                       ),
+                      onTap: () {
+                        //TODO implement repeat
+                      },
                     ),
                   ],
                 ),
