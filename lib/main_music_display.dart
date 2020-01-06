@@ -232,154 +232,169 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
   }
 
   Widget _getPlayer(MLDInfo info, Icon buttonIcon) {
-    return Column(
-      children: <Widget>[
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 8.0, 0.0, 8.0),
-            child: Text(
-              widget.pl.song.name,
-              style: TextStyle(fontSize: 32.0),
-            ),
-          ),
-        ),
-        Container(
-          width: MediaQuery.of(context).size.width / 1.7,
-          height: MediaQuery.of(context).size.width / 1.8,
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                offset: Offset(5.0, -5.0),
-                blurRadius: 5.0,
-              )
-            ],
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              stops: [0.1, 0.9],
-              colors: [PlayMaster.accentColor, PlayMaster.accentColorGradient],
-            ),
-          ),
-          child: Padding(
-            child: SvgPicture.asset(
-              'assets/music_note.svg',
-              semanticsLabel: '${widget.pl.song.name}',
-            ),
-            padding: EdgeInsets.fromLTRB(0.0, 0.0, 16.0, 16.0),
-          ),
-        ),
-        MusicSlider(),
-        Padding(
-          padding: EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 0.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return MediaQuery.removePadding(
+      context: context,
+      removeTop: true,
+      child: Expanded(
+        child: ListView.builder(
+          itemCount: 1,
+          itemBuilder: (BuildContext context, int index) => Column(
             children: <Widget>[
-              GestureDetector(
-                child: SvgPicture.asset(
-                  'assets/shuffle.svg',
-                  semanticsLabel: 'previous',
-                  width: 30.0,
-                  height: 30.0,
-                ),
-              ),
-              GestureDetector(
-                child: SvgPicture.asset(
-                  'assets/rewind.svg',
-                  semanticsLabel: 'previous',
-                  width: 35.0,
-                  height: 35.0,
-                ),
-                onTap: () {
-                  //TODO implement rewind
-                  widget.pl.prev();
-                  info.song = widget.pl.song;
-                },
-              ),
-              GestureDetector(
-                child: buttonIcon,
-                onTap: () {
-                  //pause or play the song depending on if the song is
-                  //currently paused or playing
-                  info.playing ? info.pause() : info.play();
-                  info.playing = !info.playing;
-                  info.update();
-                },
-              ),
-              GestureDetector(
-                child: SvgPicture.asset(
-                  'assets/skip.svg',
-                  semanticsLabel: 'previous',
-                  width: 35.0,
-                  height: 35.0,
-                ),
-                onTap: () {
-                  //skips to the next song in the playlist
-                  widget.pl.next();
-                  info.song = widget.pl.song;
-                },
-              ),
-              GestureDetector(
-                child: SvgPicture.asset(
-                  'assets/repeat.svg',
-                  semanticsLabel: 'previous',
-                  width: 30.0,
-                  height: 30.0,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
-          child: Row(
-            children: <Widget>[
-              Icon(
-                Icons.volume_mute,
-                size: 50.0,
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width / 1.6,
-                child: SliderTheme(
-                  data: SliderTheme.of(context).copyWith(trackHeight: 2.0),
-                  child: Slider.adaptive(
-                    inactiveColor: Colors.black12,
-                    onChanged: (value) {
-                      //TODO implement change volume
-                    },
-                    value: 0.0, //TODO make current volume
-                    min: 0.0,
-                    max: 1.0, //TODO make max volume
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16.0, 8.0, 0.0, 8.0),
+                  child: Text(
+                    widget.pl.song.name,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 32.0),
                   ),
                 ),
               ),
-              Icon(
-                Icons.volume_up,
-                size: 50.0,
+              Container(
+                width: MediaQuery.of(context).size.width / 1.7,
+                height: MediaQuery.of(context).size.width / 1.8,
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      offset: Offset(5.0, -5.0),
+                      blurRadius: 5.0,
+                    )
+                  ],
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    stops: [0.1, 0.9],
+                    colors: [
+                      PlayMaster.accentColor,
+                      PlayMaster.accentColorGradient
+                    ],
+                  ),
+                ),
+                child: Padding(
+                  child: SvgPicture.asset(
+                    'assets/music_note.svg',
+                    semanticsLabel: '${widget.pl.song.name}',
+                  ),
+                  padding: EdgeInsets.fromLTRB(0.0, 0.0, 16.0, 16.0),
+                ),
+              ),
+              MusicSlider(),
+              Padding(
+                padding: EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 0.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    GestureDetector(
+                      child: SvgPicture.asset(
+                        'assets/shuffle.svg',
+                        semanticsLabel: 'previous',
+                        width: 30.0,
+                        height: 30.0,
+                      ),
+                    ),
+                    GestureDetector(
+                      child: SvgPicture.asset(
+                        'assets/rewind.svg',
+                        semanticsLabel: 'previous',
+                        width: 35.0,
+                        height: 35.0,
+                      ),
+                      onTap: () {
+                        //TODO implement rewind
+                        widget.pl.prev();
+                        info.song = widget.pl.song;
+                      },
+                    ),
+                    GestureDetector(
+                      child: buttonIcon,
+                      onTap: () {
+                        //pause or play the song depending on if the song is
+                        //currently paused or playing
+                        info.playing ? info.pause() : info.play();
+                        info.playing = !info.playing;
+                        info.update();
+                      },
+                    ),
+                    GestureDetector(
+                      child: SvgPicture.asset(
+                        'assets/skip.svg',
+                        semanticsLabel: 'previous',
+                        width: 35.0,
+                        height: 35.0,
+                      ),
+                      onTap: () {
+                        //skips to the next song in the playlist
+                        widget.pl.next();
+                        info.song = widget.pl.song;
+                      },
+                    ),
+                    GestureDetector(
+                      child: SvgPicture.asset(
+                        'assets/repeat.svg',
+                        semanticsLabel: 'previous',
+                        width: 30.0,
+                        height: 30.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
+                child: Row(
+                  children: <Widget>[
+                    Icon(
+                      Icons.volume_mute,
+                      size: 50.0,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width / 1.6,
+                      child: SliderTheme(
+                        data:
+                            SliderTheme.of(context).copyWith(trackHeight: 2.0),
+                        child: Slider.adaptive(
+                          inactiveColor: Colors.black12,
+                          onChanged: (value) {
+                            //TODO implement change volume
+                          },
+                          value: 0.0, //TODO make current volume
+                          min: 0.0,
+                          max: 1.0, //TODO make max volume
+                        ),
+                      ),
+                    ),
+                    Icon(
+                      Icons.volume_up,
+                      size: 50.0,
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(
+                    0.0, 14.0, 0.0, 0.0), //EXTREMELY TEMPORARY
+                child: Container(
+                  width: double.infinity,
+                  height: 50.0,
+                  color: PlayMaster.fadedGrey,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(16.0, 10.0, 0.0, 0.0),
+                    child: Text(
+                      widget.pl.nextSong == null
+                          ? 'Last Track In Play List'
+                          : 'Next Track: ${widget.pl.nextSong.name}',
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 20.0),
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
         ),
-        Padding(
-          padding:
-              EdgeInsets.fromLTRB(0.0, 14.0, 0.0, 0.0), //EXTREMELY TEMPORARY
-          child: Container(
-            width: double.infinity,
-            height: 50.0,
-            color: PlayMaster.fadedGrey,
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(16.0, 10.0, 0.0, 0.0),
-              child: Text(
-                widget.pl.nextSong == null
-                    ? 'Last Track In Play List'
-                    : 'Next Track: ${widget.pl.nextSong.name}',
-                style: TextStyle(fontSize: 20.0),
-              ),
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 

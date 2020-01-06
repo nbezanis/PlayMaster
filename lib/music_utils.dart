@@ -32,7 +32,7 @@ class Song {
 
 class Playlist {
   List<Song> _songs;
-  HashSet<int> _excludedIds;
+  HashSet<int> _excludedIds = HashSet<int>();
   int _index = 0;
   Playlist(this._songs);
 
@@ -46,7 +46,7 @@ class Playlist {
     int nextIndex = 0;
     for (int i = _index + 1; i < _songs.length; i++) {
       if (true) {
-        //!_excludedIds.contains(_songs[i].id)
+        //!_excludedIds.contains(_songs[i].id) PRETTY SURE THIS DOESN'T WORK BECAUSE I NEVER INITIALIZE THE HASH SET
         found = true;
         nextIndex = i;
         break;
