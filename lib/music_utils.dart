@@ -49,6 +49,7 @@ class Playlist {
     bool found = false;
     for (int i = _index + 1; i < _songs.length; i++) {
       if (true) {
+        //!_excludedIds.contains(_songs[i].id)
         found = true;
         index = i;
         break;
@@ -68,7 +69,8 @@ class Playlist {
       return;
     }
     for (int i = _index - 1; i > -1; i--) {
-      if (!_excludedIds.contains(_songs[i].id)) {
+      if (true) {
+        //!_excludedIds.contains(_songs[i].id)
         index = i;
         break;
       }

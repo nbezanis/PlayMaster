@@ -49,23 +49,27 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
   @override
   Widget build(BuildContext context) {
     var info = Provider.of<MLDInfo>(context);
-
     return _isSmall ? _getSmall(info) : _getLarge(info);
+  }
+
+  //display the right icon depending on whether the song is playing or paused
+  Icon _getButtonIcon(double size, bool playing) {
+    return playing
+        ? Icon(
+            Icons.pause,
+            size: size,
+          )
+        : Icon(
+            Icons.play_arrow,
+            size: size,
+          );
   }
 
   //returns the small version of this widget
   Widget _getSmall(MLDInfo info) {
     final double ICON_SIZE = 35.0;
-    //display the right icon depending on whether the song is playing or paused
-    Icon _buttonIcon = info.playing
-        ? Icon(
-            Icons.pause,
-            size: ICON_SIZE,
-          )
-        : Icon(
-            Icons.play_arrow,
-            size: ICON_SIZE,
-          );
+
+    Icon _buttonIcon = _getButtonIcon(ICON_SIZE, info.playing);
 
     return Align(
       alignment: FractionalOffset.bottomCenter,
@@ -117,6 +121,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                       padding: const EdgeInsets.fromLTRB(0.0, 0.0, 16.0, 0.0),
                       child: GestureDetector(
                         onTap: () {
+                          //skips to the next song in the playlist
                           widget.pl.next();
                           info.song = widget.pl.song;
                         },
@@ -154,6 +159,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
 
   //returns the large version of this widget
   Widget _getLarge(MLDInfo info) {
+    Icon _buttonIcon = _getButtonIcon(100.0, info.playing);
     animController.forward();
     return Positioned.fill(
       top: 40.0 + _topOffset,
@@ -258,12 +264,58 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                       ),
                     ),
                     child: Padding(
-                      child: SvgPicture.asset('assets/music_note.svg',
-                          semanticsLabel: '${widget.pl.song.name}'),
+                      child: SvgPicture.asset(
+                        'assets/music_note.svg',
+                        semanticsLabel: '${widget.pl.song.name}',
+                      ),
                       padding: EdgeInsets.fromLTRB(0.0, 0.0, 16.0, 16.0),
                     ),
                   ),
                   MusicSlider(),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(50.0, 0.0, 50.0, 0.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        GestureDetector(
+                          child: SvgPicture.asset(
+                            'assets/rewind.svg',
+                            semanticsLabel: 'previous',
+                            width: 35.0,
+                            height: 35.0,
+                          ),
+                          onTap: () {
+                            //TODO implement rewind
+                            widget.pl.prev();
+                            info.song = widget.pl.song;
+                          },
+                        ),
+                        GestureDetector(
+                          child: _buttonIcon,
+                          onTap: () {
+                            //pause or play the song depending on if the song is
+                            //currently paused or playing
+                            info.playing ? info.pause() : info.play();
+                            info.playing = !info.playing;
+                            info.update();
+                          },
+                        ),
+                        GestureDetector(
+                          child: SvgPicture.asset(
+                            'assets/skip.svg',
+                            semanticsLabel: 'previous',
+                            width: 35.0,
+                            height: 35.0,
+                          ),
+                          onTap: () {
+                            //skips to the next song in the playlist
+                            widget.pl.next();
+                            info.song = widget.pl.song;
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -318,31 +370,5 @@ class _MusicSliderState extends State<MusicSlider> {
         ],
       ),
     );
-//      Padding(
-//      padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
-//      child: Row(
-//        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//        children: <Widget>[
-//          Text(
-//            '0:30', //TODO add functionality
-//            style: TextStyle(fontSize: 20.0),
-//          ),
-//          Slider.adaptive(
-//            onChanged: (double value) {
-//              setState(() {
-//                _sliderValue = value;
-//              });
-//            },
-//            value: _sliderValue,
-//            min: 0.0,
-//            max: 100.0, //TODO make length of song
-//          ),
-//          Text(
-//            '3:00',
-//            style: TextStyle(fontSize: 20.0),
-//          )
-//        ],
-//      ),
-//    );
   }
 }
