@@ -209,6 +209,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
             ),
             child: SingleChildScrollView(
               child: Column(
+//                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Container(
                     height: 30.0,
@@ -273,10 +274,18 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                   ),
                   MusicSlider(),
                   Padding(
-                    padding: EdgeInsets.fromLTRB(50.0, 0.0, 50.0, 0.0),
+                    padding: EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 0.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
+                        GestureDetector(
+                          child: SvgPicture.asset(
+                            'assets/shuffle.svg',
+                            semanticsLabel: 'previous',
+                            width: 30.0,
+                            height: 30.0,
+                          ),
+                        ),
                         GestureDetector(
                           child: SvgPicture.asset(
                             'assets/rewind.svg',
@@ -313,9 +322,48 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                             info.song = widget.pl.song;
                           },
                         ),
+                        GestureDetector(
+                          child: SvgPicture.asset(
+                            'assets/repeat.svg',
+                            semanticsLabel: 'previous',
+                            width: 30.0,
+                            height: 30.0,
+                          ),
+                        ),
                       ],
                     ),
                   ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
+                    child: Row(
+                      children: <Widget>[
+                        Icon(
+                          Icons.volume_mute,
+                          size: 50.0,
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width / 1.6,
+                          child: SliderTheme(
+                            data: SliderTheme.of(context)
+                                .copyWith(trackHeight: 2.0),
+                            child: Slider.adaptive(
+                              inactiveColor: Colors.black12,
+                              onChanged: (value) {
+                                //TODO implement change volume
+                              },
+                              value: 0.0, //TODO current volume
+                              min: 0.0,
+                              max: 100.0, //TODO make max volume
+                            ),
+                          ),
+                        ),
+                        Icon(
+                          Icons.volume_up,
+                          size: 50.0,
+                        ),
+                      ],
+                    ),
+                  )
                 ],
               ),
             ),
@@ -352,7 +400,7 @@ class _MusicSliderState extends State<MusicSlider> {
               data: SliderTheme.of(context).copyWith(trackHeight: 5.0),
               child: Slider.adaptive(
                 inactiveColor: Colors.black12,
-                onChanged: (double value) {
+                onChanged: (value) {
                   setState(() {
                     _sliderValue = value;
                   });
