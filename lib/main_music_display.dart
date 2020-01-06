@@ -32,6 +32,9 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
 
   bool _isSmall = true;
   double _topOffset = 0.0;
+  bool _displayPlayer = true;
+  Color _playerColor = PlayMaster.accentColor;
+  Color _plColor = Colors.transparent;
 
   @override
   void initState() {
@@ -155,6 +158,246 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
     );
   }
 
+  Widget _getPPViewSwitcher() {
+    return Container(
+      color: Colors.transparent,
+      child: Row(
+        children: <Widget>[
+          Container(
+            child: Expanded(
+              flex: 5,
+              child: Container(
+                margin: EdgeInsets.fromLTRB(32.0, 0.0, 32.0, 0.0),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: _playerColor,
+                      width: 3.0,
+                    ),
+                  ),
+                ),
+                child: FlatButton(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  child: Text(
+                    'Player',
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _displayPlayer = true;
+                      _playerColor = PlayMaster.accentColor;
+                      _plColor = Colors.transparent;
+                    });
+                  },
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 5,
+            child: Container(
+              margin: EdgeInsets.fromLTRB(32.0, 0.0, 32.0, 0.0),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: _plColor, width: 3.0),
+                ),
+              ),
+              child: FlatButton(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                child: Text(
+                  'Play List',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    color: Colors.black87,
+                  ),
+                ),
+                onPressed: () {
+                  setState(() {
+                    _displayPlayer = false;
+                    _plColor = PlayMaster.accentColor;
+                    _playerColor = Colors.transparent;
+                  });
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _getPlayer(MLDInfo info, Icon buttonIcon) {
+    return Column(
+      children: <Widget>[
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16.0, 8.0, 0.0, 8.0),
+            child: Text(
+              widget.pl.song.name,
+              style: TextStyle(fontSize: 32.0),
+            ),
+          ),
+        ),
+        Container(
+          width: MediaQuery.of(context).size.width / 1.7,
+          height: MediaQuery.of(context).size.width / 1.8,
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                offset: Offset(5.0, -5.0),
+                blurRadius: 5.0,
+              )
+            ],
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              stops: [0.1, 0.9],
+              colors: [PlayMaster.accentColor, PlayMaster.accentColorGradient],
+            ),
+          ),
+          child: Padding(
+            child: SvgPicture.asset(
+              'assets/music_note.svg',
+              semanticsLabel: '${widget.pl.song.name}',
+            ),
+            padding: EdgeInsets.fromLTRB(0.0, 0.0, 16.0, 16.0),
+          ),
+        ),
+        MusicSlider(),
+        Padding(
+          padding: EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 0.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              GestureDetector(
+                child: SvgPicture.asset(
+                  'assets/shuffle.svg',
+                  semanticsLabel: 'previous',
+                  width: 30.0,
+                  height: 30.0,
+                ),
+              ),
+              GestureDetector(
+                child: SvgPicture.asset(
+                  'assets/rewind.svg',
+                  semanticsLabel: 'previous',
+                  width: 35.0,
+                  height: 35.0,
+                ),
+                onTap: () {
+                  //TODO implement rewind
+                  widget.pl.prev();
+                  info.song = widget.pl.song;
+                },
+              ),
+              GestureDetector(
+                child: buttonIcon,
+                onTap: () {
+                  //pause or play the song depending on if the song is
+                  //currently paused or playing
+                  info.playing ? info.pause() : info.play();
+                  info.playing = !info.playing;
+                  info.update();
+                },
+              ),
+              GestureDetector(
+                child: SvgPicture.asset(
+                  'assets/skip.svg',
+                  semanticsLabel: 'previous',
+                  width: 35.0,
+                  height: 35.0,
+                ),
+                onTap: () {
+                  //skips to the next song in the playlist
+                  widget.pl.next();
+                  info.song = widget.pl.song;
+                },
+              ),
+              GestureDetector(
+                child: SvgPicture.asset(
+                  'assets/repeat.svg',
+                  semanticsLabel: 'previous',
+                  width: 30.0,
+                  height: 30.0,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
+          child: Row(
+            children: <Widget>[
+              Icon(
+                Icons.volume_mute,
+                size: 50.0,
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width / 1.6,
+                child: SliderTheme(
+                  data: SliderTheme.of(context).copyWith(trackHeight: 2.0),
+                  child: Slider.adaptive(
+                    inactiveColor: Colors.black12,
+                    onChanged: (value) {
+                      //TODO implement change volume
+                    },
+                    value: 0.0, //TODO make current volume
+                    min: 0.0,
+                    max: 1.0, //TODO make max volume
+                  ),
+                ),
+              ),
+              Icon(
+                Icons.volume_up,
+                size: 50.0,
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding:
+              EdgeInsets.fromLTRB(0.0, 14.0, 0.0, 0.0), //EXTREMELY TEMPORARY
+          child: Container(
+            width: double.infinity,
+            height: 50.0,
+            color: PlayMaster.fadedGrey,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(16.0, 10.0, 0.0, 0.0),
+              child: Text(
+                widget.pl.nextSong == null
+                    ? 'Last Track In Play List'
+                    : 'Next Track: ${widget.pl.nextSong.name}',
+                style: TextStyle(fontSize: 20.0),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _getPlayList() {
+    return MediaQuery.removePadding(
+      context: context,
+      removeTop: true,
+      child: Expanded(
+        child: ListView.builder(
+          itemCount: widget.pl.songs.length,
+          itemBuilder: (context, index) => MusicListDisplay(
+            widget.pl.songs[index],
+          ),
+        ),
+      ),
+    );
+  }
+
   //returns the large version of this widget
   Widget _getLarge(MLDInfo info) {
     Icon _buttonIcon = _getButtonIcon(100.0, info.playing);
@@ -189,7 +432,6 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
         child: SlideTransition(
           position: slide,
           child: Container(
-//            height: double.infinity,
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
@@ -203,185 +445,38 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                 topRight: Radius.circular(15.0),
                 topLeft: Radius.circular(15.0),
               ),
-//              border: Border(top: BorderSide(color: Colors.black12),),
             ),
-            child: SingleChildScrollView(
-              child: Column(
-//                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Container(
-                    height: 30.0,
-                    decoration: BoxDecoration(
-                      color: Colors.black12,
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(15.0),
-                        topLeft: Radius.circular(15.0),
-                      ),
-//              border: Border(top: BorderSide(color: Colors.black12),),
-                    ),
-                    child: Center(
-                      child: Container(
-                        margin: EdgeInsets.fromLTRB(150.0, 12.0, 150.0, 12.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(15.0),
-                          ),
-                        ),
-                      ),
+            child: Column(
+              //look into slivers to solve the scrolling problem
+              children: <Widget>[
+                Container(
+                  decoration: BoxDecoration(
+                    color: PlayMaster.fadedGrey,
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(15.0),
+                      topLeft: Radius.circular(15.0),
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16.0, 8.0, 0.0, 8.0),
-                      child: Text(
-                        widget.pl.song.name,
-                        style: TextStyle(fontSize: 32.0),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width / 1.7,
-                    height: MediaQuery.of(context).size.width / 1.8,
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black12,
-                          offset: Offset(5.0, -5.0),
-                          blurRadius: 5.0,
-                        )
-                      ],
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        stops: [0.1, 0.9],
-                        colors: [
-                          PlayMaster.accentColor,
-                          PlayMaster.accentColorGradient
-                        ],
-                      ),
-                    ),
-                    child: Padding(
-                      child: SvgPicture.asset(
-                        'assets/music_note.svg',
-                        semanticsLabel: '${widget.pl.song.name}',
-                      ),
-                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 16.0, 16.0),
-                    ),
-                  ),
-                  MusicSlider(),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 0.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        GestureDetector(
-                          child: SvgPicture.asset(
-                            'assets/shuffle.svg',
-                            semanticsLabel: 'previous',
-                            width: 30.0,
-                            height: 30.0,
-                          ),
-                        ),
-                        GestureDetector(
-                          child: SvgPicture.asset(
-                            'assets/rewind.svg',
-                            semanticsLabel: 'previous',
-                            width: 35.0,
-                            height: 35.0,
-                          ),
-                          onTap: () {
-                            //TODO implement rewind
-                            widget.pl.prev();
-                            info.song = widget.pl.song;
-                          },
-                        ),
-                        GestureDetector(
-                          child: _buttonIcon,
-                          onTap: () {
-                            //pause or play the song depending on if the song is
-                            //currently paused or playing
-                            info.playing ? info.pause() : info.play();
-                            info.playing = !info.playing;
-                            info.update();
-                          },
-                        ),
-                        GestureDetector(
-                          child: SvgPicture.asset(
-                            'assets/skip.svg',
-                            semanticsLabel: 'previous',
-                            width: 35.0,
-                            height: 35.0,
-                          ),
-                          onTap: () {
-                            //skips to the next song in the playlist
-                            widget.pl.next();
-                            info.song = widget.pl.song;
-                          },
-                        ),
-                        GestureDetector(
-                          child: SvgPicture.asset(
-                            'assets/repeat.svg',
-                            semanticsLabel: 'previous',
-                            width: 30.0,
-                            height: 30.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          Icons.volume_mute,
-                          size: 50.0,
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width / 1.6,
-                          child: SliderTheme(
-                            data: SliderTheme.of(context)
-                                .copyWith(trackHeight: 2.0),
-                            child: Slider.adaptive(
-                              inactiveColor: Colors.black12,
-                              onChanged: (value) {
-                                //TODO implement change volume
-                              },
-                              value: 0.0, //TODO make current volume
-                              min: 0.0,
-                              max: 1.0, //TODO make max volume
+                  child: Column(
+                    children: <Widget>[
+                      Center(
+                        child: Container(
+                          height: 5.0,
+                          margin: EdgeInsets.fromLTRB(150.0, 10.0, 150.0, 0.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(15.0),
                             ),
                           ),
                         ),
-                        Icon(
-                          Icons.volume_up,
-                          size: 50.0,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(
-                        0.0, 50.0, 0.0, 0.0), //EXTREMELY TEMPORARY
-                    child: Container(
-                      width: double.infinity,
-                      height: 50.0,
-                      color: Colors.black12,
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(16.0, 10.0, 0.0, 0.0),
-                        child: Text(
-                          widget.pl.nextSong == null
-                              ? 'Last Track In Play List'
-                              : 'Next Tracks: ${widget.pl.nextSong.name}',
-                          style: TextStyle(fontSize: 20.0),
-                        ),
                       ),
-                    ),
+                      _getPPViewSwitcher(),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                _displayPlayer ? _getPlayer(info, _buttonIcon) : _getPlayList(),
+              ],
             ),
           ),
         ),

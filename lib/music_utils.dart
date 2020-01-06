@@ -36,6 +36,7 @@ class Playlist {
   int _index = 0;
   Playlist(this._songs);
 
+  List<Song> get songs => _songs;
   Song get song => _songs[_index];
   Song get nextSong {
     if (_index == _songs.length - 1) {

@@ -90,7 +90,7 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
       } else {
         _paused = true;
       }
-      bgColor = Colors.black12;
+      bgColor = PlayMaster.musicbg;
     } else {
       bgColor = Colors.white;
       _paused = true;

@@ -18,6 +18,8 @@ class PlayMaster extends StatelessWidget {
   static List<Song> music = [];
   static Color accentColor = Colors.blue;
   static Color accentColorGradient = Color.fromRGBO(119, 192, 229, 1);
+  static Color fadedGrey = Color.fromRGBO(232, 232, 232, 1);
+  static Color musicbg = Color.fromRGBO(33, 150, 255, 0.1);
 
   @override
   Widget build(BuildContext context) {
@@ -122,9 +124,11 @@ class _HomePageState extends State<HomePage> {
     return displaySongs
         ? Expanded(
             child: ListView.builder(
-                itemCount: PlayMaster.music.length,
-                itemBuilder: (context, index) =>
-                    MusicListDisplay(PlayMaster.music[index])),
+              itemCount: PlayMaster.music.length,
+              itemBuilder: (context, index) => MusicListDisplay(
+                PlayMaster.music[index],
+              ),
+            ),
           )
         : Center(
             child: Column(
