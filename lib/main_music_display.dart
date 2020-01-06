@@ -31,7 +31,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
   Animation<Offset> slide;
 
   bool _isSmall = true;
-  double topOffset = 0.0;
+  double _topOffset = 0.0;
 
   @override
   void initState() {
@@ -51,18 +51,6 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
     var info = Provider.of<MLDInfo>(context);
 
     return _isSmall ? _getSmall(info) : _getLarge(info);
-  }
-
-  //returns a text style that makes text look like it
-  //normally does when it is under a material widget
-  TextStyle _materialStyle(double size) {
-    return TextStyle(
-      fontWeight: FontWeight.normal,
-      fontFamily: 'roboto',
-      fontSize: size,
-      color: Colors.black,
-      decoration: TextDecoration.none,
-    );
   }
 
   //returns the small version of this widget
@@ -104,7 +92,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                 child: Text(
                   widget.pl.song.name,
                   overflow: TextOverflow.ellipsis,
-                  style: _materialStyle(25.0),
+                  style: TextStyle(fontSize: 25.0),
                 ),
               ),
               Expanded(
@@ -168,21 +156,21 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
   Widget _getLarge(MLDInfo info) {
     animController.forward();
     return Positioned.fill(
-      top: 40.0 + topOffset,
+      top: 40.0 + _topOffset,
       child: GestureDetector(
         onVerticalDragUpdate: (details) {
           //update the topOffset so that the widget goes down with the user's finger
           setState(() {
-            topOffset += details.delta.dy;
+            _topOffset += details.delta.dy;
           });
         },
         onVerticalDragEnd: (details) {
           //if the widget is close to where it originally was, we can assume
           //the user wants to cancel their drag so we return it to it's initial
           //location
-          if (topOffset < 100.0) {
+          if (_topOffset < 100.0) {
             setState(() {
-              topOffset = 0;
+              _topOffset = 0;
             });
             return;
           }
@@ -192,11 +180,12 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
             animController.reverse();
             _isSmall = true;
           });
-          topOffset = 0;
+          _topOffset = 0;
         },
         child: SlideTransition(
           position: slide,
           child: Container(
+//            height: double.infinity,
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
@@ -212,72 +201,148 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
               ),
 //              border: Border(top: BorderSide(color: Colors.black12),),
             ),
-            child: Column(
-              children: <Widget>[
-                Container(
-                  height: 30.0,
-                  decoration: BoxDecoration(
-                    color: Colors.black12,
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(15.0),
-                      topLeft: Radius.circular(15.0),
-                    ),
+            child: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    height: 30.0,
+                    decoration: BoxDecoration(
+                      color: Colors.black12,
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(15.0),
+                        topLeft: Radius.circular(15.0),
+                      ),
 //              border: Border(top: BorderSide(color: Colors.black12),),
-                  ),
-                  child: Center(
-                    child: Container(
-                      margin: EdgeInsets.fromLTRB(150.0, 12.0, 150.0, 12.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(15.0),
+                    ),
+                    child: Center(
+                      child: Container(
+                        margin: EdgeInsets.fromLTRB(150.0, 12.0, 150.0, 12.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16.0, 8.0, 0.0, 8.0),
-                    child: Text(
-                      widget.pl.song.name,
-                      style: _materialStyle(38.0),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16.0, 8.0, 0.0, 8.0),
+                      child: Text(
+                        widget.pl.song.name,
+                        style: TextStyle(fontSize: 32.0),
+                      ),
                     ),
                   ),
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width / 1.5,
-                  height: MediaQuery.of(context).size.width / 1.5,
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        offset: Offset(5.0, -5.0),
-                        blurRadius: 5.0,
-                      )
-                    ],
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      stops: [0.1, 0.9],
-                      colors: [
-                        PlayMaster.accentColor,
-                        PlayMaster.accentColorGradient
+                  Container(
+                    width: MediaQuery.of(context).size.width / 1.7,
+                    height: MediaQuery.of(context).size.width / 1.8,
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          offset: Offset(5.0, -5.0),
+                          blurRadius: 5.0,
+                        )
                       ],
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        stops: [0.1, 0.9],
+                        colors: [
+                          PlayMaster.accentColor,
+                          PlayMaster.accentColorGradient
+                        ],
+                      ),
+                    ),
+                    child: Padding(
+                      child: SvgPicture.asset('assets/music_note.svg',
+                          semanticsLabel: '${widget.pl.song.name}'),
+                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 16.0, 16.0),
                     ),
                   ),
-                  child: Padding(
-                    child: SvgPicture.asset('assets/music_note.svg',
-                        semanticsLabel: '${widget.pl.song.name}'),
-                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 16.0, 16.0),
-                  ),
-                )
-              ],
+                  MusicSlider(),
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
+  }
+}
+
+class MusicSlider extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _MusicSliderState();
+  }
+}
+
+class _MusicSliderState extends State<MusicSlider> {
+  double _sliderValue = 0.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
+      child: Row(
+        children: <Widget>[
+          Text(
+            '0:30', //TODO add functionality
+            style: TextStyle(fontSize: 20.0),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width / 1.4,
+            child: SliderTheme(
+              data: SliderTheme.of(context).copyWith(trackHeight: 5.0),
+              child: Slider.adaptive(
+                inactiveColor: Colors.black12,
+                onChanged: (double value) {
+                  setState(() {
+                    _sliderValue = value;
+                  });
+                },
+                value: _sliderValue,
+                min: 0.0,
+                max: 100.0, //TODO make length of song
+              ),
+            ),
+          ),
+          Text(
+            '3:00', //TODO add functionality
+            style: TextStyle(fontSize: 20.0),
+          ),
+        ],
+      ),
+    );
+//      Padding(
+//      padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
+//      child: Row(
+//        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//        children: <Widget>[
+//          Text(
+//            '0:30', //TODO add functionality
+//            style: TextStyle(fontSize: 20.0),
+//          ),
+//          Slider.adaptive(
+//            onChanged: (double value) {
+//              setState(() {
+//                _sliderValue = value;
+//              });
+//            },
+//            value: _sliderValue,
+//            min: 0.0,
+//            max: 100.0, //TODO make length of song
+//          ),
+//          Text(
+//            '3:00',
+//            style: TextStyle(fontSize: 20.0),
+//          )
+//        ],
+//      ),
+//    );
   }
 }

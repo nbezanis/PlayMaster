@@ -185,8 +185,10 @@ class _HomePageState extends State<HomePage> {
     if (info.song.id != -1) {
       stack.add(MainMusicDisplay(Playlist(PlayMaster.music), info.song.index));
     }
-    return Stack(
-      children: stack,
+    return Material(
+      child: Stack(
+        children: stack,
+      ),
     );
   }
 }
