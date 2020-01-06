@@ -37,6 +37,26 @@ class Playlist {
   Playlist(this._songs);
 
   Song get song => _songs[_index];
+  Song get nextSong {
+    if (_index == _songs.length - 1) {
+      return null;
+    }
+    bool found = false;
+    int nextIndex = 0;
+    for (int i = _index + 1; i < _songs.length; i++) {
+      if (true) {
+        //!_excludedIds.contains(_songs[i].id)
+        found = true;
+        nextIndex = i;
+        break;
+      }
+    }
+    if (found) {
+      return _songs[nextIndex];
+    } else {
+      return null;
+    }
+  }
 
   set index(int index) => _index = index;
 

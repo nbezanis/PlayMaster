@@ -68,9 +68,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
   //returns the small version of this widget
   Widget _getSmall(MLDInfo info) {
     final double ICON_SIZE = 35.0;
-
     Icon _buttonIcon = _getButtonIcon(ICON_SIZE, info.playing);
-
     return Align(
       alignment: FractionalOffset.bottomCenter,
       child: GestureDetector(
@@ -351,9 +349,9 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                               onChanged: (value) {
                                 //TODO implement change volume
                               },
-                              value: 0.0, //TODO current volume
+                              value: 0.0, //TODO make current volume
                               min: 0.0,
-                              max: 100.0, //TODO make max volume
+                              max: 1.0, //TODO make max volume
                             ),
                           ),
                         ),
@@ -363,7 +361,25 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                         ),
                       ],
                     ),
-                  )
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                        0.0, 50.0, 0.0, 0.0), //EXTREMELY TEMPORARY
+                    child: Container(
+                      width: double.infinity,
+                      height: 50.0,
+                      color: Colors.black12,
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(16.0, 10.0, 0.0, 0.0),
+                        child: Text(
+                          widget.pl.nextSong == null
+                              ? 'Last Track In Play List'
+                              : 'Next Tracks: ${widget.pl.nextSong.name}',
+                          style: TextStyle(fontSize: 20.0),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
