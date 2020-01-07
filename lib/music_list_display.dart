@@ -8,42 +8,6 @@ import 'package:audioplayers/audio_cache.dart';
 import 'main.dart';
 import 'music_utils.dart';
 
-//this class is used along with provider to store info about which song is
-//playing and whether it's paused or not
-class MLDInfo extends ChangeNotifier {
-  Song _song = Song.init();
-  bool _playing = false;
-  bool _stopped = false;
-
-  Song get song => _song;
-  bool get playing => _playing;
-  bool get stopped => _stopped;
-
-  set playing(bool playing) => _playing = playing;
-  set song(Song song) {
-    _song = song;
-    _playing = true;
-    if (song.id != -1) {
-      play();
-    }
-    notifyListeners();
-  }
-
-  void update() {
-    notifyListeners();
-  }
-
-  //plays the audio of this widget
-  void play() async {
-    await PlayMaster.player.play(song.path, isLocal: true);
-  }
-
-  //pauses the audio of this widget
-  void pause() async {
-    await PlayMaster.player.pause();
-  }
-}
-
 //this widget is used as an item in the user's list of widgets
 class MusicListDisplay extends StatefulWidget {
   final Song song;

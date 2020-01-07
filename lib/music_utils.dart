@@ -37,10 +37,12 @@ class Playlist {
   int _index = 0;
 
   Playlist(this._songs);
+  Playlist.index(this._songs, this._index);
   Playlist.init() {
-    _songs = [];
+    _songs = [Song.init()];
   }
 
+  int get index => _index;
   List<Song> get songs => _songs;
   Song get song => _songs[_index];
   Song get nextSong {
@@ -67,6 +69,7 @@ class Playlist {
 
   //advances the playlist to the next song in the playlist
   void next() {
+    print('from play list class (before): ${_index}');
     if (_index == _songs.length - 1) {
       print('playlist ended');
       //TODO figure out what to do when the playlist ends
@@ -80,6 +83,7 @@ class Playlist {
       }
     }
     if (found) {
+      print('from play list class (after): ${_index}');
       return;
     } else {
       print('playlist ended');
@@ -113,6 +117,7 @@ class Playlist {
     while (indexes.length > 0) {
       int randomNum = r.nextInt(indexes.length);
       int randomIndex = indexes[randomNum];
+      _songs[randomIndex].index = newList.length;
       newList.add(_songs[randomIndex]);
       indexes.removeAt(randomNum);
     }

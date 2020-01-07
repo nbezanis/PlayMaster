@@ -13,12 +13,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 //song, skip to the next song, and stop the song, there is also a large version
 //which takes up all of the screen and has all the other information
 class MainMusicDisplay extends StatefulWidget {
-  final Playlist pl;
-  final int index;
-
-  MainMusicDisplay(this.pl, this.index) {
-    pl.index = index;
-  }
+  MainMusicDisplay();
 
   @override
   _MainMusicDisplayState createState() => _MainMusicDisplayState();
@@ -95,7 +90,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
               Expanded(
                 flex: 6,
                 child: Text(
-                  widget.pl.song.name,
+                  info.song.name,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontSize: 25.0),
                 ),
@@ -123,8 +118,8 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                       child: GestureDetector(
                         onTap: () {
                           //skips to the next song in the playlist
-                          widget.pl.next();
-                          info.song = widget.pl.song;
+                          info.pl.next();
+                          info.song = info.pl.song;
                         },
                         child: Icon(
                           Icons.skip_next,
@@ -245,7 +240,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16.0, 8.0, 0.0, 8.0),
                   child: Text(
-                    widget.pl.song.name,
+                    info.song.name,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(fontSize: 32.0),
                   ),
@@ -275,7 +270,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                 child: Padding(
                   child: SvgPicture.asset(
                     'assets/music_note.svg',
-                    semanticsLabel: '${widget.pl.song.name}',
+                    semanticsLabel: '${info.song.name}',
                   ),
                   padding: EdgeInsets.fromLTRB(0.0, 0.0, 16.0, 16.0),
                 ),
@@ -295,7 +290,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                       ),
                       onTap: () {
                         setState(() {
-                          widget.pl.shuffle();
+                          info.pl.shuffle();
                         });
                       },
                     ),
@@ -308,8 +303,8 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                       ),
                       onTap: () {
                         //TODO implement rewind
-                        widget.pl.prev();
-                        info.song = widget.pl.song;
+                        info.pl.prev();
+                        info.song = info.pl.song;
                       },
                     ),
                     GestureDetector(
@@ -330,9 +325,15 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                         height: 35.0,
                       ),
                       onTap: () {
+                        print(
+                            'SKIP PRESSED ----------------------------------------------------------------------------------------');
                         //skips to the next song in the playlist
-                        widget.pl.next();
-                        info.song = widget.pl.song;
+                        info.pl.next();
+                        print(
+                            'from main music display (before): ${info.pl.index}');
+                        info.song = info.pl.song;
+                        print(
+                            'from main music display (after): ${info.pl.index}');
                       },
                     ),
                     GestureDetector(
@@ -390,9 +391,9 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(16.0, 10.0, 0.0, 0.0),
                     child: Text(
-                      widget.pl.nextSong == null
+                      info.pl.nextSong == null
                           ? 'Last Track In Play List'
-                          : 'Next Track: ${widget.pl.nextSong.name}',
+                          : 'Next Track: ${info.pl.nextSong.name}',
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(fontSize: 20.0),
                     ),
@@ -406,15 +407,15 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
     );
   }
 
-  Widget _getPlayList() {
+  Widget _getPlayList(MLDInfo info) {
     return MediaQuery.removePadding(
       context: context,
       removeTop: true,
       child: Expanded(
         child: ListView.builder(
-          itemCount: widget.pl.songs.length,
+          itemCount: info.pl.songs.length,
           itemBuilder: (context, index) => MusicListDisplay(
-            widget.pl.songs[index],
+            info.pl.songs[index],
           ),
         ),
       ),
@@ -498,7 +499,9 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                     ],
                   ),
                 ),
-                _displayPlayer ? _getPlayer(info, _buttonIcon) : _getPlayList(),
+                _displayPlayer
+                    ? _getPlayer(info, _buttonIcon)
+                    : _getPlayList(info),
               ],
             ),
           ),

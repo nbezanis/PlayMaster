@@ -34,6 +34,48 @@ class PlayMaster extends StatelessWidget {
   }
 }
 
+//this class is used along with provider to store info about which song is
+//playing
+class MLDInfo extends ChangeNotifier {
+  Playlist _pl = Playlist.init();
+  Song _song = Song.init();
+  bool _playing = false;
+  bool _stopped = false;
+
+  Song get song => _song;
+  bool get playing => _playing;
+  bool get stopped => _stopped;
+  Playlist get pl => _pl;
+
+  set playing(bool playing) => _playing = playing;
+  set pl(Playlist pl) => _pl = pl;
+  set song(Song song) {
+//    print('from info class (song index): ${song.index}');
+    _pl.index = song.index;
+//    print('from info class (pl index): ${_pl.index}');
+    _song = song;
+    _playing = true;
+    if (song.id != -1) {
+      play();
+    }
+    notifyListeners();
+  }
+
+  void update() {
+    notifyListeners();
+  }
+
+  //plays the audio of this widget
+  void play() async {
+    await PlayMaster.player.play(song.path, isLocal: true);
+  }
+
+  //pauses the audio of this widget
+  void pause() async {
+    await PlayMaster.player.pause();
+  }
+}
+
 //homepage that houses the lists of the user's
 //songs and playlists
 class HomePage extends StatefulWidget {
@@ -186,8 +228,10 @@ class _HomePageState extends State<HomePage> {
     //in it at any given time
     stack.clear();
     stack.add(_getBottomOfStack());
+    List<Song> selectedSongs = displaySongs ? PlayMaster.music : [];
     if (info.song.id != -1) {
-      stack.add(MainMusicDisplay(Playlist(PlayMaster.music), info.song.index));
+      info.pl = Playlist.index(selectedSongs, info.song.index);
+      stack.add(MainMusicDisplay());
     }
     return Material(
       child: Stack(
