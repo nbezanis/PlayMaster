@@ -46,7 +46,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
 
   @override
   Widget build(BuildContext context) {
-    var info = Provider.of<MLDInfo>(context);
+    var info = Provider.of<MusicInfo>(context);
     return _isSmall ? _getSmall(info) : _getLarge(info);
   }
 
@@ -64,7 +64,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
   }
 
   //returns the small version of this widget
-  Widget _getSmall(MLDInfo info) {
+  Widget _getSmall(MusicInfo info) {
     final double ICON_SIZE = 35.0;
     Icon _buttonIcon = _getButtonIcon(ICON_SIZE, info.playing);
     return Align(
@@ -226,7 +226,17 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
     );
   }
 
-  Widget _getPlayer(MLDInfo info, Icon buttonIcon) {
+  Color _getRepeatColor(Repeat repeat) =>
+      repeat == Repeat.all || repeat == Repeat.one
+          ? PlayMaster.accentColor
+          : Colors.black;
+
+  String _getRepeatSVG(Repeat repeat) =>
+      repeat == Repeat.off || repeat == Repeat.all
+          ? 'assets/repeat.svg'
+          : 'assets/repeatOne.svg';
+
+  Widget _getPlayer(MusicInfo info, Icon buttonIcon) {
     return MediaQuery.removePadding(
       context: context,
       removeTop: true,
@@ -340,13 +350,18 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                     ),
                     GestureDetector(
                       child: SvgPicture.asset(
-                        'assets/repeat.svg',
-                        semanticsLabel: 'previous',
+                        _getRepeatSVG(info.repeat),
+                        semanticsLabel: 'repeat',
+                        color: _getRepeatColor(info.repeat),
                         width: 30.0,
                         height: 30.0,
                       ),
                       onTap: () {
-                        //TODO implement repeat
+                        setState(() {
+                          //set the repeat icon to the next value in the repeat enum
+                          info.repeat =
+                              Repeat.values[(info.repeat.index + 1) % 3];
+                        });
                       },
                     ),
                   ],
@@ -409,7 +424,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
     );
   }
 
-  Widget _getPlayList(MLDInfo info) {
+  Widget _getPlayList(MusicInfo info) {
     return MediaQuery.removePadding(
       context: context,
       removeTop: true,
@@ -425,7 +440,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
   }
 
   //returns the large version of this widget
-  Widget _getLarge(MLDInfo info) {
+  Widget _getLarge(MusicInfo info) {
     Icon _buttonIcon = _getButtonIcon(100.0, info.playing);
     animController.forward();
     return Positioned.fill(

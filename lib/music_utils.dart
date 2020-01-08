@@ -58,20 +58,16 @@ class Playlist {
         break;
       }
     }
-    if (found) {
-      return _songs[nextIndex];
-    } else {
-      return null;
-    }
+    return found ? _songs[nextIndex] : null;
   }
 
   set index(int index) => _index = index;
 
-  //advances the playlist to the next song in the playlist
-  void next() {
+  //advances the playlist to the next song in the playlist, returns true if the
+  //playlist can advance and false if not
+  bool next() {
     if (_index == _songs.length - 1) {
-      print('playlist ended');
-      //TODO figure out what to do when the playlist ends
+      return false;
     }
     bool found = false;
     for (int i = _index + 1; i < _songs.length; i++) {
@@ -81,11 +77,7 @@ class Playlist {
         break;
       }
     }
-    if (found) {
-      return;
-    } else {
-      //TODO figure out what to do when the playlist ends
-    }
+    return found;
   }
 
   //goes back to the last song in the playlist

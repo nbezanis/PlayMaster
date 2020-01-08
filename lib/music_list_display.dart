@@ -42,7 +42,7 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
 
   @override
   Widget build(BuildContext context) {
-    var info = Provider.of<MLDInfo>(context);
+    var info = Provider.of<MusicInfo>(context);
 
     //if the widget that is currently playing music is this widget, change the
     //background color to grey, else make sure the background color is white

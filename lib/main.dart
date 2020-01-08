@@ -11,6 +11,8 @@ import 'music_utils.dart';
 
 void main() => runApp(PlayMaster());
 
+enum Repeat { off, all, one }
+
 //main class for the entire app. any static variables here are
 //intended to be used throughout the entire app.
 class PlayMaster extends StatelessWidget {
@@ -27,7 +29,7 @@ class PlayMaster extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Play Master',
       home: ChangeNotifierProvider(
-        create: (context) => MLDInfo(),
+        create: (context) => MusicInfo(),
         child: HomePage(),
       ),
     );
@@ -36,21 +38,24 @@ class PlayMaster extends StatelessWidget {
 
 //this class is used along with provider to store info about which song is
 //playing
-class MLDInfo extends ChangeNotifier {
+class MusicInfo extends ChangeNotifier {
   Playlist _pl = Playlist.init();
   Song _song = Song.init();
   bool _playing = false;
   bool _stopped = false;
   bool _shuffle = false;
+  Repeat _repeat = Repeat.off;
 
   Song get song => _song;
   Playlist get pl => _pl;
   bool get playing => _playing;
   bool get stopped => _stopped;
   bool get shuffle => _shuffle;
+  Repeat get repeat => _repeat;
 
   set playing(bool playing) => _playing = playing;
   set pl(Playlist pl) => _pl = pl;
+  set repeat(Repeat repeat) => _repeat = repeat;
   set shuffle(bool shuff) {
     _shuffle = shuff;
     notifyListeners();
@@ -227,7 +232,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    var info = Provider.of<MLDInfo>(context);
+    var info = Provider.of<MusicInfo>(context);
     //use a stack so that we can display the main music display above
     //the main app display. The stack should only ever have at most 2 widgets
     //in it at any given time
