@@ -69,7 +69,6 @@ class Playlist {
 
   //advances the playlist to the next song in the playlist
   void next() {
-    print('from play list class (before): ${_index}');
     if (_index == _songs.length - 1) {
       print('playlist ended');
       //TODO figure out what to do when the playlist ends
@@ -83,10 +82,8 @@ class Playlist {
       }
     }
     if (found) {
-      print('from play list class (after): ${_index}');
       return;
     } else {
-      print('playlist ended');
       //TODO figure out what to do when the playlist ends
     }
   }
@@ -104,8 +101,10 @@ class Playlist {
     }
   }
 
+  //shuffles the playlist
   void shuffle() {
     List<Song> newList = [];
+    song.index = 0;
     newList.add(song);
     List<int> indexes = [];
     for (int i = 0; i < _songs.length; i++) {
@@ -123,6 +122,18 @@ class Playlist {
     }
     _songs = newList;
     _index = 0;
+  }
+
+  //sets all songs' index to it's position in the list
+  void resetIndexes(int songId) {
+    for (int i = 0; i < _songs.length; i++) {
+      _songs[i].index = i;
+      //set the index of the playlist to the index of the song that was
+      //playing when the playlist was shuffled
+      if (_songs[i].id == songId) {
+        _index = i;
+      }
+    }
   }
 
   //add the song to the hashset of songs that the user wants to exclude from

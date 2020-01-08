@@ -285,12 +285,20 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                       child: SvgPicture.asset(
                         'assets/shuffle.svg',
                         semanticsLabel: 'previous',
+                        color: info.shuffle
+                            ? PlayMaster.accentColor
+                            : Colors.black,
                         width: 30.0,
                         height: 30.0,
                       ),
                       onTap: () {
                         setState(() {
-                          info.pl.shuffle();
+                          if (info.shuffle) {
+                            info.shuffle = false;
+                          } else {
+                            info.pl.shuffle();
+                            info.shuffle = true;
+                          }
                         });
                       },
                     ),
@@ -325,15 +333,9 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                         height: 35.0,
                       ),
                       onTap: () {
-                        print(
-                            'SKIP PRESSED ----------------------------------------------------------------------------------------');
                         //skips to the next song in the playlist
                         info.pl.next();
-                        print(
-                            'from main music display (before): ${info.pl.index}');
                         info.song = info.pl.song;
-                        print(
-                            'from main music display (after): ${info.pl.index}');
                       },
                     ),
                     GestureDetector(

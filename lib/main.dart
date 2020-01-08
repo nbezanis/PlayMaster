@@ -41,18 +41,23 @@ class MLDInfo extends ChangeNotifier {
   Song _song = Song.init();
   bool _playing = false;
   bool _stopped = false;
+  bool _shuffle = false;
 
   Song get song => _song;
+  Playlist get pl => _pl;
   bool get playing => _playing;
   bool get stopped => _stopped;
-  Playlist get pl => _pl;
+  bool get shuffle => _shuffle;
 
   set playing(bool playing) => _playing = playing;
   set pl(Playlist pl) => _pl = pl;
+  set shuffle(bool shuff) {
+    _shuffle = shuff;
+    notifyListeners();
+  }
+
   set song(Song song) {
-//    print('from info class (song index): ${song.index}');
     _pl.index = song.index;
-//    print('from info class (pl index): ${_pl.index}');
     _song = song;
     _playing = true;
     if (song.id != -1) {
@@ -230,7 +235,21 @@ class _HomePageState extends State<HomePage> {
     stack.add(_getBottomOfStack());
     List<Song> selectedSongs = displaySongs ? PlayMaster.music : [];
     if (info.song.id != -1) {
-      info.pl = Playlist.index(selectedSongs, info.song.index);
+      if (!info.shuffle) {
+        //if the playlist isn't in shuffle mode, set the plalylist equal
+        //to the list of the selected songs in order
+        Playlist inOrderPl = Playlist.index(selectedSongs, info.song.index);
+        inOrderPl.resetIndexes(info.song.id);
+        info.pl = inOrderPl;
+      } else if (info.pl.songs[0].id == -1) {
+        //if the playlist is in shuffle mode and the user does not currently
+        //have a plalylist running (info.pl.songs[0].id == -1), create a playlist
+        //and shuffle it before setting info.pl equal to it
+        Playlist shuffledPl = Playlist.index(selectedSongs, info.song.index);
+        shuffledPl.shuffle();
+        info.pl = shuffledPl;
+      }
+      //add main music display widget to stack if a song is playing
       stack.add(MainMusicDisplay());
     }
     return Material(
