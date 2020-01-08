@@ -571,8 +571,8 @@ class _MusicSliderState extends State<MusicSlider> {
                 onChangeEnd: (value) {
                   info.play();
                   info.playing = true;
-                  PlayMaster.player.seek(Duration(seconds: value.floor()));
                   info.update();
+                  PlayMaster.player.seek(Duration(seconds: value.floor()));
                 },
                 onChanged: (value) {
                   setState(() {

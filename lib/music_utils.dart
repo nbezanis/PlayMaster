@@ -134,3 +134,27 @@ class Playlist {
     _excludedIds.add(s.id);
   }
 }
+
+//this class is used for displaying times of songs
+class Time {
+  int _seconds;
+
+  Time(this._seconds);
+
+  //this uses the seconds and returns a normalized way of viewing time
+  String toString() {
+    if (_seconds >= 3600) {
+      String min =
+          _seconds / 60 >= 10 ? '${_seconds / 60}' : '0${_seconds / 60}';
+      String secs =
+          _seconds % 3600 >= 10 ? '${_seconds % 3600}' : '0${_seconds % 3600}';
+      return '${_seconds / 3600}:$min:$secs';
+    } else if (_seconds >= 60) {
+      return _seconds % 60 >= 10
+          ? '${_seconds / 60}:${_seconds % 60}'
+          : '${_seconds / 60}:0${_seconds % 60}';
+    } else {
+      return _seconds >= 10 ? '0:$_seconds' : '0:0$_seconds';
+    }
+  }
+}
