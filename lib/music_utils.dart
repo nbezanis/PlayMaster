@@ -38,6 +38,14 @@ class Playlist {
 
   Playlist(this._songs);
   Playlist.index(this._songs, this._index);
+  Playlist.id(this._songs, int id) {
+    for (int i = 0; i < _songs.length; i++) {
+      if (_songs[i].id == id) {
+        _index = i;
+      }
+    }
+  }
+
   Playlist.init() {
     _songs = [Song.init()];
   }

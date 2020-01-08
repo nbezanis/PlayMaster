@@ -14,6 +14,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 //which takes up all of the screen and has all the other information
 class MainMusicDisplay extends StatefulWidget {
   MainMusicDisplay();
+  final Widget musicSlider = MusicSlider();
 
   @override
   _MainMusicDisplayState createState() => _MainMusicDisplayState();
@@ -133,10 +134,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                         //default values. setting info.song to Song.init() also
                         // removes this widget from the stack since the homepage
                         // gets rebuilt
-                        PlayMaster.player.stop();
-                        info.playing = false;
-                        info.song = Song.init();
-                        info.update();
+                        info.stop();
                       },
                       child: Icon(
                         Icons.clear,
@@ -285,7 +283,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                   padding: EdgeInsets.fromLTRB(0.0, 0.0, 16.0, 16.0),
                 ),
               ),
-              MusicSlider(),
+              widget.musicSlider,
               Padding(
                 padding: EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 0.0),
                 child: Row(
@@ -545,15 +543,17 @@ class _MusicSliderState extends State<MusicSlider> {
   @override
   void initState() {
     super.initState();
+    var info = Provider.of<MusicInfo>(context, listen: false);
     duration = PlayMaster.player.onDurationChanged.listen((Duration d) {
       setState(() {
-        _songDurationInMicro = d.inMicroseconds;
-        _songDurationInSec = d.inSeconds;
+        info.duration = d
+            .inMicroseconds; //this fix works but it's messy right now, clean it up then commit
+        info.durationSec = d.inSeconds;
       });
     });
     position = PlayMaster.player.onAudioPositionChanged.listen((Duration p) {
       setState(() {
-        _sliderValue = p.inSeconds;
+        info.position = p.inSeconds;
       });
     });
   }
@@ -566,7 +566,7 @@ class _MusicSliderState extends State<MusicSlider> {
       child: Row(
         children: <Widget>[
           Text(
-            '${Time(_sliderValue).toString()}',
+            '${Time(info.position).toString()}',
             style: TextStyle(fontSize: 20.0),
           ),
           Container(
@@ -584,17 +584,17 @@ class _MusicSliderState extends State<MusicSlider> {
                 },
                 onChanged: (value) {
                   setState(() {
-                    _sliderValue = value.floor();
+                    info.position = value.floor();
                   });
                 },
-                value: _sliderValue.toDouble(),
+                value: info.position.toDouble(),
                 min: 0.0,
-                max: _songDurationInMicro / 1000000,
+                max: info.duration / 1000000,
               ),
             ),
           ),
           Text(
-            '${Time(_songDurationInSec - _sliderValue).toString()}', //TODO add functionality
+            '${Time(info.durationSec - info.position).toString()}', //TODO add functionality
             style: TextStyle(fontSize: 20.0),
           ),
         ],

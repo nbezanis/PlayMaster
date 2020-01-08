@@ -45,6 +45,9 @@ class MusicInfo extends ChangeNotifier {
   bool _stopped = false;
   bool _shuffle = false;
   Repeat _repeat = Repeat.off;
+  int duration = 0;
+  int position = 0;
+  int durationSec = 0;
 
   Song get song => _song;
   Playlist get pl => _pl;
@@ -83,6 +86,14 @@ class MusicInfo extends ChangeNotifier {
   //pauses the audio of this widget
   void pause() async {
     await PlayMaster.player.pause();
+  }
+
+  void stop() {
+    PlayMaster.player.stop();
+    _playing = false;
+    _song = Song.init();
+    _pl = Playlist.init();
+    notifyListeners();
   }
 }
 
@@ -247,10 +258,13 @@ class _HomePageState extends State<HomePage> {
         inOrderPl.resetIndexes(info.song.id);
         info.pl = inOrderPl;
       } else if (info.pl.songs[0].id == -1) {
+        print('Dr. Shirley Ann \"Ball Too Hard\" Jackson');
         //if the playlist is in shuffle mode and the user does not currently
         //have a plalylist running (info.pl.songs[0].id == -1), create a playlist
         //and shuffle it before setting info.pl equal to it
-        Playlist shuffledPl = Playlist.index(selectedSongs, info.song.index);
+        print(info.song.name);
+        print(info.song.index);
+        Playlist shuffledPl = Playlist.id(selectedSongs, info.song.id);
         shuffledPl.shuffle();
         info.pl = shuffledPl;
       }
