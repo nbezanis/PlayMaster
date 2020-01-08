@@ -536,16 +536,25 @@ class MusicSlider extends StatefulWidget {
 }
 
 class _MusicSliderState extends State<MusicSlider> {
-  double _sliderValue = 0.0;
-
+  int _sliderValue = 0;
+  int _songDuration = 0;
   @override
   Widget build(BuildContext context) {
+    var info = Provider.of<MusicInfo>(context);
+    PlayMaster.player.onDurationChanged.listen((Duration d) {
+      print('Max duration: $d');
+      setState(() => _songDuration = d.inSeconds);
+    });
+    PlayMaster.player.onAudioPositionChanged.listen((Duration p) {
+      print('Current position: $p');
+      setState(() => _sliderValue = p.inSeconds);
+    });
     return Padding(
       padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
       child: Row(
         children: <Widget>[
           Text(
-            '0:30', //TODO add functionality
+            '${Duration(seconds: _sliderValue).inSeconds}', //TODO add functionality
             style: TextStyle(fontSize: 20.0),
           ),
           Container(
@@ -554,19 +563,30 @@ class _MusicSliderState extends State<MusicSlider> {
               data: SliderTheme.of(context).copyWith(trackHeight: 5.0),
               child: Slider.adaptive(
                 inactiveColor: Colors.black12,
+                onChangeStart: (value) {
+                  info.pause();
+                  info.playing = false;
+                  info.update();
+                },
+                onChangeEnd: (value) {
+                  info.play();
+                  info.playing = true;
+                  PlayMaster.player.seek(Duration(seconds: value.floor()));
+                  info.update();
+                },
                 onChanged: (value) {
                   setState(() {
-                    _sliderValue = value;
+                    _sliderValue = value.floor();
                   });
                 },
-                value: _sliderValue,
+                value: _sliderValue.toDouble(),
                 min: 0.0,
-                max: 100.0, //TODO make length of song
+                max: _songDuration.toDouble() + 1,
               ),
             ),
           ),
           Text(
-            '3:00', //TODO add functionality
+            '${Duration(seconds: _songDuration - _sliderValue).inSeconds}', //TODO add functionality
             style: TextStyle(fontSize: 20.0),
           ),
         ],
