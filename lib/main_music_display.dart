@@ -537,24 +537,36 @@ class MusicSlider extends StatefulWidget {
 
 class _MusicSliderState extends State<MusicSlider> {
   int _sliderValue = 0;
-  int _songDuration = 0;
+  int _songDurationInMicro = 0;
+  int _songDurationInSec = 0;
+  var duration;
+  var position;
+
+  @override
+  void initState() {
+    super.initState();
+    duration = PlayMaster.player.onDurationChanged.listen((Duration d) {
+      setState(() {
+        _songDurationInMicro = d.inMicroseconds;
+        _songDurationInSec = d.inSeconds;
+      });
+    });
+    position = PlayMaster.player.onAudioPositionChanged.listen((Duration p) {
+      setState(() {
+        _sliderValue = p.inSeconds;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var info = Provider.of<MusicInfo>(context);
-    PlayMaster.player.onDurationChanged.listen((Duration d) {
-      print('Max duration: $d');
-      setState(() => _songDuration = d.inSeconds);
-    });
-    PlayMaster.player.onAudioPositionChanged.listen((Duration p) {
-      print('Current position: $p');
-      setState(() => _sliderValue = p.inSeconds);
-    });
     return Padding(
       padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
       child: Row(
         children: <Widget>[
           Text(
-            '${Duration(seconds: _sliderValue).inSeconds}', //TODO add functionality
+            '${Time(_sliderValue).toString()}',
             style: TextStyle(fontSize: 20.0),
           ),
           Container(
@@ -565,13 +577,9 @@ class _MusicSliderState extends State<MusicSlider> {
                 inactiveColor: Colors.black12,
                 onChangeStart: (value) {
                   info.pause();
-                  info.playing = false;
-                  info.update();
                 },
                 onChangeEnd: (value) {
                   info.play();
-                  info.playing = true;
-                  info.update();
                   PlayMaster.player.seek(Duration(seconds: value.floor()));
                 },
                 onChanged: (value) {
@@ -581,16 +589,23 @@ class _MusicSliderState extends State<MusicSlider> {
                 },
                 value: _sliderValue.toDouble(),
                 min: 0.0,
-                max: _songDuration.toDouble() + 1,
+                max: _songDurationInMicro / 1000000,
               ),
             ),
           ),
           Text(
-            '${Duration(seconds: _songDuration - _sliderValue).inSeconds}', //TODO add functionality
+            '${Time(_songDurationInSec - _sliderValue).toString()}', //TODO add functionality
             style: TextStyle(fontSize: 20.0),
           ),
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    duration.cancel();
+    position.cancel();
+    super.dispose();
   }
 }

@@ -144,15 +144,16 @@ class Time {
   //this uses the seconds and returns a normalized way of viewing time
   String toString() {
     if (_seconds >= 3600) {
-      String min =
-          _seconds / 60 >= 10 ? '${_seconds / 60}' : '0${_seconds / 60}';
+      String min = _seconds / 60 >= 10
+          ? '${(_seconds / 60).floor()}'
+          : '0${(_seconds / 60).floor()}';
       String secs =
           _seconds % 3600 >= 10 ? '${_seconds % 3600}' : '0${_seconds % 3600}';
-      return '${_seconds / 3600}:$min:$secs';
+      return '${(_seconds / 3600).floor()}:$min:$secs';
     } else if (_seconds >= 60) {
       return _seconds % 60 >= 10
-          ? '${_seconds / 60}:${_seconds % 60}'
-          : '${_seconds / 60}:0${_seconds % 60}';
+          ? '${(_seconds / 60).floor()}:${_seconds % 60}'
+          : '${(_seconds / 60).floor()}:0${_seconds % 60}';
     } else {
       return _seconds >= 10 ? '0:$_seconds' : '0:0$_seconds';
     }
