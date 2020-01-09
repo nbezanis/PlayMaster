@@ -17,6 +17,12 @@ enum Repeat { off, all, one }
 //intended to be used throughout the entire app.
 class PlayMaster extends StatelessWidget {
   static AudioPlayer player = AudioPlayer();
+
+  //these are temporary until I implement shared preferences
+  static int sliderValue = 0;
+  static int songDurationInMicro = 0;
+  static int songDurationInSec = 0;
+
   static List<Song> music = [];
   static Color accentColor = Colors.blue;
   static Color accentColorGradient = Color.fromRGBO(119, 192, 229, 1);
@@ -45,9 +51,6 @@ class MusicInfo extends ChangeNotifier {
   bool _stopped = false;
   bool _shuffle = false;
   Repeat _repeat = Repeat.off;
-  int duration = 0;
-  int position = 0;
-  int durationSec = 0;
 
   Song get song => _song;
   Playlist get pl => _pl;
@@ -93,6 +96,9 @@ class MusicInfo extends ChangeNotifier {
     _playing = false;
     _song = Song.init();
     _pl = Playlist.init();
+    PlayMaster.sliderValue = 0;
+    PlayMaster.songDurationInMicro = 0;
+    PlayMaster.songDurationInSec = 0;
     notifyListeners();
   }
 }
@@ -258,12 +264,9 @@ class _HomePageState extends State<HomePage> {
         inOrderPl.resetIndexes(info.song.id);
         info.pl = inOrderPl;
       } else if (info.pl.songs[0].id == -1) {
-        print('Dr. Shirley Ann \"Ball Too Hard\" Jackson');
         //if the playlist is in shuffle mode and the user does not currently
         //have a plalylist running (info.pl.songs[0].id == -1), create a playlist
         //and shuffle it before setting info.pl equal to it
-        print(info.song.name);
-        print(info.song.index);
         Playlist shuffledPl = Playlist.id(selectedSongs, info.song.id);
         shuffledPl.shuffle();
         info.pl = shuffledPl;

@@ -534,26 +534,25 @@ class MusicSlider extends StatefulWidget {
 }
 
 class _MusicSliderState extends State<MusicSlider> {
-  int _sliderValue = 0;
-  int _songDurationInMicro = 0;
-  int _songDurationInSec = 0;
+  int _sliderValue =
+      PlayMaster.sliderValue; //use shared preferences for these in the future
+  int _songDurationInMicro = PlayMaster.songDurationInMicro;
+  int _songDurationInSec = PlayMaster.songDurationInSec;
   var duration;
   var position;
 
   @override
   void initState() {
     super.initState();
-    var info = Provider.of<MusicInfo>(context, listen: false);
     duration = PlayMaster.player.onDurationChanged.listen((Duration d) {
       setState(() {
-        info.duration = d
-            .inMicroseconds; //this fix works but it's messy right now, clean it up then commit
-        info.durationSec = d.inSeconds;
+        _songDurationInMicro = d.inMicroseconds;
+        _songDurationInSec = d.inSeconds;
       });
     });
     position = PlayMaster.player.onAudioPositionChanged.listen((Duration p) {
       setState(() {
-        info.position = p.inSeconds;
+        _sliderValue = p.inSeconds;
       });
     });
   }
@@ -566,7 +565,7 @@ class _MusicSliderState extends State<MusicSlider> {
       child: Row(
         children: <Widget>[
           Text(
-            '${Time(info.position).toString()}',
+            '${Time(_sliderValue).toString()}',
             style: TextStyle(fontSize: 20.0),
           ),
           Container(
@@ -584,17 +583,17 @@ class _MusicSliderState extends State<MusicSlider> {
                 },
                 onChanged: (value) {
                   setState(() {
-                    info.position = value.floor();
+                    _sliderValue = value.floor();
                   });
                 },
-                value: info.position.toDouble(),
+                value: _sliderValue.toDouble(),
                 min: 0.0,
-                max: info.duration / 1000000,
+                max: _songDurationInMicro / 1000000,
               ),
             ),
           ),
           Text(
-            '${Time(info.durationSec - info.position).toString()}', //TODO add functionality
+            '${Time(_songDurationInSec - _sliderValue).toString()}', //TODO add functionality
             style: TextStyle(fontSize: 20.0),
           ),
         ],
@@ -604,6 +603,9 @@ class _MusicSliderState extends State<MusicSlider> {
 
   @override
   void dispose() {
+    PlayMaster.sliderValue = _sliderValue;
+    PlayMaster.songDurationInMicro = _songDurationInMicro;
+    PlayMaster.songDurationInSec = _songDurationInSec;
     duration.cancel();
     position.cancel();
     super.dispose();
