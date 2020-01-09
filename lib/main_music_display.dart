@@ -26,6 +26,8 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
   Animation<double> scale;
   Animation<Offset> slide;
 
+  var completion;
+
   bool _isSmall = true;
   double _topOffset = 0.0;
   bool _displayPlayer = true;
@@ -35,6 +37,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
   @override
   void initState() {
     super.initState();
+    var info = Provider.of<MusicInfo>(context, listen: false);
     animController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 100),
@@ -43,12 +46,32 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
     scale = Tween<double>(begin: 0, end: 1).animate(animController);
     slide = Tween<Offset>(begin: Offset(0.0, 1.0), end: Offset.zero)
         .animate(animController);
+
+    completion = PlayMaster.player.onPlayerCompletion.listen((event) {
+      print(info.repeat);
+      if (info.repeat == Repeat.off || info.repeat == Repeat.all) {
+        bool success = info.pl.next();
+        if (!success && info.repeat == Repeat.all) {
+          info.song = info.pl.songs[0];
+        } else if (success) {
+          info.song = info.pl.song;
+        }
+      } else {
+        info.play();
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     var info = Provider.of<MusicInfo>(context);
     return _isSmall ? _getSmall(info) : _getLarge(info);
+  }
+
+  @override
+  void dispose() {
+    completion.cancel();
+    super.dispose();
   }
 
   //display the right icon depending on whether the song is playing or paused
@@ -130,10 +153,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                     ),
                     GestureDetector(
                       onTap: () {
-                        //stop the music and set name, path, and id back to their
-                        //default values. setting info.song to Song.init() also
-                        // removes this widget from the stack since the homepage
-                        // gets rebuilt
+                        //stops music
                         info.stop();
                       },
                       child: Icon(
@@ -336,7 +356,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                     GestureDetector(
                       child: SvgPicture.asset(
                         'assets/skip.svg',
-                        semanticsLabel: 'previous',
+                        semanticsLabel: 'skip',
                         width: 35.0,
                         height: 35.0,
                       ),
@@ -408,7 +428,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                     child: Text(
                       info.pl.nextSong == null
                           ? 'Last Track In Play List'
-                          : 'Next Track: ${info.pl.nextSong.name}',
+                          : 'Next Track: ${info.repeat == Repeat.one ? info.song.name : info.pl.nextSong.name}',
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(fontSize: 20.0),
                     ),
@@ -536,8 +556,7 @@ class MusicSlider extends StatefulWidget {
 class _MusicSliderState extends State<MusicSlider> {
   int _sliderValue =
       PlayMaster.sliderValue; //use shared preferences for these in the future
-  int _songDurationInMicro = PlayMaster.songDurationInMicro;
-  int _songDurationInSec = PlayMaster.songDurationInSec;
+  int _songDuration = PlayMaster.songDuration;
   var duration;
   var position;
 
@@ -546,13 +565,13 @@ class _MusicSliderState extends State<MusicSlider> {
     super.initState();
     duration = PlayMaster.player.onDurationChanged.listen((Duration d) {
       setState(() {
-        _songDurationInMicro = d.inMicroseconds;
-        _songDurationInSec = d.inSeconds;
+        _songDuration = d.inMicroseconds;
       });
     });
     position = PlayMaster.player.onAudioPositionChanged.listen((Duration p) {
       setState(() {
-        _sliderValue = p.inSeconds;
+        _sliderValue =
+            p.inMicroseconds > _songDuration ? _songDuration : p.inMicroseconds;
       });
     });
   }
@@ -565,7 +584,7 @@ class _MusicSliderState extends State<MusicSlider> {
       child: Row(
         children: <Widget>[
           Text(
-            '${Time(_sliderValue).toString()}',
+            '${Time((_sliderValue / 1000000).floor()).toString()}',
             style: TextStyle(fontSize: 20.0),
           ),
           Container(
@@ -578,22 +597,28 @@ class _MusicSliderState extends State<MusicSlider> {
                   info.pause();
                 },
                 onChangeEnd: (value) {
-                  info.play();
-                  PlayMaster.player.seek(Duration(seconds: value.floor()));
+                  if (info.playing) {
+                    info.play();
+                  }
+                  PlayMaster.player.seek(Duration(microseconds: value.floor()));
                 },
                 onChanged: (value) {
                   setState(() {
-                    _sliderValue = value.floor();
+                    _sliderValue = value.floor() > _songDuration
+                        ? _songDuration
+                        : value.floor();
                   });
                 },
-                value: _sliderValue.toDouble(),
+                value: _sliderValue.toDouble() > _songDuration.toDouble()
+                    ? 0
+                    : _sliderValue.toDouble(),
                 min: 0.0,
-                max: _songDurationInMicro / 1000000,
+                max: _songDuration.toDouble() + 0.1,
               ),
             ),
           ),
           Text(
-            '${Time(_songDurationInSec - _sliderValue).toString()}', //TODO add functionality
+            '${Time(((_songDuration - _sliderValue) / 1000000).floor()).toString()}', //TODO add functionality
             style: TextStyle(fontSize: 20.0),
           ),
         ],
@@ -604,8 +629,7 @@ class _MusicSliderState extends State<MusicSlider> {
   @override
   void dispose() {
     PlayMaster.sliderValue = _sliderValue;
-    PlayMaster.songDurationInMicro = _songDurationInMicro;
-    PlayMaster.songDurationInSec = _songDurationInSec;
+    PlayMaster.songDuration = _songDuration;
     duration.cancel();
     position.cancel();
     super.dispose();

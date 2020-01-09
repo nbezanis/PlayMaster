@@ -20,8 +20,7 @@ class PlayMaster extends StatelessWidget {
 
   //these are temporary until I implement shared preferences
   static int sliderValue = 0;
-  static int songDurationInMicro = 0;
-  static int songDurationInSec = 0;
+  static int songDuration = 0;
 
   static List<Song> music = [];
   static Color accentColor = Colors.blue;
@@ -91,14 +90,17 @@ class MusicInfo extends ChangeNotifier {
     await PlayMaster.player.pause();
   }
 
+  //stop the music and set name, path, and id back to their
+  //default values. setting info.song to Song.init() also
+  // removes this widget from the stack since the homepage
+  // gets rebuilt
   void stop() {
     PlayMaster.player.stop();
     _playing = false;
     _song = Song.init();
     _pl = Playlist.init();
     PlayMaster.sliderValue = 0;
-    PlayMaster.songDurationInMicro = 0;
-    PlayMaster.songDurationInSec = 0;
+    PlayMaster.songDuration = 0;
     notifyListeners();
   }
 }
