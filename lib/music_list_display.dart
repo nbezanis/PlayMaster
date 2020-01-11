@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
-import 'package:stereo/stereo.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:audioplayers/audio_cache.dart';
 
@@ -27,18 +26,6 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
   //refer to the song that's playing at any given time
   bool _paused = true;
   Color bgColor = Colors.white;
-
-  @override
-  void initState() {
-    super.initState();
-//    print('INITIALIZING ${widget._name}');
-//    _loadSong(widget.path);
-  }
-
-//  void _loadSong(String path) async {
-//    await player.setUrl(widget.path);//use this to implement looping
-//      await player.setReleaseMode(ReleaseMode.LOOP);
-//  }
 
   @override
   Widget build(BuildContext context) {

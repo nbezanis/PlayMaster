@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:file_picker/file_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:stereo/stereo.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 import 'music_list_display.dart';
