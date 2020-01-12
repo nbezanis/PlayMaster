@@ -30,6 +30,11 @@ class Song {
     return name;
   }
 
+//  String toJson() {
+//    return ''
+//  }
+
+  //compare function used to make songs compatible with splay tree
   static int compare(Song key1, Song key2) {
     return key1.name.compareTo(key2.name);
   }

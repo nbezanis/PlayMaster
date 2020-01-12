@@ -1,10 +1,10 @@
 import 'dart:collection';
-
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:file_picker/file_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'music_list_display.dart';
 import 'main_music_display.dart';
@@ -28,6 +28,17 @@ class PlayMaster extends StatelessWidget {
   static Color accentColorGradient = Color.fromRGBO(119, 192, 229, 1);
   static Color fadedGrey = Color.fromRGBO(232, 232, 232, 1);
   static Color musicbg = Color.fromRGBO(33, 150, 255, 0.1);
+
+  static void putIntInPrefs(String key, int value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(key, value);
+    prefs.clear();
+  }
+
+  static Future<int> getIntFromPrefs(String key) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(key);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -229,12 +240,20 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 //pick files from phone and add them to list of music
                 pickFiles().then((map) {
-                  setState(() {
-                    map.forEach((name, path) {
-                      PlayMaster.music
-                          .add(Song(path, idTotal, PlayMaster.music.length));
-                      //add 1 to idTotal so that every song gets its own id
-                      idTotal++;
+                  //use shared preferences fro idTotal so that we're not giving
+                  //repeat IDs
+                  PlayMaster.getIntFromPrefs('idTotal').then((val) {
+                    idTotal = val ?? 0;
+                    setState(() {
+                      map.forEach((name, path) {
+                        PlayMaster.music
+                            .add(Song(path, idTotal, PlayMaster.music.length));
+                        //add 1 to idTotal so that every song gets its own id
+                        idTotal++;
+                      });
+
+                      PlayMaster.putIntInPrefs('idTotal', idTotal);
+                      print(idTotal);
                     });
                   });
                 });
