@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:file_picker/file_picker.dart';
@@ -21,7 +23,7 @@ class PlayMaster extends StatelessWidget {
   static int sliderValue = 0;
   static int songDuration = 0;
 
-  static List<Song> music = [];
+  static SplayTreeSet<Song> music = SplayTreeSet<Song>(Song.compare);
   static Color accentColor = Colors.blue;
   static Color accentColorGradient = Color.fromRGBO(119, 192, 229, 1);
   static Color fadedGrey = Color.fromRGBO(232, 232, 232, 1);
@@ -196,7 +198,7 @@ class _HomePageState extends State<HomePage> {
             child: ListView.builder(
               itemCount: PlayMaster.music.length,
               itemBuilder: (context, index) => MusicListDisplay(
-                PlayMaster.music[index],
+                PlayMaster.music.elementAt(index),
               ),
             ),
           )
@@ -256,7 +258,7 @@ class _HomePageState extends State<HomePage> {
     //in it at any given time
     stack.clear();
     stack.add(_getBottomOfStack());
-    List<Song> selectedSongs = displaySongs ? PlayMaster.music : [];
+    List<Song> selectedSongs = displaySongs ? PlayMaster.music.toList() : [];
     if (info.song.id != -1) {
       if (!info.shuffle) {
         //if the playlist isn't in shuffle mode, set the plalylist equal

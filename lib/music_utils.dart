@@ -29,6 +29,10 @@ class Song {
     name = path.substring(path.lastIndexOf('/') + 1, path.indexOf('.mp3'));
     return name;
   }
+
+  static int compare(Song key1, Song key2) {
+    return key1.name.compareTo(key2.name);
+  }
 }
 
 class Playlist {
