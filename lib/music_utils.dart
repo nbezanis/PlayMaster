@@ -30,9 +30,10 @@ class Song {
     return name;
   }
 
-//  String toJson() {
-//    return ''
-//  }
+  //return a string that contains the song's path, id, and index so that it
+  //is able to be constructed from the string later. Use § as a separating
+  //character since it is unlikely to show up in a song's path
+  String toString() => '$_path§$id§$index§';
 
   //compare function used to make songs compatible with splay tree
   static int compare(Song key1, Song key2) {

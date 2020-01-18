@@ -29,10 +29,11 @@ class PlayMaster extends StatelessWidget {
   static Color fadedGrey = Color.fromRGBO(232, 232, 232, 1);
   static Color musicbg = Color.fromRGBO(33, 150, 255, 0.1);
 
+  static String songStr = '';
+
   static void putIntInPrefs(String key, int value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt(key, value);
-    prefs.clear();
   }
 
   static Future<int> getIntFromPrefs(String key) async {
@@ -40,8 +41,26 @@ class PlayMaster extends StatelessWidget {
     return prefs.getInt(key);
   }
 
+  static void putStrInPrefs(String key, String value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(key, value);
+  }
+
+  static Future<String> getStrFromPrefs(String key) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(key);
+  }
+
+  //DEBUG ONLY
+  static void clearPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
+//    PlayMaster.clearPrefs();
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Play Master',
@@ -245,15 +264,21 @@ class _HomePageState extends State<HomePage> {
                   PlayMaster.getIntFromPrefs('idTotal').then((val) {
                     idTotal = val ?? 0;
                     setState(() {
+                      String songs = '';
                       map.forEach((name, path) {
-                        PlayMaster.music
-                            .add(Song(path, idTotal, PlayMaster.music.length));
+                        Song s = Song(path, idTotal, PlayMaster.music.length);
+                        PlayMaster.music.add(s);
+                        //add this song a string containing all the songs that
+                        //were just added
+                        songs += s.toString();
                         //add 1 to idTotal so that every song gets its own id
                         idTotal++;
                       });
-
+                      //store the songs and idTotal in prefs
+                      PlayMaster.putStrInPrefs(
+                          'songs', PlayMaster.songStr + songs);
+                      PlayMaster.songStr += songs;
                       PlayMaster.putIntInPrefs('idTotal', idTotal);
-                      print(idTotal);
                     });
                   });
                 });
@@ -267,6 +292,42 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
+  }
+
+  //loads the user's songs from prefs and puts them in the music splaytree
+  void _loadMusicFromPrefs(MusicInfo info) {
+    PlayMaster.getStrFromPrefs('songs').then((str) {
+      if (str == null) {
+        return;
+      }
+      PlayMaster.songStr = str;
+      for (int i = 0; i < str.length;) {
+        String path;
+        int id;
+        int index;
+        //path
+        int separation = str.indexOf('§', i);
+        path = str.substring(i, separation);
+        i = separation + 1;
+        //id
+        separation = str.indexOf('§', i);
+        id = int.tryParse(str.substring(i, separation)) ?? 0;
+        i = separation + 1;
+        //index
+        separation = str.indexOf('§', i);
+        index = int.tryParse(str.substring(i, separation)) ?? 0;
+        i = separation + 1;
+        PlayMaster.music.add(Song(path, id, index));
+      }
+      info.update();
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    var info = Provider.of<MusicInfo>(context, listen: false);
+    _loadMusicFromPrefs(info);
   }
 
   @override
