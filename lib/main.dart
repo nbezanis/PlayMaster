@@ -364,7 +364,8 @@ class _HomePageState extends State<HomePage> {
       if (!info.shuffle) {
         //if the playlist isn't in shuffle mode, set the plalylist equal
         //to the list of the selected songs in order
-        Playlist inOrderPl = Playlist.index(selectedSongs, info.song.index);
+        Playlist inOrderPl = Playlist.inOrder(
+            selectedSongs, info.song.index, info.pl.excludedIds);
         inOrderPl.resetIndexes(info.song.id);
         info.pl = inOrderPl;
       } else if (info.pl.songs[0].id == -1) {

@@ -48,7 +48,14 @@ class Playlist {
   List<Song> _activeSongs = [];
 
   Playlist(this._songs);
-  Playlist.index(this._songs, this._index);
+  //for in order playlists only
+  Playlist.inOrder(this._songs, this._index, this._excludedIds) {
+    for (int i = 0; i < _songs.length; i++) {
+      if (!_excludedIds.contains(_songs[i].id)) {
+        activeSongs.add(_songs[i]);
+      }
+    }
+  }
   Playlist.id(this._songs, int id) {
     for (int i = 0; i < _songs.length; i++) {
       if (_songs[i].id == id) {
@@ -64,6 +71,7 @@ class Playlist {
   int get index => _index;
   List<Song> get songs => _songs;
   List<Song> get activeSongs => _activeSongs;
+  HashSet<int> get excludedIds => _excludedIds;
   Song get song => _songs[_index];
   Song get nextSong {
     if (_index == _songs.length - 1) {
@@ -82,10 +90,11 @@ class Playlist {
   }
 
   set index(int index) => _index = index;
+  //sets active songs to all songs that aren't currently excluded
   set activeSongs(List<Song> songs) {
     activeSongs.clear();
     for (int i = 0; i < songs.length; i++) {
-      if (!isExcluded(songs[i])) {
+      if (!_excludedIds.contains(songs[i].id)) {
         _activeSongs.add(songs[i]);
       }
     }

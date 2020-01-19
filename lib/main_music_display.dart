@@ -338,7 +338,6 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                         height: 35.0,
                       ),
                       onTap: () {
-                        //TODO implement rewind
                         info.pl.prev();
                         info.song = info.pl.song;
                       },
@@ -445,6 +444,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
 
   Widget _getPlayList(MusicInfo info) {
     info.pl.activeSongs = info.pl.songs;
+    print('${info.pl.activeSongs}\n\n');
     return MediaQuery.removePadding(
       context: context,
       removeTop: true,
