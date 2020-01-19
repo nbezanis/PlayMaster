@@ -399,6 +399,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                         data:
                             SliderTheme.of(context).copyWith(trackHeight: 2.0),
                         child: Slider.adaptive(
+                          activeColor: PlayMaster.accentColor,
                           inactiveColor: Colors.black12,
                           onChanged: (value) {
                             //TODO implement change volume
@@ -554,8 +555,7 @@ class MusicSlider extends StatefulWidget {
 }
 
 class _MusicSliderState extends State<MusicSlider> {
-  int _sliderValue =
-      PlayMaster.sliderValue; //use shared preferences for these in the future
+  int _sliderValue = PlayMaster.sliderValue;
   int _songDuration = PlayMaster.songDuration;
   var duration;
   var position;
@@ -592,6 +592,7 @@ class _MusicSliderState extends State<MusicSlider> {
             child: SliderTheme(
               data: SliderTheme.of(context).copyWith(trackHeight: 5.0),
               child: Slider.adaptive(
+                activeColor: PlayMaster.accentColor,
                 inactiveColor: Colors.black12,
                 onChangeStart: (value) {
                   info.pause();

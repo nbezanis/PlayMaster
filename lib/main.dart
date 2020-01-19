@@ -19,15 +19,16 @@ enum Repeat { off, all, one }
 class PlayMaster extends StatelessWidget {
   static AudioPlayer player = AudioPlayer();
 
-  //these are temporary until I implement shared preferences
   static int sliderValue = 0;
   static int songDuration = 0;
 
   static SplayTreeSet<Song> music = SplayTreeSet<Song>(Song.compare);
   static Color accentColor = Colors.blue;
-  static Color accentColorGradient = Color.fromRGBO(119, 192, 229, 1);
+  static Color accentColorGradient;
+//      Color.fromRGBO(119, 192, 229, 1); //(119, 192, 229, 1)
   static Color fadedGrey = Color.fromRGBO(232, 232, 232, 1);
-  static Color musicbg = Color.fromRGBO(33, 150, 255, 0.1);
+  static Color musicbg =
+      Color.fromRGBO(accentColor.red, accentColor.green, accentColor.blue, 0.1);
 
   static String songStr = '';
 
@@ -57,10 +58,19 @@ class PlayMaster extends StatelessWidget {
     prefs.clear();
   }
 
+  Color _getGradientColor(Color color) {
+    HSVColor hsv = HSVColor.fromColor(color);
+    double hue = (hsv.hue - 0.06 < 0 ? 0 : hsv.hue - 0.06);
+    double sat = (hsv.saturation - 0.38 < 0 ? 0 : hsv.saturation - 0.38);
+    double val = (hsv.value - 0.02 < 0 ? 0 : hsv.value - 0.02);
+    HSVColor newColor = HSVColor.fromAHSV(1, hue, sat, val);
+    return newColor.toColor();
+  }
+
   @override
   Widget build(BuildContext context) {
 //    PlayMaster.clearPrefs();
-
+    accentColorGradient = _getGradientColor(accentColor);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Play Master',
@@ -249,6 +259,7 @@ class _HomePageState extends State<HomePage> {
   Widget _getBottomOfStack() {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: PlayMaster.accentColor,
         title: _getSPViewSwitcher(),
         actions: <Widget>[
           //this icon button is used to add songs and playlists
