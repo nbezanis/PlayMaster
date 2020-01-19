@@ -456,10 +456,15 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
             background: Container(color: Colors.red),
             onDismissed: (direction) {
               setState(() {
+                //exclude the song that was swiped
                 info.pl.exclude(info.pl.activeSongs[index]);
+                //if the song that was swiped is the current song,
+                //skip to the next song
                 if (info.pl.activeSongs[index].id == info.song.id) {
                   bool success = info.pl.next();
                   info.song = info.pl.song;
+                  //if this is the last song in the playlist,
+                  //stop the music and close the music display
                   if (!success) {
                     info.stop();
                     info.song = Song.init();

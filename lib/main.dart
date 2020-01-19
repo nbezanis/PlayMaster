@@ -230,6 +230,15 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  //adds all songs in music splaytree to sharedprefs string
+  void _updateSongsInPrefs() {
+    String strForPrefs = '';
+    for (int i = 0; i < PlayMaster.music.length; i++) {
+      strForPrefs += PlayMaster.music.elementAt(i).toString();
+    }
+    PlayMaster.putStrInPrefs('songs', strForPrefs);
+  }
+
   //returns list of songs if displaySongs is true and
   //list of playlists if it's false
   Widget _displayContent(bool displaySongs) {
@@ -244,7 +253,12 @@ class _HomePageState extends State<HomePage> {
                   color: Colors.red,
                 ),
                 onDismissed: (direction) {
-                  PlayMaster.music.remove(PlayMaster.music.elementAt(index));
+                  setState(() {
+                    //remove swiped song from music splaytree and update the
+                    //string containing all the songs in sharedprefs
+                    PlayMaster.music.remove(PlayMaster.music.elementAt(index));
+                    _updateSongsInPrefs();
+                  });
                 },
                 child: MusicListDisplay(
                   PlayMaster.music.elementAt(index),
