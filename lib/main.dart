@@ -237,8 +237,18 @@ class _HomePageState extends State<HomePage> {
         ? Expanded(
             child: ListView.builder(
               itemCount: PlayMaster.music.length,
-              itemBuilder: (context, index) => MusicListDisplay(
-                PlayMaster.music.elementAt(index),
+              itemBuilder: (context, index) => Dismissible(
+                key: Key(PlayMaster.music.elementAt(index).path),
+                direction: DismissDirection.endToStart,
+                background: Container(
+                  color: Colors.red,
+                ),
+                onDismissed: (direction) {
+                  PlayMaster.music.remove(PlayMaster.music.elementAt(index));
+                },
+                child: MusicListDisplay(
+                  PlayMaster.music.elementAt(index),
+                ),
               ),
             ),
           )

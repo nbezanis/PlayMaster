@@ -444,14 +444,23 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
   }
 
   Widget _getPlayList(MusicInfo info) {
+    info.pl.activeSongs = info.pl.songs;
     return MediaQuery.removePadding(
       context: context,
       removeTop: true,
       child: Expanded(
         child: ListView.builder(
-          itemCount: info.pl.songs.length,
-          itemBuilder: (context, index) => MusicListDisplay(
-            info.pl.songs[index],
+          itemCount: info.pl.activeSongs.length,
+          itemBuilder: (context, index) => Dismissible(
+            key: Key(info.pl.activeSongs[index].path),
+            direction: DismissDirection.endToStart,
+            background: Container(color: Colors.red),
+            onDismissed: (direction) {
+              setState(() {
+                info.pl.exclude(info.pl.songs[index]);
+              });
+            },
+            child: MusicListDisplay(info.pl.activeSongs[index]),
           ),
         ),
       ),

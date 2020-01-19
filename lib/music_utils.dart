@@ -45,6 +45,7 @@ class Playlist {
   List<Song> _songs;
   HashSet<int> _excludedIds = HashSet<int>();
   int _index = 0;
+  List<Song> _activeSongs = [];
 
   Playlist(this._songs);
   Playlist.index(this._songs, this._index);
@@ -62,6 +63,7 @@ class Playlist {
 
   int get index => _index;
   List<Song> get songs => _songs;
+  List<Song> get activeSongs => _activeSongs;
   Song get song => _songs[_index];
   Song get nextSong {
     if (_index == _songs.length - 1) {
@@ -80,6 +82,14 @@ class Playlist {
   }
 
   set index(int index) => _index = index;
+  set activeSongs(List<Song> songs) {
+    activeSongs.clear();
+    for (int i = 0; i < songs.length; i++) {
+      if (!isExcluded(songs[i])) {
+        _activeSongs.add(songs[i]);
+      }
+    }
+  }
 
   //advances the playlist to the next song in the playlist, returns true if the
   //playlist can advance and false if not
@@ -96,6 +106,22 @@ class Playlist {
       }
     }
     return found;
+  }
+
+  Song nextSongFromSong(Song s) {
+    int nextIndex = 0;
+    if (s.index == _songs.length - 1) {
+      return null;
+    }
+    bool found = false;
+    for (int i = s.index + 1; i < _songs.length; i++) {
+      if (!_excludedIds.contains(_songs[i].id)) {
+        found = true;
+        nextIndex = i;
+        break;
+      }
+    }
+    return found ? songs[nextIndex] : null;
   }
 
   //goes back to the last song in the playlist
@@ -151,6 +177,8 @@ class Playlist {
   void exclude(Song s) {
     _excludedIds.add(s.id);
   }
+
+  bool isExcluded(Song s) => _excludedIds.contains(s.id);
 }
 
 //this class is used for displaying times of songs
