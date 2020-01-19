@@ -457,6 +457,14 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
             onDismissed: (direction) {
               setState(() {
                 info.pl.exclude(info.pl.activeSongs[index]);
+                if (info.pl.activeSongs[index].id == info.song.id) {
+                  bool success = info.pl.next();
+                  info.song = info.pl.song;
+                  if (!success) {
+                    info.stop();
+                    info.song = Song.init();
+                  }
+                }
               });
             },
             child: MusicListDisplay(info.pl.activeSongs[index]),
