@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'music_list_display.dart';
 import 'main_music_display.dart';
 import 'music_utils.dart';
+import 'theme_changer.dart';
 
 void main() => runApp(PlayMaster());
 
@@ -23,12 +24,12 @@ class PlayMaster extends StatelessWidget {
   static int songDuration = 0;
 
   static SplayTreeSet<Song> music = SplayTreeSet<Song>(Song.compare);
-  static Color accentColor = Colors.blue;
+  static Color accentColor;
   static Color accentColorGradient;
-//      Color.fromRGBO(119, 192, 229, 1); //(119, 192, 229, 1)
+  static Color musicbg;
   static Color fadedGrey = Color.fromRGBO(232, 232, 232, 1);
-  static Color musicbg =
-      Color.fromRGBO(accentColor.red, accentColor.green, accentColor.blue, 0.1);
+
+  static final HashMap<String, Color> colorMap = HashMap<String, Color>();
 
   static String songStr = '';
 
@@ -67,10 +68,28 @@ class PlayMaster extends StatelessWidget {
     return newColor.toColor();
   }
 
+  void _initiateColorMap() {
+    //most of these colors are temp
+    colorMap['blue'] = Colors.blue;
+    colorMap['red'] = Colors.red;
+    colorMap['green'] = Colors.green;
+    colorMap['orange'] = Colors.orange;
+    colorMap['purple'] = Colors.purple;
+    colorMap['pink'] = Colors.pink;
+    colorMap['yellow'] = Colors.yellow;
+    colorMap['teal'] = Colors.teal;
+  }
+
   @override
   Widget build(BuildContext context) {
-//    PlayMaster.clearPrefs();
-    accentColorGradient = _getGradientColor(accentColor);
+//    PlayMaster.clearPrefs(); DEBUG
+    _initiateColorMap();
+    PlayMaster.getStrFromPrefs('color').then((color) {
+      accentColor = colorMap[color ?? 'blue'];
+      accentColorGradient = _getGradientColor(accentColor);
+      musicbg = Color.fromRGBO(
+          accentColor.red, accentColor.green, accentColor.blue, 0.1);
+    });
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Play Master',
@@ -175,9 +194,9 @@ class _HomePageState extends State<HomePage> {
         children: <Widget>[
           Container(
             child: Expanded(
-              flex: 5,
+              flex: 4,
               child: Container(
-                margin: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
+                margin: EdgeInsets.fromLTRB(8.0, 0.0, 0.0, 0.0),
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(color: _songsColor, width: 3.0),
@@ -202,7 +221,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Expanded(
-            flex: 5,
+            flex: 6,
             child: Container(
               margin: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
               decoration: BoxDecoration(
@@ -291,6 +310,7 @@ class _HomePageState extends State<HomePage> {
           IconButton(
               icon: Icon(Icons.add),
               iconSize: 40.0,
+              padding: EdgeInsets.all(0.0),
               onPressed: () {
                 //pick files from phone and add them to list of music
                 pickFiles().then((map) {
@@ -318,6 +338,25 @@ class _HomePageState extends State<HomePage> {
                   });
                 });
               }),
+          PopupMenuButton<String>(
+            icon: Icon(
+              Icons.more_vert,
+              size: 35.0,
+            ),
+            itemBuilder: (context) {
+              return ['Change Theme'].map((choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList();
+            },
+            onSelected: (choice) {
+              if (choice == 'Change Theme') {
+                _launchThemeChanger();
+              }
+            },
+          ),
         ],
       ),
       body: Column(
@@ -325,6 +364,15 @@ class _HomePageState extends State<HomePage> {
           //list of songs or playlists
           _displayContent(displaySongs),
         ],
+      ),
+    );
+  }
+
+  void _launchThemeChanger() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ThemeChanger(),
       ),
     );
   }
