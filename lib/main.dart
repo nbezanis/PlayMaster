@@ -59,7 +59,13 @@ class PlayMaster extends StatelessWidget {
     prefs.clear();
   }
 
-  Color _getGradientColor(Color color) {
+  static void getSupportingColors() {
+    accentColorGradient = _getGradientColor(accentColor);
+    musicbg = Color.fromRGBO(
+        accentColor.red, accentColor.green, accentColor.blue, 0.1);
+  }
+
+  static Color _getGradientColor(Color color) {
     HSVColor hsv = HSVColor.fromColor(color);
     double hue = (hsv.hue - 0.06 < 0 ? 0 : hsv.hue - 0.06);
     double sat = (hsv.saturation - 0.38 < 0 ? 0 : hsv.saturation - 0.38);
@@ -86,9 +92,7 @@ class PlayMaster extends StatelessWidget {
     _initiateColorMap();
     PlayMaster.getStrFromPrefs('color').then((color) {
       accentColor = colorMap[color ?? 'blue'];
-      accentColorGradient = _getGradientColor(accentColor);
-      musicbg = Color.fromRGBO(
-          accentColor.red, accentColor.green, accentColor.blue, 0.1);
+      getSupportingColors();
     });
     return MaterialApp(
       debugShowCheckedModeBanner: false,
