@@ -17,32 +17,49 @@ class ColorInfo extends ChangeNotifier {
   }
 }
 
-//class used to house the grid display of each color that the user can select
+//class used to house the provider so that the color of the appbar can be updated
+//when the user clicks on a color
 class ThemeChanger extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (BuildContext context) => ColorInfo(),
-      child: Scaffold(
-        backgroundColor: PlayMaster.accentColor,
-        appBar: AppBar(
-          title: Text('Select a Color'),
-        ),
-        body: Container(
-          color: Colors.white,
-          child: GridView.count(
-            crossAxisCount: 2,
-            children: <Widget>[
-              ColorObject('blue'),
-              ColorObject('red'),
-              ColorObject('green'),
-              ColorObject('orange'),
-              ColorObject('purple'),
-              ColorObject('pink'),
-              ColorObject('yellow'),
-              ColorObject('teal'),
-            ],
-          ),
+      child: ColorObjectHolder(),
+    );
+  }
+}
+
+//class used to house the grid display of each color that the user can select
+class ColorObjectHolder extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _ColorObjectHolderState();
+  }
+}
+
+class _ColorObjectHolderState extends State<ColorObjectHolder> {
+  @override
+  Widget build(BuildContext context) {
+    var info = Provider.of<ColorInfo>(context);
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: info.color,
+        title: Text('Select a Color'),
+      ),
+      body: Container(
+        color: Colors.white,
+        child: GridView.count(
+          crossAxisCount: 2,
+          children: <Widget>[
+            ColorObject('blue'),
+            ColorObject('red'),
+            ColorObject('green'),
+            ColorObject('orange'),
+            ColorObject('purple'),
+            ColorObject('pink'),
+            ColorObject('yellow'),
+            ColorObject('teal'),
+          ],
         ),
       ),
     );
@@ -68,6 +85,7 @@ class _ColorObjectState extends State<ColorObject> {
     Color color = PlayMaster.colorMap[widget.name];
     return GestureDetector(
       onTap: () {
+        //change color to selected color
         PlayMaster.putStrInPrefs('color', widget.name);
         info.color = color;
       },
