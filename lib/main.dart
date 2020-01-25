@@ -100,7 +100,10 @@ class PlayMaster extends StatelessWidget {
       title: 'Play Master',
       home: ChangeNotifierProvider(
         create: (context) => MusicInfo(),
-        child: HomePage(),
+        child: ChangeNotifierProvider(
+          create: (BuildContext context) => SelectInfo(),
+          child: HomePage(),
+        ),
       ),
     );
   }
@@ -240,7 +243,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   //returns the main page which should always be the bototm of the stack widget
-  Widget _getBottomOfStack() {
+  Widget _getBottomOfStack(SelectInfo selectInfo) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: PlayMaster.accentColor,
@@ -285,7 +288,7 @@ class _HomePageState extends State<HomePage> {
               size: 35.0,
             ),
             itemBuilder: (context) {
-              return ['Change Theme'].map((choice) {
+              return ['Change Theme', 'Select'].map((choice) {
                 return PopupMenuItem<String>(
                   value: choice,
                   child: Text(choice),
@@ -295,6 +298,8 @@ class _HomePageState extends State<HomePage> {
             onSelected: (choice) {
               if (choice == 'Change Theme') {
                 _launchThemeChanger();
+              } else if (choice == 'Select') {
+                _launchSelector(selectInfo);
               }
             },
           ),
@@ -316,6 +321,10 @@ class _HomePageState extends State<HomePage> {
         builder: (context) => ThemeChanger(),
       ),
     );
+  }
+
+  void _launchSelector(SelectInfo selectInfo) {
+    selectInfo.selecting = !selectInfo.selecting;
   }
 
   //loads the user's songs from prefs and puts them in the music splaytree
@@ -356,28 +365,29 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    var info = Provider.of<MusicInfo>(context);
+    var musicInfo = Provider.of<MusicInfo>(context);
+    var selectInfo = Provider.of<SelectInfo>(context);
     //use a stack so that we can display the main music display above
     //the main app display. The stack should only ever have at most 2 widgets
     //in it at any given time
     stack.clear();
-    stack.add(_getBottomOfStack());
+    stack.add(_getBottomOfStack(selectInfo));
     List<Song> selectedSongs = displaySongs ? PlayMaster.music.toList() : [];
-    if (info.song.id != -1) {
-      if (!info.shuffle) {
+    if (musicInfo.song.id != -1) {
+      if (!musicInfo.shuffle) {
         //if the playlist isn't in shuffle mode, set the plalylist equal
         //to the list of the selected songs in order
         Playlist inOrderPl = Playlist.inOrder(
-            selectedSongs, info.song.index, info.pl.excludedIds);
-        inOrderPl.resetIndexes(info.song.id);
-        info.pl = inOrderPl;
-      } else if (info.pl.songs[0].id == -1) {
+            selectedSongs, musicInfo.song.index, musicInfo.pl.excludedIds);
+        inOrderPl.resetIndexes(musicInfo.song.id);
+        musicInfo.pl = inOrderPl;
+      } else if (musicInfo.pl.songs[0].id == -1) {
         //if the playlist is in shuffle mode and the user does not currently
         //have a plalylist running (info.pl.songs[0].id == -1), create a playlist
         //and shuffle it before setting info.pl equal to it
-        Playlist shuffledPl = Playlist.id(selectedSongs, info.song.id);
+        Playlist shuffledPl = Playlist.id(selectedSongs, musicInfo.song.id);
         shuffledPl.shuffle();
-        info.pl = shuffledPl;
+        musicInfo.pl = shuffledPl;
       }
       //add main music display widget to stack if a song is playing
       stack.add(MainMusicDisplay());

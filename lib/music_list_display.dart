@@ -18,23 +18,24 @@ class MusicListDisplay extends StatefulWidget {
 }
 
 class _MusicListDisplayState extends State<MusicListDisplay> {
-//  Stereo _stereo = Stereo();
   //this bool refers to whether this widget is paused or not
-  //differs from the one in MLDInfo because it doesn't necessarily
+  //differs from the one in MusicInfo because it doesn't necessarily
   //refer to the song that's playing at any given time
   bool _paused = true;
   Color bgColor = Colors.white;
+  bool _selected = false;
 
   @override
   Widget build(BuildContext context) {
-    var info = Provider.of<MusicInfo>(context);
+    var musicInfo = Provider.of<MusicInfo>(context);
+    var selectInfo = Provider.of<SelectInfo>(context);
 
     //if the widget that is currently playing music is this widget, change the
     //background color to grey, else make sure the background color is white
-    if (info.song.id == widget.song.id) {
+    if (musicInfo.song.id == widget.song.id) {
       //this handles the edge case where the widget is unloaded and everything
       //gets reinitialized yet the music is still playing
-      if (info.playing) {
+      if (musicInfo.playing) {
         _paused = false;
       } else {
         _paused = true;
@@ -46,34 +47,27 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
     }
     return GestureDetector(
       onTap: () {
-        //pause or play the music depending on if the music is playing or not
-        //and set the id of the current playing song to this one
-        info.song = widget.song;
-        if (_paused) {
-          info.play();
-          info.playing = true;
+        if (selectInfo.selecting) {
+          _select(selectInfo);
         } else {
-          info.pause();
-          info.playing = false;
+          //pause or play the music depending on if the music is playing or not
+          //and set the id of the current playing song to this one
+          musicInfo.song = widget.song;
+          if (_paused) {
+            musicInfo.play();
+            musicInfo.playing = true;
+          } else {
+            musicInfo.pause();
+            musicInfo.playing = false;
+          }
+          _paused = !_paused;
         }
-        _paused = !_paused;
       },
       child: SizedBox(
         width: double.infinity,
         child: Container(
           padding: EdgeInsets.all(20.0),
-          child: Row(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 0.0),
-                child: Icon(Icons.music_note),
-              ),
-              Text(
-                widget.song.name,
-                style: TextStyle(fontSize: 20.0),
-              ),
-            ],
-          ),
+          child: _getTitle(selectInfo),
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(color: Colors.grey),
@@ -83,5 +77,47 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
         ),
       ),
     );
+  }
+
+  void _select(SelectInfo selectInfo) {
+    setState(() {
+      _selected = !_selected;
+    });
+    _selected ? selectInfo.addMusic(widget) : selectInfo.removeMusic(widget);
+  }
+
+  Row _getTitle(SelectInfo selectInfo) {
+    List<Widget> titleElements = [
+      Padding(
+        padding: const EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 0.0),
+        child: Icon(Icons.music_note),
+      ),
+      Text(
+        widget.song.name,
+        style: TextStyle(fontSize: 20.0),
+      ),
+    ];
+
+    return selectInfo.selecting
+        ? Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Row(
+                children: titleElements,
+              ),
+              GestureDetector(
+                onTap: () {
+                  _select(selectInfo);
+                },
+                child: Icon(
+                  _selected ? Icons.check_box : Icons.check_box_outline_blank,
+                  color: _selected ? PlayMaster.accentColor : Colors.black54,
+                ),
+              ),
+            ],
+          )
+        : Row(
+            children: titleElements,
+          );
   }
 }

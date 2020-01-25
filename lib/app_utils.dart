@@ -96,4 +96,5 @@ class SelectInfo extends ChangeNotifier {
   }
 
   void addMusic(MusicListDisplay mld) => _selectedMusic.add(mld);
+  void removeMusic(MusicListDisplay mld) => _selectedMusic.remove(mld);
 }
