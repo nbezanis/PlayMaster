@@ -6,6 +6,7 @@ import 'package:audioplayers/audio_cache.dart';
 
 import 'main.dart';
 import 'music_utils.dart';
+import 'app_utils.dart';
 
 //this widget is used as an item in the user's list of widgets
 class MusicListDisplay extends StatefulWidget {

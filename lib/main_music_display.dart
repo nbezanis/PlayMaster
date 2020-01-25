@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'main.dart';
 import 'music_list_display.dart';
 import 'music_utils.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'app_utils.dart';
 
 //this is used for displying all the information about the song that is currently
 //playing such as whether it's paused, what song is next in the playlist etc. It

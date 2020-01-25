@@ -2,20 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'main.dart';
-
-//class used to keep track of what color is currently selected
-class ColorInfo extends ChangeNotifier {
-  Color _color = PlayMaster.accentColor;
-
-  Color get color => _color;
-
-  set color(Color c) {
-    _color = c;
-    PlayMaster.accentColor = c;
-    PlayMaster.getSupportingColors();
-    notifyListeners();
-  }
-}
+import 'app_utils.dart';
 
 //class used to house the provider so that the color of the appbar can be updated
 //when the user clicks on a color
