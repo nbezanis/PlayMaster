@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:collection';
 
 import 'main.dart';
+import 'music_list_display.dart';
 import 'music_utils.dart';
 
 //this class is used along with provider to store info about which song is
@@ -81,4 +83,17 @@ class ColorInfo extends ChangeNotifier {
   }
 }
 
-class SelectInfo extends ChangeNotifier {}
+class SelectInfo extends ChangeNotifier {
+  bool _selecting = false;
+  HashSet<MusicListDisplay> _selectedMusic = HashSet<MusicListDisplay>();
+
+  bool get selecting => _selecting;
+  HashSet<MusicListDisplay> get selectedMusic => _selectedMusic;
+
+  set selecting(bool selecting) {
+    _selecting = selecting;
+    notifyListeners();
+  }
+
+  void addMusic(MusicListDisplay mld) => _selectedMusic.add(mld);
+}
