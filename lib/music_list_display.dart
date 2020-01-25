@@ -30,6 +30,11 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
     var musicInfo = Provider.of<MusicInfo>(context);
     var selectInfo = Provider.of<SelectInfo>(context);
 
+//    if (selectInfo.selectAll) {
+//      _selected = true;
+//      selectInfo.addMusic(widget);
+//      selectInfo.selectAll = false;
+//    }
     //if the widget that is currently playing music is this widget, change the
     //background color to grey, else make sure the background color is white
     if (musicInfo.song.id == widget.song.id) {

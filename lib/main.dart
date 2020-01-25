@@ -242,68 +242,99 @@ class _HomePageState extends State<HomePage> {
           );
   }
 
+  List<Widget> _getActions(SelectInfo selectInfo) {
+    if (selectInfo.selecting) {
+      return <Widget>[
+//        Padding(
+//          padding: const EdgeInsets.fromLTRB(0.0, 8.0, 8.0, 8.0),
+//          child: RaisedButton(
+//            color: Colors.white,
+//            onPressed: () => selectInfo.selectAll = true,
+//            child: Text(
+//              'select all',
+//              style: TextStyle(fontSize: 18.0),
+//            ),
+//          ),
+//        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0.0, 8.0, 8.0, 8.0),
+          child: RaisedButton(
+            color: Colors.white,
+            onPressed: () => selectInfo.selecting = false,
+            child: Text(
+              'Done',
+              style: TextStyle(fontSize: 18.0),
+            ),
+          ),
+        ),
+      ];
+    } else {
+      return <Widget>[
+        //this icon button is used to add songs and playlists
+        //using flutter file picker
+        IconButton(
+            icon: Icon(Icons.add),
+            iconSize: 40.0,
+            padding: EdgeInsets.all(0.0),
+            onPressed: () {
+              //pick files from phone and add them to list of music
+              pickFiles().then((map) {
+                //use shared preferences fro idTotal so that we're not giving
+                //repeat IDs
+                PlayMaster.getIntFromPrefs('idTotal').then((val) {
+                  idTotal = val ?? 0;
+                  setState(() {
+                    String songs = '';
+                    map.forEach((name, path) {
+                      Song s = Song(path, idTotal, PlayMaster.music.length);
+                      PlayMaster.music.add(s);
+                      //add this song a string containing all the songs that
+                      //were just added
+                      songs += s.toString();
+                      //add 1 to idTotal so that every song gets its own id
+                      idTotal++;
+                    });
+                    //store the songs and idTotal in prefs
+                    PlayMaster.putStrInPrefs(
+                        'songs', PlayMaster.songStr + songs);
+                    PlayMaster.songStr += songs;
+                    PlayMaster.putIntInPrefs('idTotal', idTotal);
+                  });
+                });
+              });
+            }),
+        PopupMenuButton<String>(
+          icon: Icon(
+            Icons.more_vert,
+            size: 35.0,
+          ),
+          itemBuilder: (context) {
+            return ['Change Theme', 'Select'].map((choice) {
+              return PopupMenuItem<String>(
+                value: choice,
+                child: Text(choice),
+              );
+            }).toList();
+          },
+          onSelected: (choice) {
+            if (choice == 'Change Theme') {
+              _launchThemeChanger();
+            } else if (choice == 'Select') {
+              _launchSelector(selectInfo);
+            }
+          },
+        ),
+      ];
+    }
+  }
+
   //returns the main page which should always be the bototm of the stack widget
   Widget _getBottomOfStack(SelectInfo selectInfo) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: PlayMaster.accentColor,
-        title: _getSPViewSwitcher(),
-        actions: <Widget>[
-          //this icon button is used to add songs and playlists
-          //using flutter file picker
-          IconButton(
-              icon: Icon(Icons.add),
-              iconSize: 40.0,
-              padding: EdgeInsets.all(0.0),
-              onPressed: () {
-                //pick files from phone and add them to list of music
-                pickFiles().then((map) {
-                  //use shared preferences fro idTotal so that we're not giving
-                  //repeat IDs
-                  PlayMaster.getIntFromPrefs('idTotal').then((val) {
-                    idTotal = val ?? 0;
-                    setState(() {
-                      String songs = '';
-                      map.forEach((name, path) {
-                        Song s = Song(path, idTotal, PlayMaster.music.length);
-                        PlayMaster.music.add(s);
-                        //add this song a string containing all the songs that
-                        //were just added
-                        songs += s.toString();
-                        //add 1 to idTotal so that every song gets its own id
-                        idTotal++;
-                      });
-                      //store the songs and idTotal in prefs
-                      PlayMaster.putStrInPrefs(
-                          'songs', PlayMaster.songStr + songs);
-                      PlayMaster.songStr += songs;
-                      PlayMaster.putIntInPrefs('idTotal', idTotal);
-                    });
-                  });
-                });
-              }),
-          PopupMenuButton<String>(
-            icon: Icon(
-              Icons.more_vert,
-              size: 35.0,
-            ),
-            itemBuilder: (context) {
-              return ['Change Theme', 'Select'].map((choice) {
-                return PopupMenuItem<String>(
-                  value: choice,
-                  child: Text(choice),
-                );
-              }).toList();
-            },
-            onSelected: (choice) {
-              if (choice == 'Change Theme') {
-                _launchThemeChanger();
-              } else if (choice == 'Select') {
-                _launchSelector(selectInfo);
-              }
-            },
-          ),
-        ],
+        title: selectInfo.selecting ? Container() : _getSPViewSwitcher(),
+        actions: _getActions(selectInfo),
       ),
       body: Column(
         children: <Widget>[
@@ -324,7 +355,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _launchSelector(SelectInfo selectInfo) {
-    selectInfo.selecting = !selectInfo.selecting;
+    selectInfo.selecting = true;
   }
 
   //loads the user's songs from prefs and puts them in the music splaytree
