@@ -25,6 +25,14 @@ class ColorObjectHolder extends StatefulWidget {
 }
 
 class _ColorObjectHolderState extends State<ColorObjectHolder> {
+  List<ColorObject> _getColors() {
+    List<ColorObject> colors = [];
+    PlayMaster.colorMap.forEach((name, color) {
+      colors.add(ColorObject(name));
+    });
+    return colors;
+  }
+
   @override
   Widget build(BuildContext context) {
     var info = Provider.of<ColorInfo>(context);
@@ -37,16 +45,7 @@ class _ColorObjectHolderState extends State<ColorObjectHolder> {
         color: Colors.white,
         child: GridView.count(
           crossAxisCount: 2,
-          children: <Widget>[
-            ColorObject('blue'),
-            ColorObject('red'),
-            ColorObject('green'),
-            ColorObject('orange'),
-            ColorObject('purple'),
-            ColorObject('pink'),
-            ColorObject('yellow'),
-            ColorObject('teal'),
-          ],
+          children: _getColors(),
         ),
       ),
     );
