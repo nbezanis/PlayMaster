@@ -66,7 +66,15 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
   @override
   Widget build(BuildContext context) {
     var info = Provider.of<MusicInfo>(context);
-    _playerColor = PlayMaster.accentColor;
+    //when the app rebuilds after picking a color we need to make sure the
+    //correct color is displaying
+    if (_displayPlayer) {
+      _playerColor = PlayMaster.accentColor;
+      _plColor = Colors.transparent;
+    } else {
+      _playerColor = Colors.transparent;
+      _plColor = PlayMaster.accentColor;
+    }
     return _isSmall ? _getSmall(info) : _getLarge(info);
   }
 
