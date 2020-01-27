@@ -46,8 +46,10 @@ class Playlist {
   HashSet<int> _excludedIds = HashSet<int>();
   int _index = 0;
   List<Song> _activeSongs = [];
+  String name = '';
 
   Playlist(this._songs);
+  Playlist.name(this._songs, this.name);
   //for in order playlists only
   Playlist.inOrder(this._songs, this._index, this._excludedIds) {
     for (int i = 0; i < _songs.length; i++) {

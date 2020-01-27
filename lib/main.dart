@@ -11,6 +11,7 @@ import 'main_music_display.dart';
 import 'music_utils.dart';
 import 'app_utils.dart';
 import 'theme_changer.dart';
+import 'playlist_creator.dart';
 
 void main() => runApp(PlayMaster());
 
@@ -26,6 +27,7 @@ class PlayMaster extends StatelessWidget {
   static int songDuration = 0;
 
   static SplayTreeSet<Song> music = SplayTreeSet<Song>(Song.compare);
+  static SplayTreeSet<Playlist> playlists = SplayTreeSet<Playlist>();
   static Color accentColor;
   static Color accentColorGradient;
   static Color musicbg;
@@ -260,7 +262,43 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  List<Widget> _getActions(SelectInfo selectInfo) {
+  void _addPlaylists(MusicInfo musicInfo, SelectInfo selectInfo) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PlaylistCreator(musicInfo, selectInfo),
+      ),
+    );
+  }
+
+  void _addSongs() {
+    //pick files from phone and add them to list of music
+    pickFiles().then((map) {
+      //use shared preferences fro idTotal so that we're not giving
+      //repeat IDs
+      PlayMaster.getIntFromPrefs('idTotal').then((val) {
+        idTotal = val ?? 0;
+        setState(() {
+          String songs = '';
+          map.forEach((name, path) {
+            Song s = Song(path, idTotal, PlayMaster.music.length);
+            PlayMaster.music.add(s);
+            //add this song a string containing all the songs that
+            //were just added
+            songs += s.toString();
+            //add 1 to idTotal so that every song gets its own id
+            idTotal++;
+          });
+          //store the songs and idTotal in prefs
+          PlayMaster.putStrInPrefs('songs', PlayMaster.songStr + songs);
+          PlayMaster.songStr += songs;
+          PlayMaster.putIntInPrefs('idTotal', idTotal);
+        });
+      });
+    });
+  }
+
+  List<Widget> _getActions(SelectInfo selectInfo, MusicInfo musicInfo) {
     if (selectInfo.selecting) {
       return <Widget>[
         Padding(
@@ -310,31 +348,7 @@ class _HomePageState extends State<HomePage> {
             iconSize: 40.0,
             padding: EdgeInsets.all(0.0),
             onPressed: () {
-              //pick files from phone and add them to list of music
-              pickFiles().then((map) {
-                //use shared preferences fro idTotal so that we're not giving
-                //repeat IDs
-                PlayMaster.getIntFromPrefs('idTotal').then((val) {
-                  idTotal = val ?? 0;
-                  setState(() {
-                    String songs = '';
-                    map.forEach((name, path) {
-                      Song s = Song(path, idTotal, PlayMaster.music.length);
-                      PlayMaster.music.add(s);
-                      //add this song a string containing all the songs that
-                      //were just added
-                      songs += s.toString();
-                      //add 1 to idTotal so that every song gets its own id
-                      idTotal++;
-                    });
-                    //store the songs and idTotal in prefs
-                    PlayMaster.putStrInPrefs(
-                        'songs', PlayMaster.songStr + songs);
-                    PlayMaster.songStr += songs;
-                    PlayMaster.putIntInPrefs('idTotal', idTotal);
-                  });
-                });
-              });
+              displaySongs ? _addSongs() : _addPlaylists(musicInfo, selectInfo);
             }),
         PopupMenuButton<String>(
           icon: Icon(
@@ -362,14 +376,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   //returns the main page which should always be the bototm of the stack widget
-  Widget _getBottomOfStack(SelectInfo selectInfo) {
+  Widget _getBottomOfStack(SelectInfo selectInfo, MusicInfo musicInfo) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: PlayMaster.accentColor,
         title: selectInfo.selecting
             ? _getSelectingTools(selectInfo)
             : _getSPViewSwitcher(),
-        actions: _getActions(selectInfo),
+        actions: _getActions(selectInfo, musicInfo),
       ),
       body: Column(
         children: <Widget>[
@@ -437,7 +451,7 @@ class _HomePageState extends State<HomePage> {
     //the main app display. The stack should only ever have at most 2 widgets
     //in it at any given time
     stack.clear();
-    stack.add(_getBottomOfStack(selectInfo));
+    stack.add(_getBottomOfStack(selectInfo, musicInfo));
     List<Song> selectedSongs = displaySongs ? PlayMaster.music.toList() : [];
     if (musicInfo.song.id != -1) {
       if (!musicInfo.shuffle) {
