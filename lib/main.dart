@@ -243,12 +243,39 @@ class _HomePageState extends State<HomePage> {
           );
   }
 
+  Widget _getSelectingTools(SelectInfo selectInfo) {
+    return Row(
+      children: <Widget>[
+        GestureDetector(
+          child: Icon(Icons.delete),
+          onTap: () {
+            HashSet<Song> selectedMusic = selectInfo.finishSongSelect();
+            for (int i = 0; i < selectedMusic.length; i++) {
+              PlayMaster.music.remove(selectedMusic.elementAt(i));
+            }
+            _updateSongsInPrefs();
+          },
+        ),
+      ],
+    );
+  }
+
   List<Widget> _getActions(SelectInfo selectInfo) {
     if (selectInfo.selecting) {
       return <Widget>[
         Padding(
           padding: const EdgeInsets.fromLTRB(0.0, 8.0, 8.0, 8.0),
-          child: RaisedButton(
+          child:
+//              GestureDetector(
+//              onTap: () => selectInfo.type == Select.all
+//                  ? selectInfo.deselectAll()
+//                  : selectInfo.selectAll(),
+//              child: selectInfo.type == Select.all
+//                  ? Icon(Icons.tab_unselected)
+//                  : Icon(Icons.select_all),
+//            )
+
+              RaisedButton(
             color: Colors.white,
             onPressed: () => selectInfo.type == Select.all
                 ? selectInfo.deselectAll()
@@ -339,7 +366,9 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: PlayMaster.accentColor,
-        title: selectInfo.selecting ? Container() : _getSPViewSwitcher(),
+        title: selectInfo.selecting
+            ? _getSelectingTools(selectInfo)
+            : _getSPViewSwitcher(),
         actions: _getActions(selectInfo),
       ),
       body: Column(

@@ -114,4 +114,11 @@ class SelectInfo extends ChangeNotifier {
 
   void addMusic(Song s) => _selectedMusic.add(s);
   void removeMusic(Song s) => _selectedMusic.remove(s);
+
+  HashSet<Song> finishSongSelect() {
+    deselectAll();
+    _selecting = false;
+    notifyListeners();
+    return _selectedMusic;
+  }
 }
