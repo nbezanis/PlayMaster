@@ -85,25 +85,33 @@ class ColorInfo extends ChangeNotifier {
 
 class SelectInfo extends ChangeNotifier {
   bool _selecting = false;
-  HashSet<MusicListDisplay> _selectedMusic = HashSet<MusicListDisplay>();
-//  bool _selectAll = false;
+  HashSet<Song> _selectedMusic = HashSet<Song>();
+  Select _type = Select.choose;
 
   bool get selecting => _selecting;
-//  bool get selectAll => _selectAll;
-  HashSet<MusicListDisplay> get selectedMusic => _selectedMusic;
+  Select get type => _type;
+  HashSet<Song> get selectedMusic => _selectedMusic;
 
   set selecting(bool selecting) {
     _selecting = selecting;
     notifyListeners();
   }
 
-//  set selectAll(bool selectAll) {
-//    _selectAll = selectAll;
-//    if (selectAll) {
-//      notifyListeners();
-//    }
-//  }
+  set type(Select type) {
+    _type = type;
+    notifyListeners();
+  }
 
-  void addMusic(MusicListDisplay mld) => _selectedMusic.add(mld);
-  void removeMusic(MusicListDisplay mld) => _selectedMusic.remove(mld);
+  void selectAll() {
+    _type = Select.all;
+    notifyListeners();
+  }
+
+  void deselectAll() {
+    _type = Select.none;
+    notifyListeners();
+  }
+
+  void addMusic(Song s) => _selectedMusic.add(s);
+  void removeMusic(Song s) => _selectedMusic.remove(s);
 }

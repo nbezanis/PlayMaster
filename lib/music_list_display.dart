@@ -30,11 +30,13 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
     var musicInfo = Provider.of<MusicInfo>(context);
     var selectInfo = Provider.of<SelectInfo>(context);
 
-//    if (selectInfo.selectAll) {
-//      _selected = true;
-//      selectInfo.addMusic(widget);
-//      selectInfo.selectAll = false;
-//    }
+    if (selectInfo.type == Select.all) {
+      _selected = true;
+      selectInfo.addMusic(widget.song);
+    } else if (selectInfo.type == Select.none) {
+      _selected = false;
+      selectInfo.removeMusic(widget.song);
+    }
     //if the widget that is currently playing music is this widget, change the
     //background color to grey, else make sure the background color is white
     if (musicInfo.song.id == widget.song.id) {
@@ -85,10 +87,13 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
   }
 
   void _select(SelectInfo selectInfo) {
+    selectInfo.type = Select.choose;
     setState(() {
       _selected = !_selected;
     });
-    _selected ? selectInfo.addMusic(widget) : selectInfo.removeMusic(widget);
+    _selected
+        ? selectInfo.addMusic(widget.song)
+        : selectInfo.removeMusic(widget.song);
   }
 
   Row _getTitle(SelectInfo selectInfo) {

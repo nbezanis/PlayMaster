@@ -15,6 +15,7 @@ import 'theme_changer.dart';
 void main() => runApp(PlayMaster());
 
 enum Repeat { off, all, one }
+enum Select { all, none, choose }
 
 //main class for the entire app. any static variables here are
 //intended to be used throughout the entire app.
@@ -245,22 +246,27 @@ class _HomePageState extends State<HomePage> {
   List<Widget> _getActions(SelectInfo selectInfo) {
     if (selectInfo.selecting) {
       return <Widget>[
-//        Padding(
-//          padding: const EdgeInsets.fromLTRB(0.0, 8.0, 8.0, 8.0),
-//          child: RaisedButton(
-//            color: Colors.white,
-//            onPressed: () => selectInfo.selectAll = true,
-//            child: Text(
-//              'select all',
-//              style: TextStyle(fontSize: 18.0),
-//            ),
-//          ),
-//        ),
         Padding(
           padding: const EdgeInsets.fromLTRB(0.0, 8.0, 8.0, 8.0),
           child: RaisedButton(
             color: Colors.white,
-            onPressed: () => selectInfo.selecting = false,
+            onPressed: () => selectInfo.type == Select.all
+                ? selectInfo.deselectAll()
+                : selectInfo.selectAll(),
+            child: Text(
+              selectInfo.type == Select.all ? 'deselect all' : 'select all',
+              style: TextStyle(fontSize: 18.0),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0.0, 8.0, 8.0, 8.0),
+          child: RaisedButton(
+            color: Colors.white,
+            onPressed: () {
+              selectInfo.selecting = false;
+              selectInfo.deselectAll();
+            },
             child: Text(
               'Done',
               style: TextStyle(fontSize: 18.0),
