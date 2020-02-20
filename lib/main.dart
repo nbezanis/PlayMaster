@@ -262,13 +262,19 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _addPlaylists(MusicInfo musicInfo, SelectInfo selectInfo) {
-    Navigator.push(
+  Future<Playlist> _createPlaylist(MusicInfo musicInfo, SelectInfo selectInfo) {
+    return Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => PlaylistCreator(musicInfo, selectInfo),
       ),
     );
+  }
+
+  void _addPlaylist(Playlist p) {
+    PlayMaster.playlists.add(p);
+    print(p.name);
+    //add to shared preferences too
   }
 
   void _addSongs() {
@@ -348,7 +354,9 @@ class _HomePageState extends State<HomePage> {
             iconSize: 40.0,
             padding: EdgeInsets.all(0.0),
             onPressed: () {
-              displaySongs ? _addSongs() : _addPlaylists(musicInfo, selectInfo);
+              displaySongs
+                  ? _addSongs()
+                  : _createPlaylist(musicInfo, selectInfo).then(_addPlaylist);
             }),
         PopupMenuButton<String>(
           icon: Icon(

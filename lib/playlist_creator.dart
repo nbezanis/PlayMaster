@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:collection';
 
 import 'main.dart';
 import 'music_list_display.dart';
 import 'app_utils.dart';
+import 'music_utils.dart';
 
 //class to hold the providers required for music list display to work
 class PlaylistCreator extends StatelessWidget {
@@ -24,6 +26,31 @@ class PlaylistCreator extends StatelessWidget {
 
 //class that holds the display of the plalylist creator
 class PlaylistContainer extends StatelessWidget {
+  //shows a dialog asking for the name of the playlist
+  //passes back the name the user inputted
+  Future<String> createNameDialog(BuildContext context) {
+    TextEditingController controller = TextEditingController();
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Enter Playlist Name'),
+            content: TextField(
+              controller: controller,
+            ),
+            actions: <Widget>[
+              MaterialButton(
+                elevation: 5.0,
+                child: Text('Done'),
+                onPressed: () {
+                  Navigator.of(context).pop(controller.text.toString());
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     var selectInfo = Provider.of<SelectInfo>(context);
@@ -50,7 +77,13 @@ class PlaylistContainer extends StatelessWidget {
             child: RaisedButton(
               color: Colors.white,
               onPressed: () {
-                //TODO launch name dialog
+                //shows dialog asking for name when pressed
+                createNameDialog(context).then((name) {
+                  //sends back the playlist that was created
+                  HashSet<Song> songs = selectInfo.finishSongSelect();
+                  Navigator.of(context)
+                      .pop(Playlist.name(songs.toList(), name));
+                });
               },
               child: Text(
                 'Add',
