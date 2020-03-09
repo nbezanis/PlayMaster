@@ -54,7 +54,9 @@ class PlaylistContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var selectInfo = Provider.of<SelectInfo>(context);
-    selectInfo.selecting = true;
+//    if (selectInfo.selectedMusic.isEmpty) {
+//      selectInfo.selecting = true;
+//    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: PlayMaster.accentColor,

@@ -109,6 +109,7 @@ class SelectInfo extends ChangeNotifier {
 
   void deselectAll() {
     _type = Select.none;
+    _selectedMusic.clear();
     notifyListeners();
   }
 
@@ -116,9 +117,8 @@ class SelectInfo extends ChangeNotifier {
   void removeMusic(Song s) => _selectedMusic.remove(s);
 
   HashSet<Song> finishSongSelect() {
-    deselectAll();
     _selecting = false;
-    notifyListeners();
+    deselectAll();
     return _selectedMusic;
   }
 }

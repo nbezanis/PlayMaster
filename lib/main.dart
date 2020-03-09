@@ -260,6 +260,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<Playlist> _createPlaylist(MusicInfo musicInfo, SelectInfo selectInfo) {
+    selectInfo.selecting = true;
     return Navigator.push(
       context,
       MaterialPageRoute(
@@ -268,10 +269,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _addPlaylist(Playlist p) {
-    setState(() {
+  void _addPlaylist(Playlist p, SelectInfo selectInfo) {
+    if (p != null) {
       PlayMaster.playlists.add(p);
-    });
+    }
+    selectInfo.selecting = false;
     //add to shared preferences too
   }
 
@@ -354,7 +356,8 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               displaySongs
                   ? _addSongs()
-                  : _createPlaylist(musicInfo, selectInfo).then(_addPlaylist);
+                  : _createPlaylist(musicInfo, selectInfo)
+                      .then((p) => _addPlaylist(p, selectInfo));
             }),
         PopupMenuButton<String>(
           icon: Icon(
