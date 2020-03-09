@@ -17,6 +17,7 @@ void main() => runApp(PlayMaster());
 
 enum Repeat { off, all, one }
 enum Select { all, none, choose }
+enum PLType { temp, name, sub }
 
 //main class for the entire app. any static variables here are
 //intended to be used throughout the entire app.
@@ -471,15 +472,16 @@ class _HomePageState extends State<HomePage> {
       if (!musicInfo.shuffle) {
         //if the playlist isn't in shuffle mode, set the plalylist equal
         //to the list of the selected songs in order
-        Playlist inOrderPl = Playlist.inOrder(
-            selectedSongs, musicInfo.song.index, musicInfo.pl.excludedIds);
+        Playlist inOrderPl = Playlist.inOrder(selectedSongs,
+            musicInfo.song.index, musicInfo.pl.excludedIds, PLType.temp);
         inOrderPl.resetIndexes(musicInfo.song.id);
         musicInfo.pl = inOrderPl;
       } else if (musicInfo.pl.songs[0].id == -1) {
         //if the playlist is in shuffle mode and the user does not currently
         //have a plalylist running (info.pl.songs[0].id == -1), create a playlist
         //and shuffle it before setting info.pl equal to it
-        Playlist shuffledPl = Playlist.id(selectedSongs, musicInfo.song.id);
+        Playlist shuffledPl =
+            Playlist.id(selectedSongs, musicInfo.song.id, PLType.temp);
         shuffledPl.shuffle();
         musicInfo.pl = shuffledPl;
       }

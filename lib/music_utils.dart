@@ -1,6 +1,8 @@
 import 'dart:collection';
 import 'dart:math';
 
+import 'main.dart';
+
 class Song {
   String _path;
   String _name;
@@ -48,18 +50,24 @@ class Playlist {
   List<Song> _activeSongs = [];
   String _name = '';
   int _id = -1;
+  PLType _type;
 
-  Playlist(this._songs);
-  Playlist.name(this._songs, this._name, this._id);
+  Playlist(this._songs) {
+    _type = PLType.temp;
+  }
+  Playlist.name(this._songs, this._name, this._id) {
+    _type = PLType.name;
+  }
   //for in order playlists only
-  Playlist.inOrder(this._songs, this._index, this._excludedIds) {
+  Playlist.inOrder(this._songs, this._index, this._excludedIds, this._type) {
     for (int i = 0; i < _songs.length; i++) {
       if (!_excludedIds.contains(_songs[i].id)) {
         activeSongs.add(_songs[i]);
       }
     }
   }
-  Playlist.id(this._songs, int id) {
+  //for starting a playlist at a certain song
+  Playlist.id(this._songs, int id, this._type) {
     for (int i = 0; i < _songs.length; i++) {
       if (_songs[i].id == id) {
         _index = i;
@@ -67,6 +75,7 @@ class Playlist {
     }
   }
 
+  //empty playlist
   Playlist.init() {
     _songs = [Song.init()];
   }
@@ -78,6 +87,7 @@ class Playlist {
   Song get song => _songs[_index];
   String get name => _name;
   int get id => _id;
+  PLType get type => _type;
   Song get nextSong {
     if (_index == _songs.length - 1) {
       return null;
