@@ -46,10 +46,11 @@ class Playlist {
   HashSet<int> _excludedIds = HashSet<int>();
   int _index = 0;
   List<Song> _activeSongs = [];
-  String name = '';
+  String _name = '';
+  int _id = -1;
 
   Playlist(this._songs);
-  Playlist.name(this._songs, this.name);
+  Playlist.name(this._songs, this._name, this._id);
   //for in order playlists only
   Playlist.inOrder(this._songs, this._index, this._excludedIds) {
     for (int i = 0; i < _songs.length; i++) {
@@ -75,6 +76,8 @@ class Playlist {
   List<Song> get activeSongs => _activeSongs;
   HashSet<int> get excludedIds => _excludedIds;
   Song get song => _songs[_index];
+  String get name => _name;
+  int get id => _id;
   Song get nextSong {
     if (_index == _songs.length - 1) {
       return null;
@@ -104,7 +107,7 @@ class Playlist {
 
   //used for comparisons with splaytree
   static int compare(Playlist key1, Playlist key2) {
-    return key1.name.compareTo(key2.name);
+    return key1._name.compareTo(key2._name);
   }
 
   //advances the playlist to the next song in the playlist, returns true if the

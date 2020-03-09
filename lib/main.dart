@@ -130,7 +130,8 @@ class _HomePageState extends State<HomePage> {
   Color _selected = Colors.white;
   Color _unselected = Colors.transparent;
   //used to set each music object's id
-  int idTotal = 0;
+  int musicIdTotal = 0;
+  int plIdTotal = 0;
   List<Widget> stack = [];
 
   //returns a widget that allows user to switch between
@@ -259,6 +260,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  //opens playlist creator page
   Future<Playlist> _createPlaylist(MusicInfo musicInfo, SelectInfo selectInfo) {
     selectInfo.selecting = true;
     return Navigator.push(
@@ -269,11 +271,14 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  //adds the created playlist to the splaytree
   void _addPlaylist(Playlist p, SelectInfo selectInfo) {
-    if (p != null) {
-      PlayMaster.playlists.add(p);
-    }
-    selectInfo.selecting = false;
+    PlayMaster.getIntFromPrefs('plIdTotal').then((val) {
+      if (p != null) {
+        PlayMaster.playlists.add(p);
+      }
+      selectInfo.selecting = false;
+    });
     //add to shared preferences too
   }
 
@@ -283,22 +288,22 @@ class _HomePageState extends State<HomePage> {
       //use shared preferences fro idTotal so that we're not giving
       //repeat IDs
       PlayMaster.getIntFromPrefs('idTotal').then((val) {
-        idTotal = val ?? 0;
+        musicIdTotal = val ?? 0;
         setState(() {
           String songs = '';
           map.forEach((name, path) {
-            Song s = Song(path, idTotal, PlayMaster.music.length);
+            Song s = Song(path, musicIdTotal, PlayMaster.music.length);
             PlayMaster.music.add(s);
             //add this song a string containing all the songs that
             //were just added
             songs += s.toString();
             //add 1 to idTotal so that every song gets its own id
-            idTotal++;
+            musicIdTotal++;
           });
           //store the songs and idTotal in prefs
           PlayMaster.putStrInPrefs('songs', PlayMaster.songStr + songs);
           PlayMaster.songStr += songs;
-          PlayMaster.putIntInPrefs('idTotal', idTotal);
+          PlayMaster.putIntInPrefs('idTotal', musicIdTotal);
         });
       });
     });

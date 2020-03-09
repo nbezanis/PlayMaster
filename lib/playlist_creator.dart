@@ -83,8 +83,18 @@ class PlaylistContainer extends StatelessWidget {
                 createNameDialog(context).then((name) {
                   //sends back the playlist that was created
                   HashSet<Song> songs = selectInfo.finishSongSelect();
-                  Navigator.of(context)
-                      .pop(Playlist.name(songs.toList(), name));
+                  int plIdTotal;
+                  //get id for playlist
+                  PlayMaster.getIntFromPrefs('plIdTotal').then((val) {
+                    plIdTotal = val ?? 0;
+                    Navigator.of(context)
+                        .pop(Playlist.name(songs.toList(), name, plIdTotal));
+                    //increase id total
+                    plIdTotal++;
+                  }).then((val) {
+                    //save id total in prefs
+                    PlayMaster.putIntInPrefs('plIdTotal', plIdTotal);
+                  });
                 });
               },
               child: Text(
