@@ -27,7 +27,8 @@ class PlayMaster extends StatelessWidget {
   static int songDuration = 0;
 
   static SplayTreeSet<Song> music = SplayTreeSet<Song>(Song.compare);
-  static SplayTreeSet<Playlist> playlists = SplayTreeSet<Playlist>();
+  static SplayTreeSet<Playlist> playlists =
+      SplayTreeSet<Playlist>(Playlist.compare);
   static Color accentColor;
   static Color accentColorGradient;
   static Color musicbg;
@@ -232,15 +233,11 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           )
-        : Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  'PLAYLISTS HERE',
-                  textAlign: TextAlign.center,
-                ),
-              ],
+        : Expanded(
+            child: ListView.builder(
+              itemCount: PlayMaster.playlists.length,
+              itemBuilder: (context, index) =>
+                  Text(PlayMaster.playlists.elementAt(index).name),
             ),
           );
   }
@@ -272,8 +269,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _addPlaylist(Playlist p) {
-    PlayMaster.playlists.add(p);
-    print(p.name);
+    setState(() {
+      PlayMaster.playlists.add(p);
+    });
     //add to shared preferences too
   }
 

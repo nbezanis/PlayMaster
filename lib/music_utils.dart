@@ -102,6 +102,11 @@ class Playlist {
     }
   }
 
+  //used for comparisons with splaytree
+  static int compare(Playlist key1, Playlist key2) {
+    return key1.name.compareTo(key2.name);
+  }
+
   //advances the playlist to the next song in the playlist, returns true if the
   //playlist can advance and false if not
   bool next() {
