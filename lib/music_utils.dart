@@ -82,6 +82,7 @@ class Playlist {
 
   int get index => _index;
   List<Song> get songs => _songs;
+  int get length => _songs.length;
   List<Song> get activeSongs => _activeSongs;
   HashSet<int> get excludedIds => _excludedIds;
   Song get song => _songs[_index];

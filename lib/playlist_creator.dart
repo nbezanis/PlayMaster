@@ -87,6 +87,7 @@ class PlaylistContainer extends StatelessWidget {
                   //get id for playlist
                   PlayMaster.getIntFromPrefs('plIdTotal').then((val) {
                     plIdTotal = val ?? 0;
+                    print(songs.length); //fix problem where songs has length 0
                     Navigator.of(context)
                         .pop(Playlist.name(songs.toList(), name, plIdTotal));
                     //increase id total

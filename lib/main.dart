@@ -12,6 +12,7 @@ import 'music_utils.dart';
 import 'app_utils.dart';
 import 'theme_changer.dart';
 import 'playlist_creator.dart';
+import 'playlist_list_display.dart';
 
 void main() => runApp(PlayMaster());
 
@@ -239,7 +240,7 @@ class _HomePageState extends State<HomePage> {
             child: ListView.builder(
               itemCount: PlayMaster.playlists.length,
               itemBuilder: (context, index) =>
-                  Text(PlayMaster.playlists.elementAt(index).name),
+                  PlaylistListDisplay(PlayMaster.playlists.elementAt(index)),
             ),
           );
   }
