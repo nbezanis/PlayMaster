@@ -52,7 +52,9 @@ class _PlaylistListDisplayState extends State<PlaylistListDisplay> {
     ];
 
     return selectInfo.selecting
-        ? Container()
+        ? Row(
+            children: titleElements,
+          )
 
 //    Row(
 //      mainAxisAlignment: MainAxisAlignment.spaceBetween,

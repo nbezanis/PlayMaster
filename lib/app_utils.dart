@@ -83,8 +83,10 @@ class ColorInfo extends ChangeNotifier {
   }
 }
 
+//class used to keep track of selected items
 class SelectInfo extends ChangeNotifier {
   bool _selecting = false;
+  //keeps track of selected songs
   HashSet<Song> _selectedMusic = HashSet<Song>();
   Select _type = Select.choose;
 
@@ -109,15 +111,16 @@ class SelectInfo extends ChangeNotifier {
 
   void deselectAll() {
     _type = Select.none;
-    _selectedMusic.clear();
     notifyListeners();
   }
 
   void addMusic(Song s) => _selectedMusic.add(s);
   void removeMusic(Song s) => _selectedMusic.remove(s);
 
+  //returns all the songs that were selected
   HashSet<Song> finishSongSelect() {
     _selecting = false;
+    //make sure the select mode is set to none
     deselectAll();
     return _selectedMusic;
   }
