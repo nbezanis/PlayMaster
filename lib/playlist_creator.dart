@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'dart:collection';
 
@@ -81,13 +82,26 @@ class PlaylistContainer extends StatelessWidget {
               onPressed: () {
                 //shows dialog asking for name when pressed
                 createNameDialog(context).then((name) {
+                  int plIdTotal;
                   //sends back the playlist that was created
                   HashSet<Song> songs = selectInfo.finishSongSelect();
-                  int plIdTotal;
+                  //if the user didn't select anything, don't ceate a playlist
+                  if (songs.length == 0) {
+                    //show a toast prompting the user to select music
+                    Fluttertoast.showToast(
+                        msg: "Please select music and try again",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIos: 1,
+                        backgroundColor: PlayMaster.accentColor,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                    selectInfo.selecting = true;
+                    return;
+                  }
                   //get id for playlist
                   PlayMaster.getIntFromPrefs('plIdTotal').then((val) {
                     plIdTotal = val ?? 0;
-                    print(songs.length); //fix problem where songs has length 0
                     Navigator.of(context)
                         .pop(Playlist.name(songs.toList(), name, plIdTotal));
                     //increase id total

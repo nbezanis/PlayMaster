@@ -41,6 +41,7 @@ class _PlaylistListDisplayState extends State<PlaylistListDisplay> {
         child: Icon(Icons.dehaze),
       ),
       Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
             widget.pl.name,
