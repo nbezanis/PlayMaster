@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:math';
 
 import 'app_utils.dart';
 import 'music_utils.dart';
@@ -17,7 +18,11 @@ class _PlaylistListDisplayState extends State<PlaylistListDisplay> {
   @override
   Widget build(BuildContext context) {
     var selectInfo = Provider.of<SelectInfo>(context);
+    var musicInfo = Provider.of<MusicInfo>(context);
     return GestureDetector(
+      onTap: () {
+        //open playlist view
+      },
       child: SizedBox(
         width: double.infinity,
         child: Container(
@@ -28,13 +33,13 @@ class _PlaylistListDisplayState extends State<PlaylistListDisplay> {
             ),
             color: Colors.white,
           ),
-          child: _getTitle(selectInfo),
+          child: _getTitle(selectInfo, musicInfo),
         ),
       ),
     );
   }
 
-  Row _getTitle(SelectInfo selectInfo) {
+  Row _getTitle(SelectInfo selectInfo, MusicInfo musicInfo) {
     List<Widget> titleElements = [
       Padding(
         padding: const EdgeInsets.fromLTRB(0.0, 0.0, 16.0, 0.0),
@@ -81,6 +86,26 @@ class _PlaylistListDisplayState extends State<PlaylistListDisplay> {
                 children: titleElements,
               ),
               GestureDetector(
+                onTap: () {
+                  if (!musicInfo.shuffle) {
+                    //start the playlist at the first song
+                    widget.pl.index = 0;
+                    print(
+                        'in order: ${widget.pl.index}, ${widget.pl.song.name}');
+                    musicInfo.song = widget.pl.song;
+                  } else {
+                    //pick a random song to start with and shuffle the rest of the playlist
+                    Random r = Random();
+                    int randomIndex = r.nextInt(widget.pl.length);
+                    widget.pl.index = randomIndex;
+                    widget.pl.shuffle();
+                    print(
+                        'shuffle: ${widget.pl.index}, ${widget.pl.song.name}');
+                    musicInfo.song = widget.pl.song;
+                  }
+                  musicInfo.pl = widget.pl;
+                  musicInfo.playing = true;
+                },
                 child: Icon(
                   Icons.play_arrow,
                   size: 30.0,

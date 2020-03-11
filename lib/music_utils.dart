@@ -106,6 +106,7 @@ class Playlist {
   }
 
   set index(int index) => _index = index;
+
   //sets active songs to all songs that aren't currently excluded
   set activeSongs(List<Song> songs) {
     activeSongs.clear();
