@@ -326,28 +326,38 @@ class _HomePageState extends State<HomePage> {
 //                  : Icon(Icons.select_all),
 //            )
 
-              RaisedButton(
-            color: Colors.white,
-            onPressed: () => selectInfo.type == Select.all
-                ? selectInfo.deselectAll()
-                : selectInfo.selectAll(),
-            child: Text(
-              selectInfo.type == Select.all ? 'deselect all' : 'select all',
-              style: TextStyle(fontSize: 18.0),
+              ButtonTheme(
+            padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0),
+            minWidth: 0,
+            height: 0,
+            child: RaisedButton(
+              color: Colors.white,
+              onPressed: () => selectInfo.type == Select.all
+                  ? selectInfo.deselectAll()
+                  : selectInfo.selectAll(),
+              child: Text(
+                selectInfo.type == Select.all ? 'deselect all' : 'select all',
+                style: TextStyle(fontSize: 18.0),
+              ),
             ),
           ),
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(0.0, 8.0, 8.0, 8.0),
-          child: RaisedButton(
-            color: Colors.white,
-            onPressed: () {
-              selectInfo.selecting = false;
-              selectInfo.deselectAll();
-            },
-            child: Text(
-              'Done',
-              style: TextStyle(fontSize: 18.0),
+          child: ButtonTheme(
+            padding: EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
+            minWidth: 0,
+            height: 0,
+            child: RaisedButton(
+              color: Colors.white,
+              onPressed: () {
+                selectInfo.selecting = false;
+                selectInfo.deselectAll();
+              },
+              child: Text(
+                'Done',
+                style: TextStyle(fontSize: 18.0),
+              ),
             ),
           ),
         ),
