@@ -251,7 +251,7 @@ class _HomePageState extends State<HomePage> {
         GestureDetector(
           child: Icon(Icons.delete),
           onTap: () {
-            HashSet<Song> selectedMusic = selectInfo.finishSongSelect();
+            SplayTreeSet<Song> selectedMusic = selectInfo.finishSongSelect();
             for (int i = 0; i < selectedMusic.length; i++) {
               PlayMaster.music.remove(selectedMusic.elementAt(i));
             }
@@ -468,7 +468,8 @@ class _HomePageState extends State<HomePage> {
     //in it at any given time
     stack.clear();
     stack.add(_getBottomOfStack(selectInfo, musicInfo));
-    List<Song> selectedSongs = displaySongs ? PlayMaster.music.toList() : [];
+    List<Song> selectedSongs =
+        displaySongs ? PlayMaster.music.toList() : musicInfo.pl.songs;
     if (musicInfo.song.id != -1) {
       if (!musicInfo.shuffle) {
         //if the playlist isn't in shuffle mode, set the plalylist equal
@@ -477,6 +478,7 @@ class _HomePageState extends State<HomePage> {
             musicInfo.song.index, musicInfo.pl.excludedIds, PLType.temp);
         inOrderPl.resetIndexes(musicInfo.song.id);
         musicInfo.pl = inOrderPl;
+//        musicInfo.pl.reorder(musicInfo.song.id);
       } else if (musicInfo.pl.songs[0].id == -1) {
         //if the playlist is in shuffle mode and the user does not currently
         //have a plalylist running (info.pl.songs[0].id == -1), create a playlist

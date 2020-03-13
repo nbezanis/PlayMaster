@@ -90,8 +90,8 @@ class _PlaylistListDisplayState extends State<PlaylistListDisplay> {
                   if (!musicInfo.shuffle) {
                     //start the playlist at the first song
                     widget.pl.index = 0;
-                    print(
-                        'in order: ${widget.pl.index}, ${widget.pl.song.name}');
+                    //reorder the playlist in case it was previously shuffled
+                    widget.pl.reorder(0);
                     musicInfo.song = widget.pl.song;
                   } else {
                     //pick a random song to start with and shuffle the rest of the playlist
@@ -99,9 +99,6 @@ class _PlaylistListDisplayState extends State<PlaylistListDisplay> {
                     int randomIndex = r.nextInt(widget.pl.length);
                     widget.pl.index = randomIndex;
                     widget.pl.shuffle();
-                    print(
-                        'shuffle: ${widget.pl.index}, ${widget.pl.song.name}');
-                    musicInfo.song = widget.pl.song;
                   }
                   musicInfo.pl = widget.pl;
                   musicInfo.playing = true;

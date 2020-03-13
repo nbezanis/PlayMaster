@@ -84,7 +84,7 @@ class PlaylistContainer extends StatelessWidget {
                 createNameDialog(context).then((name) {
                   int plIdTotal;
                   //sends back the playlist that was created
-                  HashSet<Song> songs = selectInfo.finishSongSelect();
+                  SplayTreeSet<Song> songs = selectInfo.finishSongSelect();
                   //if the user didn't select anything, don't ceate a playlist
                   if (songs.length == 0) {
                     //show a toast prompting the user to select music

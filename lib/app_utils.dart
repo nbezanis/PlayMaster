@@ -87,12 +87,12 @@ class ColorInfo extends ChangeNotifier {
 class SelectInfo extends ChangeNotifier {
   bool _selecting = false;
   //keeps track of selected songs
-  HashSet<Song> _selectedMusic = HashSet<Song>();
+  SplayTreeSet<Song> _selectedMusic = SplayTreeSet<Song>(Song.compare);
   Select _type = Select.choose;
 
   bool get selecting => _selecting;
   Select get type => _type;
-  HashSet<Song> get selectedMusic => _selectedMusic;
+  SplayTreeSet<Song> get selectedMusic => _selectedMusic;
 
   set selecting(bool selecting) {
     _selecting = selecting;
@@ -118,7 +118,7 @@ class SelectInfo extends ChangeNotifier {
   void removeMusic(Song s) => _selectedMusic.remove(s);
 
   //returns all the songs that were selected
-  HashSet<Song> finishSongSelect() {
+  SplayTreeSet<Song> finishSongSelect() {
     _selecting = false;
     //make sure the select mode is set to none
     deselectAll();

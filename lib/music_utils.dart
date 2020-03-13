@@ -168,6 +168,18 @@ class Playlist {
     }
   }
 
+  void reorder(int songId) {
+    _songs.sort(Song.compare);
+    for (int i = 0; i < _songs.length; i++) {
+      _songs[i].index = i;
+      //set the index of the playlist to the index of the song that was
+      //playing when the playlist was shuffled
+      if (_songs[i].id == songId) {
+        _index = i;
+      }
+    }
+  }
+
   //shuffles the playlist
   void shuffle() {
     List<Song> newList = [];

@@ -332,8 +332,12 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                       onTap: () {
                         setState(() {
                           if (info.shuffle) {
+                            //reorder the playlist if the shuffle option is unselected
+                            info.pl.index = 0;
+                            info.pl.reorder(0);
                             info.shuffle = false;
                           } else {
+                            //shuffle the playlist if the shuffle option is selected
                             info.pl.shuffle();
                             info.shuffle = true;
                           }
