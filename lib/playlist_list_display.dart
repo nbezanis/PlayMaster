@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'app_utils.dart';
 import 'music_utils.dart';
+import 'main_play_list_display.dart';
 
 class PlaylistListDisplay extends StatefulWidget {
   final Playlist pl;
@@ -21,7 +22,12 @@ class _PlaylistListDisplayState extends State<PlaylistListDisplay> {
     var musicInfo = Provider.of<MusicInfo>(context);
     return GestureDetector(
       onTap: () {
-        //open playlist view
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MainPlayListDisplay(widget.pl),
+          ),
+        );
       },
       child: SizedBox(
         width: double.infinity,

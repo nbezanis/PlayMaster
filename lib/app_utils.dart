@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:collection';
 
 import 'main.dart';
-import 'music_list_display.dart';
 import 'music_utils.dart';
 
 //this class is used along with provider to store info about which song is
