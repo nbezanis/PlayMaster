@@ -1,16 +1,19 @@
-# play_master
+# Play Master
 
-A master app for your playlists
+Play Master is an app that allows you to import mp3 files that are on your phone and play them. It also features flexible playlist functionality that allow you to customize playlists to fit any situation.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## ScreenShots
+Here are some screenshots of what the app currently looks like:
+<br/>
+<br/>
+<img src="screenshots/songs.png" width="300"/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<img src="screenshots/songPlaying.png" width="300"/>
+<br/>
+<br/>
+<img src="screenshots/songPlayingPlaylist.png" width="300"/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<img src="screenshots/playlists.png" width="300"/>
+<br/>
+<br/>
+<img src="screenshots/themeChanger.png" width="300"/>
