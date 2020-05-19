@@ -44,8 +44,13 @@ class MusicInfo extends ChangeNotifier {
   }
 
   //plays the audio of this widget
-  void play() async {
-    await PlayMaster.player.play(song.path, isLocal: true);
+  Future<int> play() async {
+    try {
+      int result = await PlayMaster.player.play(song.path, isLocal: true);
+      return 1;
+    } catch (e) {
+      return 0;
+    }
   }
 
   //pauses the audio of this widget

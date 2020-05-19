@@ -30,6 +30,26 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
     var musicInfo = Provider.of<MusicInfo>(context);
     var selectInfo = Provider.of<SelectInfo>(context);
 
+    Future<void> createDialog(String path) {
+      return showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('An error occured while trying to play the song'),
+              content: Text('the song\'s path was $path'),
+              actions: <Widget>[
+                MaterialButton(
+                  elevation: 5.0,
+                  child: Text('Done'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          });
+    }
+
     if (selectInfo.type == Select.all) {
       _selected = true;
       selectInfo.addMusic(widget.song);
@@ -61,8 +81,13 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
           //and set the id of the current playing song to this one
           musicInfo.song = widget.song;
           if (_paused) {
-            musicInfo.play();
-            musicInfo.playing = true;
+            musicInfo.play().then((value) {
+              if (value == 1) {
+                musicInfo.playing = true;
+              } else {
+                createDialog(musicInfo.song.path);
+              }
+            });
           } else {
             musicInfo.pause();
             musicInfo.playing = false;

@@ -95,6 +95,7 @@ class PlayMaster extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    PlayMaster.music.add(Song.init());
 //    PlayMaster.clearPrefs(); DEBUG
     _initiateColorMap();
     PlayMaster.getStrFromPrefs('color').then((color) {
