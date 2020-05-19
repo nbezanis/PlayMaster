@@ -427,7 +427,10 @@ class _HomePageState extends State<HomePage> {
       MaterialPageRoute(
         builder: (context) => ThemeChanger(),
       ),
-    );
+      //use .then so that we can update the state once the page returns to the homescreen
+    ).then((value) {
+      setState(() {});
+    });
   }
 
   void _launchSelector(SelectInfo selectInfo) {
