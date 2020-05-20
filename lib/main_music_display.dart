@@ -265,13 +265,13 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
           : 'assets/repeatOne.svg';
 
   Widget _getPlayer(MusicInfo info, Icon buttonIcon) {
-    return MediaQuery.removePadding(
-      context: context,
-      removeTop: true,
-      child: Expanded(
-        child: ListView.builder(
-          itemCount: 1,
-          itemBuilder: (BuildContext context, int index) => Column(
+    return Container(
+      //give the column a height that is equal to the height of the main music display player section
+      height: MediaQuery.of(context).size.height - 106.0 - _topOffset,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Column(
             children: <Widget>[
               Align(
                 alignment: Alignment.centerLeft,
@@ -430,28 +430,24 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                   ],
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(
-                    0.0, 14.0, 0.0, 0.0), //EXTREMELY TEMPORARY
-                child: Container(
-                  width: double.infinity,
-                  height: 50.0,
-                  color: PlayMaster.fadedGrey,
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(16.0, 10.0, 0.0, 0.0),
-                    child: Text(
-                      info.pl.nextSong == null
-                          ? 'Last Track In Play List'
-                          : 'Next Track: ${info.repeat == Repeat.one ? info.song.name : info.pl.nextSong.name}',
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 20.0),
-                    ),
-                  ),
-                ),
-              ),
             ],
           ),
-        ),
+          Container(
+            width: double.infinity,
+            height: 50.0,
+            color: PlayMaster.fadedGrey,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(16.0, 10.0, 0.0, 0.0),
+              child: Text(
+                info.pl.nextSong == null
+                    ? 'Last Track In Play List'
+                    : 'Next Track: ${info.repeat == Repeat.one ? info.song.name : info.pl.nextSong.name}',
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 20.0),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -542,8 +538,8 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
               ),
             ),
             child: Column(
-              //look into slivers to solve the scrolling problem
               children: <Widget>[
+                //grey box at top
                 Container(
                   decoration: BoxDecoration(
                     color: PlayMaster.fadedGrey,
@@ -552,6 +548,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                       topLeft: Radius.circular(15.0),
                     ),
                   ),
+                  //white bar + ppViewSwitcher
                   child: Column(
                     children: <Widget>[
                       Center(
