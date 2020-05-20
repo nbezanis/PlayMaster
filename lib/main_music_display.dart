@@ -614,16 +614,21 @@ class _MusicSliderState extends State<MusicSlider> {
     return Padding(
       padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Text(
-            '${Time((_sliderValue / 1000000).floor()).toString()}',
-            style: TextStyle(fontSize: 20.0),
+          Container(
+            width: MediaQuery.of(context).size.width * 0.1,
+            child: Text(
+              '${Time((_sliderValue / 1000000).floor()).toString()}',
+              style:
+                  TextStyle(fontSize: MediaQuery.of(context).size.width / 20),
+            ),
           ),
           Container(
-            width: MediaQuery.of(context).size.width / 1.4,
+            width: MediaQuery.of(context).size.width * 0.71,
             child: SliderTheme(
               data: SliderTheme.of(context).copyWith(trackHeight: 5.0),
-              child: Slider.adaptive(
+              child: Slider(
                 activeColor: PlayMaster.accentColor,
                 inactiveColor: Colors.black12,
                 onChangeStart: (value) {
@@ -650,9 +655,13 @@ class _MusicSliderState extends State<MusicSlider> {
               ),
             ),
           ),
-          Text(
-            '${Time(((_songDuration - _sliderValue) / 1000000).floor()).toString()}', //TODO add functionality
-            style: TextStyle(fontSize: 20.0),
+          Container(
+            width: MediaQuery.of(context).size.width * 0.1,
+            child: Text(
+              '${Time(((_songDuration - _sliderValue) / 1000000).floor()).toString()}', //TODO add functionality
+              style:
+                  TextStyle(fontSize: MediaQuery.of(context).size.width / 20),
+            ),
           ),
         ],
       ),
