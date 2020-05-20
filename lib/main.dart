@@ -95,7 +95,7 @@ class PlayMaster extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    PlayMaster.music.add(Song.init());
+//    PlayMaster.music.add(Song.init());
 //    PlayMaster.clearPrefs(); DEBUG
     _initiateColorMap();
     PlayMaster.getStrFromPrefs('color').then((color) {
@@ -141,7 +141,6 @@ class _HomePageState extends State<HomePage> {
   //the list of their songs and the list of their playlists
   Widget _getSPViewSwitcher() {
     return Container(
-      color: Colors.transparent,
       child: Row(
         children: <Widget>[
           Container(
@@ -159,7 +158,10 @@ class _HomePageState extends State<HomePage> {
                   highlightColor: Colors.transparent,
                   child: Text(
                     'Songs',
-                    style: TextStyle(fontSize: 22.0, color: Colors.white),
+                    style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width / 17,
+                      color: Colors.white,
+                    ),
                   ),
                   onPressed: () {
                     setState(() {
@@ -184,7 +186,10 @@ class _HomePageState extends State<HomePage> {
                 highlightColor: Colors.transparent,
                 child: Text(
                   'Play Lists',
-                  style: TextStyle(fontSize: 22.0, color: Colors.white),
+                  style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width / 17,
+                    color: Colors.white,
+                  ),
                 ),
                 onPressed: () {
                   setState(() {
@@ -368,15 +373,17 @@ class _HomePageState extends State<HomePage> {
         //this icon button is used to add songs and playlists
         //using flutter file picker
         IconButton(
-            icon: Icon(Icons.add),
-            iconSize: 40.0,
-            padding: EdgeInsets.all(0.0),
-            onPressed: () {
-              displaySongs
-                  ? _addSongs()
-                  : _createPlaylist(musicInfo, selectInfo)
-                      .then((p) => _addPlaylist(p, selectInfo));
-            }),
+          icon: Icon(
+            Icons.add,
+            size: 40.0,
+          ),
+          onPressed: () {
+            displaySongs
+                ? _addSongs()
+                : _createPlaylist(musicInfo, selectInfo)
+                    .then((p) => _addPlaylist(p, selectInfo));
+          },
+        ),
         PopupMenuButton<String>(
           icon: Icon(
             Icons.more_vert,
