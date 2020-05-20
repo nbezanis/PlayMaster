@@ -127,9 +127,15 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
         padding: const EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 0.0),
         child: Icon(Icons.music_note),
       ),
-      Text(
-        widget.song.name,
-        style: TextStyle(fontSize: 20.0),
+      Container(
+        width: selectInfo.selecting
+            ? MediaQuery.of(context).size.width * 0.75
+            : MediaQuery.of(context).size.width * 0.8,
+        child: Text(
+          widget.song.name,
+          style: TextStyle(fontSize: 20.0),
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
     ];
 
