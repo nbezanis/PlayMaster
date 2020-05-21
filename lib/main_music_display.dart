@@ -618,10 +618,10 @@ class _MusicSliderState extends State<MusicSlider> {
         children: <Widget>[
           Container(
             width: MediaQuery.of(context).size.width * 0.1,
-            child: Text(
-              '${Time((_sliderValue / 1000000).floor()).toString()}',
-              style:
-                  TextStyle(fontSize: MediaQuery.of(context).size.width / 20),
+            child: FittedBox(
+              child: Text(
+                '${Time((_sliderValue / 1000000).floor()).toString()}',
+              ),
             ),
           ),
           Container(
@@ -657,10 +657,10 @@ class _MusicSliderState extends State<MusicSlider> {
           ),
           Container(
             width: MediaQuery.of(context).size.width * 0.1,
-            child: Text(
-              '${Time(((_songDuration - _sliderValue) / 1000000).floor()).toString()}', //TODO add functionality
-              style:
-                  TextStyle(fontSize: MediaQuery.of(context).size.width / 20),
+            child: FittedBox(
+              child: Text(
+                '${Time(((_songDuration - _sliderValue) / 1000000).floor()).toString()}', //TODO add functionality
+              ),
             ),
           ),
         ],
