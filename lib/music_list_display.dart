@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 import 'main.dart';
@@ -81,13 +82,18 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
           //and set the id of the current playing song to this one
           musicInfo.song = widget.song;
           if (_paused) {
-            musicInfo.play().then((value) {
-              if (value == 1) {
-                musicInfo.playing = true;
-              } else {
-                createDialog(musicInfo.song.path);
-              }
-            });
+            musicInfo.play();
+            musicInfo.playing = true;
+            //for debug purposes
+            Fluttertoast.showToast(
+              msg: "Song's path: ${musicInfo.song.path}",
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIos: 5,
+              backgroundColor: PlayMaster.accentColor,
+              textColor: Colors.white,
+              fontSize: 16.0,
+            );
           } else {
             musicInfo.pause();
             musicInfo.playing = false;
