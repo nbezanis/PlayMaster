@@ -143,63 +143,57 @@ class _HomePageState extends State<HomePage> {
     return Container(
       child: Row(
         children: <Widget>[
-          Container(
-            child: Expanded(
-              flex: 4,
-              child: Container(
-                margin: EdgeInsets.fromLTRB(8.0, 0.0, 0.0, 0.0),
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: _songsColor, width: 3.0),
-                  ),
-                ),
-                child: FlatButton(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  child: Text(
-                    'Songs',
-                    style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width / 17,
-                      color: Colors.white,
-                    ),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      displaySongs = true;
-                      _songsColor = _selected;
-                      _plColor = _unselected;
-                    });
-                  },
+          GestureDetector(
+            child: Container(
+              height: 56.0, //height of appbar
+              width: MediaQuery.of(context).size.width / 4.5,
+              margin: EdgeInsets.fromLTRB(8.0, 0.0, 0.0, 0.0),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: _songsColor, width: 3.0),
                 ),
               ),
-            ),
-          ),
-          Expanded(
-            flex: 6,
-            child: Container(
-              margin: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
-              decoration: BoxDecoration(
-                  border:
-                      Border(bottom: BorderSide(color: _plColor, width: 3.0))),
-              child: FlatButton(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
+              child: FittedBox(
                 child: Text(
-                  'Play Lists',
+                  'Songs',
                   style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.width / 17,
                     color: Colors.white,
                   ),
                 ),
-                onPressed: () {
-                  setState(() {
-                    displaySongs = false;
-                    _plColor = _selected;
-                    _songsColor = _unselected;
-                  });
-                },
               ),
             ),
+            onTap: () {
+              setState(() {
+                displaySongs = true;
+                _songsColor = _selected;
+                _plColor = _unselected;
+              });
+            },
+          ),
+          GestureDetector(
+            child: Container(
+              height: 56.0, //height of appbar
+              width: MediaQuery.of(context).size.width / 3.5,
+              margin: EdgeInsets.fromLTRB(24.0, 0.0, 16.0, 0.0),
+              decoration: BoxDecoration(
+                  border:
+                      Border(bottom: BorderSide(color: _plColor, width: 3.0))),
+              child: FittedBox(
+                child: Text(
+                  'Play Lists',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+            onTap: () {
+              setState(() {
+                displaySongs = false;
+                _plColor = _selected;
+                _songsColor = _unselected;
+              });
+            },
           ),
         ],
       ),
