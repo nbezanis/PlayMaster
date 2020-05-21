@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:file_picker/file_picker.dart';
@@ -286,22 +287,32 @@ class _HomePageState extends State<HomePage> {
 
   void _addSongs() {
     //pick files from phone and add them to list of music
-    pickFiles().then((map) {
+    pickFiles().then((files) {
       //use shared preferences fro idTotal so that we're not giving
       //repeat IDs
       PlayMaster.getIntFromPrefs('idTotal').then((val) {
         musicIdTotal = val ?? 0;
         setState(() {
           String songs = '';
-          map.forEach((name, path) {
-            Song s = Song(path, musicIdTotal, PlayMaster.music.length);
+          for (File file in files) {
+            Song s =
+                Song(file.absolute.path, musicIdTotal, PlayMaster.music.length);
             PlayMaster.music.add(s);
             //add this song a string containing all the songs that
             //were just added
             songs += s.toString();
             //add 1 to idTotal so that every song gets its own id
             musicIdTotal++;
-          });
+          }
+//          map.forEach((name, path) {
+//            Song s = Song(path, musicIdTotal, PlayMaster.music.length);
+//            PlayMaster.music.add(s);
+//            //add this song a string containing all the songs that
+//            //were just added
+//            songs += s.toString();
+//            //add 1 to idTotal so that every song gets its own id
+//            musicIdTotal++;
+//          });
           //store the songs and idTotal in prefs
           PlayMaster.putStrInPrefs('songs', PlayMaster.songStr + songs);
           PlayMaster.songStr += songs;
@@ -516,8 +527,14 @@ class _HomePageState extends State<HomePage> {
 
 //uses flutter file picker to allow the user to import audio files from elsewhere
 //on their device
-Future<Map<String, String>> pickFiles() async {
-  Map<String, String> filePaths;
-  filePaths = await FilePicker.getMultiFilePath(type: FileType.AUDIO);
-  return filePaths;
+//Future<Map<String, String>> pickFiles() async {
+//  Map<String, String> filePaths;
+//  filePaths = await FilePicker.getMultiFilePath(fileExtension: 'mp3');
+//  return filePaths;
+//}
+
+Future<List<File>> pickFiles() async {
+  List<File> files;
+  files = await FilePicker.getMultiFile(fileExtension: 'mp3');
+  return files;
 }
