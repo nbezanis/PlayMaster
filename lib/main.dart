@@ -218,6 +218,12 @@ class _HomePageState extends State<HomePage> {
     PlayMaster.putStrInPrefs('songs', strForPrefs);
   }
 
+  //remove song's file from app documents
+  Future<FileSystemEntity> _removeSongFile(String path) {
+    File file = File(path);
+    return file.delete();
+  }
+
   //returns list of songs if displaySongs is true and
   //list of playlists if it's false
   Widget _displayContent(bool displaySongs) {
@@ -233,8 +239,10 @@ class _HomePageState extends State<HomePage> {
                 ),
                 onDismissed: (direction) {
                   setState(() {
-                    //remove swiped song from music splaytree and update the
-                    //string containing all the songs in sharedprefs
+                    //remove the file from, remove swiped song from music splaytree
+                    // the app's documents, and update the string containing all
+                    // the songs in sharedprefs
+                    _removeSongFile(PlayMaster.music.elementAt(index).path);
                     PlayMaster.music.remove(PlayMaster.music.elementAt(index));
                     _updateSongsInPrefs();
                   });
@@ -262,7 +270,8 @@ class _HomePageState extends State<HomePage> {
           onTap: () {
             SplayTreeSet<Song> selectedMusic = selectInfo.finishSongSelect();
             for (int i = 0; i < selectedMusic.length; i++) {
-              PlayMaster.music.remove(selectedMusic.elementAt(i));
+              _removeSongFile(selectedMusic.elementAt(i).path).then((value) =>
+                  PlayMaster.music.remove(selectedMusic.elementAt(i)));
             }
             _updateSongsInPrefs();
           },
@@ -296,6 +305,10 @@ class _HomePageState extends State<HomePage> {
   void _addSongs() {
     //pick files from phone and add them to list of music
     pickFiles().then((files) {
+      //if the user didn't pick any files, reutrn
+      if (files == null) {
+        return;
+      }
       //use shared preferences fro idTotal so that we're not giving
       //repeat IDs
       PlayMaster.getIntFromPrefs('idTotal').then((val) {
