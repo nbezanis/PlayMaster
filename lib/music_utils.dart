@@ -15,7 +15,7 @@ class Song {
     _index = -1;
   }
   Song(this._path, this._id, this._index) {
-    _name = _getSongName(_path);
+    _name = PlayMaster.isolateSongName(_path);
   }
 
   String get path => _path;
@@ -24,13 +24,6 @@ class Song {
   int get index => _index;
 
   set index(int i) => _index = i;
-
-  //isolates a song's name given the path to the mp3 file
-  String _getSongName(String path) {
-    String name;
-    name = path.substring(path.lastIndexOf('/') + 1, path.indexOf('.mp3'));
-    return name;
-  }
 
   //return a string that contains the song's path, id, and index so that it
   //is able to be constructed from the string later. Use § as a separating

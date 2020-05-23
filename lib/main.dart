@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:file_picker/file_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -92,6 +93,13 @@ class PlayMaster extends StatelessWidget {
     colorMap['pink'] = Colors.pink;
     colorMap['yellow'] = Colors.yellow;
     colorMap['teal'] = Colors.teal;
+  }
+
+  //isolates a song's name given the path to the mp3 file
+  static String isolateSongName(String path) {
+    String name;
+    name = path.substring(path.lastIndexOf('/') + 1, path.indexOf('.mp3'));
+    return name;
   }
 
   @override
@@ -292,31 +300,32 @@ class _HomePageState extends State<HomePage> {
       //repeat IDs
       PlayMaster.getIntFromPrefs('idTotal').then((val) {
         musicIdTotal = val ?? 0;
-        setState(() {
-          String songs = '';
+        String songs = '';
+        getApplicationDocumentsDirectory().then((dir) {
           for (File file in files) {
-            Song s =
-                Song(file.absolute.path, musicIdTotal, PlayMaster.music.length);
-            PlayMaster.music.add(s);
-            //add this song a string containing all the songs that
-            //were just added
-            songs += s.toString();
-            //add 1 to idTotal so that every song gets its own id
-            musicIdTotal++;
+            //make copy the file to the app's permanent directory
+            file
+                .copy(
+                    '${dir.path}/${PlayMaster.isolateSongName(file.path)}.mp3')
+                .then((newFile) {
+              Song s = Song(
+                  newFile.absolute.path, musicIdTotal, PlayMaster.music.length);
+              PlayMaster.music.add(s);
+              //add this song a string containing all the songs that
+              //were just added
+              songs += s.toString();
+              //add 1 to idTotal so that every song gets its own id
+              musicIdTotal++;
+            }).then((value) {
+              //call set state to immediately update the display
+              setState(() {
+                //store the songs and idTotal in prefs
+                PlayMaster.putStrInPrefs('songs', PlayMaster.songStr + songs);
+                PlayMaster.songStr += songs;
+                PlayMaster.putIntInPrefs('idTotal', musicIdTotal);
+              });
+            });
           }
-//          map.forEach((name, path) {
-//            Song s = Song(path, musicIdTotal, PlayMaster.music.length);
-//            PlayMaster.music.add(s);
-//            //add this song a string containing all the songs that
-//            //were just added
-//            songs += s.toString();
-//            //add 1 to idTotal so that every song gets its own id
-//            musicIdTotal++;
-//          });
-          //store the songs and idTotal in prefs
-          PlayMaster.putStrInPrefs('songs', PlayMaster.songStr + songs);
-          PlayMaster.songStr += songs;
-          PlayMaster.putIntInPrefs('idTotal', musicIdTotal);
         });
       });
     });
@@ -535,6 +544,7 @@ class _HomePageState extends State<HomePage> {
 
 Future<List<File>> pickFiles() async {
   List<File> files;
-  files = await FilePicker.getMultiFile(allowedExtensions: ['mp3']);
+  files = await FilePicker.getMultiFile(
+      allowedExtensions: ['mp3'], type: FileType.custom);
   return files;
 }
