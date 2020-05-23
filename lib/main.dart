@@ -557,7 +557,6 @@ class _HomePageState extends State<HomePage> {
 
 Future<List<File>> pickFiles() async {
   List<File> files;
-  files = await FilePicker.getMultiFile(
-      allowedExtensions: ['mp3'], type: FileType.custom);
+  files = await FilePicker.getMultiFile(fileExtension: 'mp3');
   return files;
 }
