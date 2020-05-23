@@ -89,7 +89,7 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
               msg: "Song's path: ${musicInfo.song.path}",
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.BOTTOM,
-              timeInSecForIos: 5,
+              timeInSecForIosWeb: 5,
               backgroundColor: PlayMaster.accentColor,
               textColor: Colors.white,
               fontSize: 16.0,

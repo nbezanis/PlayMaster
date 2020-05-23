@@ -102,7 +102,7 @@ class PlaylistContainer extends StatelessWidget {
                           msg: "Please select music and try again",
                           toastLength: Toast.LENGTH_SHORT,
                           gravity: ToastGravity.BOTTOM,
-                          timeInSecForIos: 1,
+                          timeInSecForIosWeb: 1,
                           backgroundColor: PlayMaster.accentColor,
                           textColor: Colors.white,
                           fontSize: 16.0);
