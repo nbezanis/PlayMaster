@@ -37,7 +37,6 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
           builder: (context) {
             return AlertDialog(
               title: Text('An error occured while trying to play the song'),
-              content: Text('the song\'s path was $path'),
               actions: <Widget>[
                 MaterialButton(
                   elevation: 5.0,
