@@ -77,16 +77,6 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
           if (_paused) {
             musicInfo.play();
             musicInfo.playing = true;
-            //for debug purposes
-            Fluttertoast.showToast(
-              msg: "Song's path: ${musicInfo.song.path}",
-              toastLength: Toast.LENGTH_LONG,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIos: 5,
-              backgroundColor: PlayMaster.accentColor,
-              textColor: Colors.white,
-              fontSize: 16.0,
-            );
           } else {
             musicInfo.pause();
             musicInfo.playing = false;

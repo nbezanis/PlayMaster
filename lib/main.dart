@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:file_picker/file_picker.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -29,6 +30,9 @@ class PlayMaster extends StatelessWidget {
 
   static int sliderValue = 0;
   static int songDuration = 0;
+
+  //DEBUG
+  static int deletedItems = 0;
 
   static SplayTreeSet<Song> music = SplayTreeSet<Song>(Song.compare);
   static SplayTreeSet<Playlist> playlists =
@@ -221,7 +225,8 @@ class _HomePageState extends State<HomePage> {
   //remove song's file from app documents
   Future<void> _deleteFromPath(String path) async {
     File file = File(path);
-    file.delete();
+    await file.delete();
+    PlayMaster.deletedItems++;
   }
 
   //returns list of songs if displaySongs is true and
@@ -264,7 +269,9 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _deleteSongs(SplayTreeSet<Song> selectedMusic) async {
     for (int i = 0; i < selectedMusic.length; i++) {
-      _deleteFromPath(selectedMusic.elementAt(i).path).then((_) {
+      //remove file from device
+      await _deleteFromPath(selectedMusic.elementAt(i).path).then((_) {
+        //after that, remove it from the music splaytree
         PlayMaster.music.remove(selectedMusic.elementAt(i));
       });
     }
@@ -278,7 +285,21 @@ class _HomePageState extends State<HomePage> {
           onTap: () {
             SplayTreeSet<Song> selectedMusic = selectInfo.finishSongSelect();
             _deleteSongs(selectedMusic).then((_) {
-              _updateSongsInPrefs();
+              setState(() {
+                //for debug purposes
+                Fluttertoast.showToast(
+                  msg: "deleted ${PlayMaster.deletedItems} items",
+                  toastLength: Toast.LENGTH_LONG,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIos: 5,
+                  backgroundColor: PlayMaster.accentColor,
+                  textColor: Colors.white,
+                  fontSize: 16.0,
+                );
+                PlayMaster.deletedItems = 0;
+                //update prefs to reflect the deleted songs
+                _updateSongsInPrefs();
+              });
             });
           },
         ),
