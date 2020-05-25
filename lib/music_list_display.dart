@@ -60,11 +60,7 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
     if (musicInfo.song.id == widget.song.id) {
       //this handles the edge case where the widget is unloaded and everything
       //gets reinitialized yet the music is still playing
-      if (musicInfo.playing) {
-        _paused = false;
-      } else {
-        _paused = true;
-      }
+      _paused = !musicInfo.playing;
       bgColor = selectInfo.selecting ? Colors.white : PlayMaster.musicbg;
     } else {
       bgColor = Colors.white;
