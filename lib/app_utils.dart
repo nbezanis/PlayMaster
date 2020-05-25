@@ -108,8 +108,9 @@ class SelectInfo extends ChangeNotifier {
     notifyListeners();
   }
 
-  void selectAll() {
+  void selectAll(SplayTreeSet<Song> songs) {
     _type = Select.all;
+    _selectedMusic = songs;
     notifyListeners();
   }
 

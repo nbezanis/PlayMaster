@@ -367,7 +367,7 @@ class _HomePageState extends State<HomePage> {
               color: Colors.white,
               onPressed: () => selectInfo.type == Select.all
                   ? selectInfo.deselectAll()
-                  : selectInfo.selectAll(),
+                  : selectInfo.selectAll(PlayMaster.music),
               child: Text(
                 selectInfo.type == Select.all ? 'deselect all' : 'select all',
                 style: TextStyle(fontSize: 18.0),

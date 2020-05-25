@@ -52,10 +52,8 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
 
     if (selectInfo.type == Select.all) {
       _selected = true;
-      selectInfo.addMusic(widget.song);
     } else if (selectInfo.type == Select.none) {
       _selected = false;
-      selectInfo.removeMusic(widget.song);
     }
     //if the widget that is currently playing music is this widget, change the
     //background color to grey, else make sure the background color is white
