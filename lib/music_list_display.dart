@@ -31,7 +31,7 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
     var musicInfo = Provider.of<MusicInfo>(context);
     var selectInfo = Provider.of<SelectInfo>(context);
 
-    Future<void> createDialog(String path) {
+    Future<void> createDialog(String path) async {
       return showDialog(
           context: context,
           builder: (context) {

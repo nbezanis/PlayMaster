@@ -110,7 +110,9 @@ class SelectInfo extends ChangeNotifier {
 
   void selectAll(SplayTreeSet<Song> songs) {
     _type = Select.all;
-    _selectedMusic = songs;
+    for (int i = 0; i < songs.length; i++) {
+      _selectedMusic.add(songs.elementAt(i));
+    }
     notifyListeners();
   }
 

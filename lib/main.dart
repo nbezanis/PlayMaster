@@ -219,9 +219,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   //remove song's file from app documents
-  Future<FileSystemEntity> _removeSongFile(String path) {
+  Future<void> _deleteFromPath(String path) async {
     File file = File(path);
-    return file.delete();
+    file.delete();
   }
 
   //returns list of songs if displaySongs is true and
@@ -242,7 +242,7 @@ class _HomePageState extends State<HomePage> {
                     //remove the file from, remove swiped song from music splaytree
                     // the app's documents, and update the string containing all
                     // the songs in sharedprefs
-                    _removeSongFile(PlayMaster.music.elementAt(index).path);
+                    _deleteFromPath(PlayMaster.music.elementAt(index).path);
                     PlayMaster.music.remove(PlayMaster.music.elementAt(index));
                     _updateSongsInPrefs();
                   });
@@ -262,6 +262,14 @@ class _HomePageState extends State<HomePage> {
           );
   }
 
+  Future<void> _deleteSongs(SplayTreeSet<Song> selectedMusic) async {
+    for (int i = 0; i < selectedMusic.length; i++) {
+      _deleteFromPath(selectedMusic.elementAt(i).path).then((_) {
+        PlayMaster.music.remove(selectedMusic.elementAt(i));
+      });
+    }
+  }
+
   Widget _getSelectingTools(SelectInfo selectInfo) {
     return Row(
       children: <Widget>[
@@ -269,11 +277,9 @@ class _HomePageState extends State<HomePage> {
           child: Icon(Icons.delete),
           onTap: () {
             SplayTreeSet<Song> selectedMusic = selectInfo.finishSongSelect();
-            for (int i = 0; i < selectedMusic.length; i++) {
-              _removeSongFile(selectedMusic.elementAt(i).path).then((value) =>
-                  PlayMaster.music.remove(selectedMusic.elementAt(i)));
-            }
-            _updateSongsInPrefs();
+            _deleteSongs(selectedMusic).then((_) {
+              _updateSongsInPrefs();
+            });
           },
         ),
       ],
