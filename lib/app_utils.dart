@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:collection';
 
 import 'main.dart';
@@ -35,7 +36,17 @@ class MusicInfo extends ChangeNotifier {
     _pl.index = song.index;
     _song = song;
     _playing = true;
-    _songDuration = await PlayMaster.player.setUrl(song.path);
+    _songDuration =
+        await PlayMaster.player.setUrl(song.path).catchError((error) {
+      Fluttertoast.showToast(
+          msg: error.toString(),
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIos: 5,
+          backgroundColor: PlayMaster.accentColor,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    });
     if (song.id != -1) {
       play();
     }

@@ -108,7 +108,7 @@ class PlayMaster extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-//    PlayMaster.music.add(Song.init());
+//    PlayMaster.music.add(Song('/test error.mp3', 100, 100));
 //    PlayMaster.clearPrefs(); DEBUG
     AudioPlayer.setIosCategory(IosCategory.playback);
     _initiateColorMap();
