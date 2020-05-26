@@ -110,6 +110,7 @@ class PlayMaster extends StatelessWidget {
   Widget build(BuildContext context) {
 //    PlayMaster.music.add(Song.init());
 //    PlayMaster.clearPrefs(); DEBUG
+    AudioPlayer.setIosCategory(IosCategory.playback);
     _initiateColorMap();
     PlayMaster.getStrFromPrefs('color').then((color) {
       accentColor = colorMap[color ?? 'blue'];
