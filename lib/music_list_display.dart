@@ -56,7 +56,7 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
       _selected = false;
     }
     //if the widget that is currently playing music is this widget, change the
-    //background color to grey, else make sure the background color is white
+    //background color to PlayMaster.musicbg, else make sure the background color is white
     if (musicInfo.song.id == widget.song.id) {
       //this handles the edge case where the widget is unloaded and everything
       //gets reinitialized yet the music is still playing
@@ -71,17 +71,14 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
         if (selectInfo.selecting) {
           _select(selectInfo);
         } else {
-          //pause or play the music depending on if the music is playing or not
-          //and set the id of the current playing song to this one
-          musicInfo.setSong(widget.song);
-          if (_paused) {
-            musicInfo.play();
-            musicInfo.playing = true;
+          if (musicInfo.song.id == widget.song.id) {
+            //pause/play the song if this song is currently playing
+            _handlePausePlay(musicInfo);
           } else {
-            musicInfo.pause();
-            musicInfo.playing = false;
+            //set the id of the current playing song to this one if this song
+            // isn't currently playing
+            musicInfo.setSong(widget.song);
           }
-          _paused = !_paused;
         }
       },
       child: SizedBox(
@@ -98,6 +95,19 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
         ),
       ),
     );
+  }
+
+  //pause or play the music depending on if the music is playing or not
+  void _handlePausePlay(MusicInfo musicInfo) {
+    if (_paused) {
+      musicInfo.play();
+      musicInfo.playing = true;
+    } else {
+      musicInfo.pause();
+      musicInfo.playing = false;
+    }
+    _paused = !_paused;
+    musicInfo.update();
   }
 
   void _select(SelectInfo selectInfo) {

@@ -47,7 +47,9 @@ class MusicInfo extends ChangeNotifier {
   }
 
   //plays the audio of this widget
-  void play() => PlayMaster.player.play();
+  void play() async {
+    await PlayMaster.player.play();
+  }
 
   //pauses the audio of this widget
   void pause() async {
