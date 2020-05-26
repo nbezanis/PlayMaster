@@ -105,7 +105,7 @@ class _PlaylistListDisplayState extends State<PlaylistListDisplay> {
                     widget.pl.index = randomIndex;
                     widget.pl.shuffle();
                   }
-                  musicInfo.song = widget.pl.song;
+                  musicInfo.setSong(widget.pl.song);
                   musicInfo.pl = widget.pl;
                   musicInfo.playing = true;
                   print(musicInfo.song);

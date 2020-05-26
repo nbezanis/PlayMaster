@@ -73,7 +73,7 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
         } else {
           //pause or play the music depending on if the music is playing or not
           //and set the id of the current playing song to this one
-          musicInfo.song = widget.song;
+          musicInfo.setSong(widget.song);
           if (_paused) {
             musicInfo.play();
             musicInfo.playing = true;

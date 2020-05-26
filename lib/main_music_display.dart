@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -15,7 +16,6 @@ import 'app_utils.dart';
 //which takes up all of the screen and has all the other information
 class MainMusicDisplay extends StatefulWidget {
   MainMusicDisplay();
-  final Widget musicSlider = MusicSlider();
 
   @override
   _MainMusicDisplayState createState() => _MainMusicDisplayState();
@@ -48,19 +48,34 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
     slide = Tween<Offset>(begin: Offset(0.0, 1.0), end: Offset.zero)
         .animate(animController);
 
-    completion = PlayMaster.player.onPlayerCompletion.listen((event) {
-      print(info.repeat);
-      if (info.repeat == Repeat.off || info.repeat == Repeat.all) {
-        bool success = info.pl.next();
-        if (!success && info.repeat == Repeat.all) {
-          info.song = info.pl.songs[0];
-        } else if (success) {
-          info.song = info.pl.song;
+    //use this to protect against double state calls
+    int timeStamp = 0;
+
+    completion = PlayMaster.player.fullPlaybackStateStream.listen((event) {
+      if (event.state == AudioPlaybackState.completed) {
+        //determine whether this is a repeat state call
+        if (DateTime.now().millisecondsSinceEpoch - timeStamp < 500) {
+          _handleSongCompletion(info);
         }
-      } else {
-        info.play();
+        timeStamp = DateTime.now().millisecondsSinceEpoch;
       }
     });
+  }
+
+  //handles what to do after a song is completed
+  void _handleSongCompletion(MusicInfo info) {
+    if (info.repeat == Repeat.off || info.repeat == Repeat.all) {
+      bool success = info.pl.next();
+      if (!success && info.repeat == Repeat.all) {
+        info.setSong(info.pl.songs[0]);
+      } else if (success) {
+        info.setSong(info.pl.song);
+      }
+    } else {
+      //if we're repeating the current song, reset the song and play
+      PlayMaster.player.seek(Duration(microseconds: 0));
+      info.play();
+    }
   }
 
   @override
@@ -153,7 +168,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                         onTap: () {
                           //skips to the next song in the playlist
                           info.pl.next();
-                          info.song = info.pl.song;
+                          info.setSong(info.pl.song);
                         },
                         child: Icon(
                           Icons.skip_next,
@@ -313,7 +328,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                   padding: EdgeInsets.fromLTRB(0.0, 0.0, 16.0, 16.0),
                 ),
               ),
-              widget.musicSlider,
+              MusicSlider(info),
               Padding(
                 padding: EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 0.0),
                 child: Row(
@@ -353,7 +368,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                       ),
                       onTap: () {
                         info.pl.prev();
-                        info.song = info.pl.song;
+                        info.setSong(info.pl.song);
                       },
                     ),
                     GestureDetector(
@@ -376,7 +391,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                       onTap: () {
                         //skips to the next song in the playlist
                         info.pl.next();
-                        info.song = info.pl.song;
+                        info.setSong(info.pl.song);
                       },
                     ),
                     GestureDetector(
@@ -472,12 +487,12 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                 //skip to the next song
                 if (info.pl.activeSongs[index].id == info.song.id) {
                   bool success = info.pl.next();
-                  info.song = info.pl.song;
+                  info.setSong(info.pl.song);
                   //if this is the last song in the playlist,
                   //stop the music and close the music display
                   if (!success) {
                     info.stop();
-                    info.song = Song.init();
+                    info.setSong(Song.init());
                   }
                 }
               });
@@ -580,6 +595,10 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
 }
 
 class MusicSlider extends StatefulWidget {
+  final MusicInfo info;
+
+  MusicSlider(this.info);
+
   @override
   State<StatefulWidget> createState() {
     return _MusicSliderState();
@@ -587,26 +606,27 @@ class MusicSlider extends StatefulWidget {
 }
 
 class _MusicSliderState extends State<MusicSlider> {
-  int _sliderValue = PlayMaster.sliderValue;
-  int _songDuration = PlayMaster.songDuration;
-  var duration;
+  double _sliderValue = PlayMaster.sliderValue;
   var position;
+  bool _sliding = false;
 
   @override
   void initState() {
     super.initState();
-    duration = PlayMaster.player.onDurationChanged.listen((Duration d) {
-      setState(() {
-        _songDuration = d.inMicroseconds;
-      });
-    });
-    position = PlayMaster.player.onAudioPositionChanged.listen((Duration p) {
-      setState(() {
-        _sliderValue =
-            p.inMicroseconds > _songDuration ? _songDuration : p.inMicroseconds;
-      });
+//    duration = widget.info.duration;
+    position = PlayMaster.player.getPositionStream().listen((p) {
+      if (!_sliding) {
+        setState(() {
+          _sliderValue = p.inMicroseconds > widget.info.duration.inMicroseconds
+              ? widget.info.duration.inMicroseconds.toDouble()
+              : p.inMicroseconds.toDouble();
+        });
+      }
     });
   }
+
+  int _getDurationInMicroseconds() =>
+      widget.info.duration == null ? 0 : widget.info.duration.inMicroseconds;
 
   @override
   Widget build(BuildContext context) {
@@ -620,7 +640,7 @@ class _MusicSliderState extends State<MusicSlider> {
             width: MediaQuery.of(context).size.width * 0.1,
             child: FittedBox(
               child: Text(
-                '${Time((_sliderValue / 1000000).floor()).toString()}',
+                '${Time.fromMicro(_sliderValue).toString()}',
               ),
             ),
           ),
@@ -633,25 +653,23 @@ class _MusicSliderState extends State<MusicSlider> {
                 inactiveColor: Colors.black12,
                 onChangeStart: (value) {
                   info.pause();
+                  _sliding = true;
                 },
                 onChangeEnd: (value) {
                   if (info.playing) {
                     info.play();
                   }
                   PlayMaster.player.seek(Duration(microseconds: value.floor()));
+                  _sliding = false;
                 },
                 onChanged: (value) {
                   setState(() {
-                    _sliderValue = value.floor() > _songDuration
-                        ? _songDuration
-                        : value.floor();
+                    _sliderValue = value;
                   });
                 },
-                value: _sliderValue.toDouble() > _songDuration.toDouble()
-                    ? 0
-                    : _sliderValue.toDouble(),
+                value: _sliderValue,
                 min: 0.0,
-                max: _songDuration.toDouble() + 0.1,
+                max: _getDurationInMicroseconds().toDouble(),
               ),
             ),
           ),
@@ -659,7 +677,7 @@ class _MusicSliderState extends State<MusicSlider> {
             width: MediaQuery.of(context).size.width * 0.1,
             child: FittedBox(
               child: Text(
-                '${Time(((_songDuration - _sliderValue) / 1000000).floor()).toString()}', //TODO add functionality
+                '${Time.fromMicro(_getDurationInMicroseconds() - _sliderValue).toString()}',
               ),
             ),
           ),
@@ -671,8 +689,6 @@ class _MusicSliderState extends State<MusicSlider> {
   @override
   void dispose() {
     PlayMaster.sliderValue = _sliderValue;
-    PlayMaster.songDuration = _songDuration;
-    duration.cancel();
     position.cancel();
     super.dispose();
   }

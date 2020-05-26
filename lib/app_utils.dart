@@ -13,6 +13,7 @@ class MusicInfo extends ChangeNotifier {
   bool _stopped = false;
   bool _shuffle = false;
   Repeat _repeat = Repeat.off;
+  Duration _songDuration = Duration();
 
   Song get song => _song;
   Playlist get pl => _pl;
@@ -20,6 +21,7 @@ class MusicInfo extends ChangeNotifier {
   bool get stopped => _stopped;
   bool get shuffle => _shuffle;
   Repeat get repeat => _repeat;
+  Duration get duration => _songDuration;
 
   set playing(bool playing) => _playing = playing;
   set pl(Playlist pl) => _pl = pl;
@@ -29,10 +31,11 @@ class MusicInfo extends ChangeNotifier {
     notifyListeners();
   }
 
-  set song(Song song) {
+  void setSong(Song song) async {
     _pl.index = song.index;
     _song = song;
     _playing = true;
+    _songDuration = await PlayMaster.player.setUrl(song.path);
     if (song.id != -1) {
       play();
     }
@@ -44,14 +47,7 @@ class MusicInfo extends ChangeNotifier {
   }
 
   //plays the audio of this widget
-  Future<int> play() async {
-    try {
-      int result = await PlayMaster.player.play(song.path, isLocal: true);
-      return 1;
-    } catch (e) {
-      return 0;
-    }
-  }
+  void play() => PlayMaster.player.play();
 
   //pauses the audio of this widget
   void pause() async {
@@ -62,13 +58,13 @@ class MusicInfo extends ChangeNotifier {
   //default values. setting info.song to Song.init() also
   // removes this widget from the stack since the homepage
   // gets rebuilt
-  void stop() {
-    PlayMaster.player.stop();
+  void stop() async {
+    await PlayMaster.player.stop();
     _playing = false;
     _song = Song.init();
     _pl = Playlist.init();
-    PlayMaster.sliderValue = 0;
-    PlayMaster.songDuration = 0;
+    PlayMaster.sliderValue = 0.0;
+    _songDuration = Duration();
     notifyListeners();
   }
 }

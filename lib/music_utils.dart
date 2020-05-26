@@ -223,6 +223,10 @@ class Time {
 
   Time(this._seconds);
 
+  Time.fromMicro(double microseconds) {
+    _seconds = (microseconds / 1000000).floor();
+  }
+
   //this uses the seconds and returns a normalized way of viewing time
   String toString() {
     if (_seconds >= 3600) {
