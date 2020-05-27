@@ -37,7 +37,6 @@ class MusicInfo extends ChangeNotifier {
     PlayMaster.player.setUrl(song.path, isLocal: true);
     if (song.id != -1) {
       play();
-//      PlayMaster.player.play(song.path, isLocal: true, stayAwake: true);
     }
     notifyListeners();
   }
