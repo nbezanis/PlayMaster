@@ -599,13 +599,10 @@ class MusicSlider extends StatefulWidget {
 
 class _MusicSliderState extends State<MusicSlider> {
   double _sliderValue = PlayMaster.sliderValue;
-  Duration _duration = PlayMaster.duration;
   var positionStream;
-  var durationStream;
   bool _sliding = false;
-  bool _durationStarted = false;
   bool _positionStarted = false;
-
+  //init music slider in build function of main music display and see if that helps
   @override
   void initState() {
     super.initState();
@@ -617,20 +614,6 @@ class _MusicSliderState extends State<MusicSlider> {
         backgroundColor: PlayMaster.accentColor,
         textColor: Colors.white,
         fontSize: 16.0);
-    durationStream = PlayMaster.player.onDurationChanged.listen((d) {
-      if (!_durationStarted) {
-        _durationStarted = true;
-        Fluttertoast.showToast(
-            msg: "currently listening to duration",
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIos: 3,
-            backgroundColor: PlayMaster.accentColor,
-            textColor: Colors.white,
-            fontSize: 16.0);
-      }
-      _duration = d;
-    });
     positionStream = PlayMaster.player.onAudioPositionChanged.listen((p) {
       if (!_positionStarted) {
         _positionStarted = true;
@@ -645,9 +628,10 @@ class _MusicSliderState extends State<MusicSlider> {
       }
       if (!_sliding) {
         setState(() {
-          _sliderValue = p.inMicroseconds > _duration.inMicroseconds
-              ? _duration.inMicroseconds
-              : p.inMicroseconds.toDouble();
+          _sliderValue =
+              p.inMicroseconds > widget.info.song.duration.inMicroseconds
+                  ? widget.info.song.duration.inMicroseconds.toDouble()
+                  : p.inMicroseconds.toDouble();
         });
       }
     });
@@ -692,9 +676,11 @@ class _MusicSliderState extends State<MusicSlider> {
                     _sliderValue = value;
                   });
                 },
-                value: _sliderValue,
+                value: _sliderValue > widget.info.song.duration.inMicroseconds
+                    ? widget.info.song.duration.inMicroseconds.toDouble()
+                    : _sliderValue,
                 min: 0.0,
-                max: _duration.inMicroseconds.toDouble(),
+                max: widget.info.song.duration.inMicroseconds.toDouble(),
               ),
             ),
           ),
@@ -702,7 +688,7 @@ class _MusicSliderState extends State<MusicSlider> {
             width: MediaQuery.of(context).size.width * 0.1,
             child: FittedBox(
               child: Text(
-                '${Time.fromMicro(_duration.inMicroseconds - _sliderValue).toString()}',
+                '${Time.fromMicro(widget.info.song.duration.inMicroseconds - _sliderValue).toString()}',
               ),
             ),
           ),
@@ -722,9 +708,7 @@ class _MusicSliderState extends State<MusicSlider> {
         textColor: Colors.white,
         fontSize: 16.0);
     PlayMaster.sliderValue = _sliderValue;
-    PlayMaster.duration = _duration;
     positionStream.cancel();
-    durationStream.cancel();
     super.dispose();
   }
 }

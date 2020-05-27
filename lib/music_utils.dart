@@ -1,5 +1,7 @@
 import 'dart:collection';
+import 'dart:io';
 import 'dart:math';
+import 'package:mp3_info/mp3_info.dart';
 
 import 'main.dart';
 
@@ -8,20 +10,24 @@ class Song {
   String _name;
   int _id;
   int _index;
+  Duration _duration;
   Song.init() {
     _path = '';
     _name = '';
     _id = -1;
     _index = -1;
+    _duration = Duration(microseconds: 0);
   }
   Song(this._path, this._id, this._index) {
     _name = PlayMaster.isolateSongName(_path);
+    _duration = MP3Processor.fromFile(File(_path)).duration;
   }
 
   String get path => _path;
   int get id => _id;
   String get name => _name;
   int get index => _index;
+  Duration get duration => _duration;
 
   set index(int i) => _index = i;
 

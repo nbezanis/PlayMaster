@@ -30,7 +30,6 @@ class PlayMaster extends StatelessWidget {
   static AudioPlayer player = AudioPlayer(mode: PlayerMode.MEDIA_PLAYER);
 
   static double sliderValue = 0.0;
-  static Duration duration = Duration(microseconds: 0);
 
   //DEBUG
   static int deletedItems = 0;
