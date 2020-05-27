@@ -14,7 +14,6 @@ class MusicInfo extends ChangeNotifier {
   bool _stopped = false;
   bool _shuffle = false;
   Repeat _repeat = Repeat.off;
-  int _songDuration = 0;
 
   Song get song => _song;
   Playlist get pl => _pl;
@@ -22,7 +21,6 @@ class MusicInfo extends ChangeNotifier {
   bool get stopped => _stopped;
   bool get shuffle => _shuffle;
   Repeat get repeat => _repeat;
-  int get duration => _songDuration;
 
   set playing(bool playing) => _playing = playing;
   set pl(Playlist pl) => _pl = pl;
@@ -38,7 +36,7 @@ class MusicInfo extends ChangeNotifier {
     _playing = true;
     PlayMaster.player.setUrl(song.path, isLocal: true);
     if (song.id != -1) {
-      await PlayMaster.player.play(song.path, isLocal: true, stayAwake: true);
+      PlayMaster.player.play(song.path, isLocal: true, stayAwake: true);
     }
     notifyListeners();
   }
@@ -67,7 +65,6 @@ class MusicInfo extends ChangeNotifier {
     _song = Song.init();
     _pl = Playlist.init();
     PlayMaster.sliderValue = 0.0;
-    _songDuration = 0;
     notifyListeners();
   }
 }
