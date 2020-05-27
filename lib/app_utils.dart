@@ -14,7 +14,7 @@ class MusicInfo extends ChangeNotifier {
   bool _stopped = false;
   bool _shuffle = false;
   Repeat _repeat = Repeat.off;
-  Duration _songDuration = Duration();
+  int _songDuration = 0;
 
   Song get song => _song;
   Playlist get pl => _pl;
@@ -22,7 +22,7 @@ class MusicInfo extends ChangeNotifier {
   bool get stopped => _stopped;
   bool get shuffle => _shuffle;
   Repeat get repeat => _repeat;
-  Duration get duration => _songDuration;
+  int get duration => _songDuration;
 
   set playing(bool playing) => _playing = playing;
   set pl(Playlist pl) => _pl = pl;
@@ -36,19 +36,9 @@ class MusicInfo extends ChangeNotifier {
     _pl.index = song.index;
     _song = song;
     _playing = true;
-    _songDuration =
-        await PlayMaster.player.setUrl(song.path).catchError((error) {
-      Fluttertoast.showToast(
-          msg: error.toString(),
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIos: 5,
-          backgroundColor: PlayMaster.accentColor,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    });
+    PlayMaster.player.setUrl(song.path, isLocal: true);
     if (song.id != -1) {
-      play();
+      await PlayMaster.player.play(song.path, isLocal: true, stayAwake: true);
     }
     notifyListeners();
   }
@@ -59,7 +49,7 @@ class MusicInfo extends ChangeNotifier {
 
   //plays the audio of this widget
   void play() async {
-    await PlayMaster.player.play();
+    await PlayMaster.player.resume();
   }
 
   //pauses the audio of this widget
@@ -77,7 +67,7 @@ class MusicInfo extends ChangeNotifier {
     _song = Song.init();
     _pl = Playlist.init();
     PlayMaster.sliderValue = 0.0;
-    _songDuration = Duration();
+    _songDuration = 0;
     notifyListeners();
   }
 }

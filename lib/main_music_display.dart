@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
+//import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -48,17 +48,8 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
     slide = Tween<Offset>(begin: Offset(0.0, 1.0), end: Offset.zero)
         .animate(animController);
 
-    //use this to protect against double state calls
-    int timeStamp = 0;
-
-    completion = PlayMaster.player.fullPlaybackStateStream.listen((event) {
-      if (event.state == AudioPlaybackState.completed) {
-        //determine whether this is a repeat state call
-        if (DateTime.now().millisecondsSinceEpoch - timeStamp < 500) {
-          _handleSongCompletion(info);
-        }
-        timeStamp = DateTime.now().millisecondsSinceEpoch;
-      }
+    completion = PlayMaster.player.onPlayerCompletion.listen((event) {
+      _handleSongCompletion(info);
     });
   }
 
@@ -607,26 +598,27 @@ class MusicSlider extends StatefulWidget {
 
 class _MusicSliderState extends State<MusicSlider> {
   double _sliderValue = PlayMaster.sliderValue;
-  var position;
+  Duration _duration = PlayMaster.duration;
+  var positionStream;
+  var durationStream;
   bool _sliding = false;
 
   @override
   void initState() {
     super.initState();
-//    duration = widget.info.duration;
-    position = PlayMaster.player.getPositionStream().listen((p) {
+    durationStream = PlayMaster.player.onDurationChanged.listen((d) {
+      _duration = d;
+    });
+    positionStream = PlayMaster.player.onAudioPositionChanged.listen((p) {
       if (!_sliding) {
         setState(() {
-          _sliderValue = p.inMicroseconds > widget.info.duration.inMicroseconds
-              ? widget.info.duration.inMicroseconds.toDouble()
+          _sliderValue = p.inMicroseconds > _duration.inMicroseconds
+              ? _duration.inMicroseconds
               : p.inMicroseconds.toDouble();
         });
       }
     });
   }
-
-  int _getDurationInMicroseconds() =>
-      widget.info.duration == null ? 0 : widget.info.duration.inMicroseconds;
 
   @override
   Widget build(BuildContext context) {
@@ -669,7 +661,7 @@ class _MusicSliderState extends State<MusicSlider> {
                 },
                 value: _sliderValue,
                 min: 0.0,
-                max: _getDurationInMicroseconds().toDouble(),
+                max: _duration.inMicroseconds.toDouble(),
               ),
             ),
           ),
@@ -677,7 +669,7 @@ class _MusicSliderState extends State<MusicSlider> {
             width: MediaQuery.of(context).size.width * 0.1,
             child: FittedBox(
               child: Text(
-                '${Time.fromMicro(_getDurationInMicroseconds() - _sliderValue).toString()}',
+                '${Time.fromMicro(_duration.inMicroseconds - _sliderValue).toString()}',
               ),
             ),
           ),
@@ -689,7 +681,9 @@ class _MusicSliderState extends State<MusicSlider> {
   @override
   void dispose() {
     PlayMaster.sliderValue = _sliderValue;
-    position.cancel();
+    PlayMaster.duration = _duration;
+    positionStream.cancel();
+    durationStream.cancel();
     super.dispose();
   }
 }

@@ -6,9 +6,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-//import 'package:audioplayers/audioplayers.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:just_audio/just_audio.dart';
+//import 'package:just_audio/just_audio.dart';
 
 import 'music_list_display.dart';
 import 'main_music_display.dart';
@@ -27,9 +27,10 @@ enum PLType { temp, name, sub }
 //main class for the entire app. any static variables here are
 //intended to be used throughout the entire app.
 class PlayMaster extends StatelessWidget {
-  static AudioPlayer player = AudioPlayer();
+  static AudioPlayer player = AudioPlayer(mode: PlayerMode.MEDIA_PLAYER);
 
   static double sliderValue = 0.0;
+  static Duration duration = Duration(microseconds: 0);
 
   //DEBUG
   static int deletedItems = 0;
