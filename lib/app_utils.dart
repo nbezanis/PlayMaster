@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:collection';
-import 'package:audio_manager/audio_manager.dart';
 
 import 'main.dart';
 import 'music_utils.dart';
@@ -37,18 +36,17 @@ class MusicInfo extends ChangeNotifier {
     _pl.index = song.index;
     _song = song;
     _playing = true;
-    AudioManager.instance.start('file://${song.path}', song.name);
-//    _songDuration =
-//        await PlayMaster.player.setUrl(song.path).catchError((error) {
-//      Fluttertoast.showToast(
-//          msg: error.toString(),
-//          toastLength: Toast.LENGTH_LONG,
-//          gravity: ToastGravity.BOTTOM,
-//          timeInSecForIos: 5,
-//          backgroundColor: PlayMaster.accentColor,
-//          textColor: Colors.white,
-//          fontSize: 16.0);
-//    });
+    _songDuration =
+        await PlayMaster.player.setUrl(song.path).catchError((error) {
+      Fluttertoast.showToast(
+          msg: error.toString(),
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIos: 5,
+          backgroundColor: PlayMaster.accentColor,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    });
     if (song.id != -1) {
       play();
     }
@@ -61,14 +59,12 @@ class MusicInfo extends ChangeNotifier {
 
   //plays the audio of this widget
   void play() async {
-    AudioManager.instance.playOrPause();
-//    await PlayMaster.player.play();
+    await PlayMaster.player.play();
   }
 
   //pauses the audio of this widget
   void pause() async {
-    AudioManager.instance.playOrPause();
-//    await PlayMaster.player.pause();
+    await PlayMaster.player.pause();
   }
 
   //stop the music and set name, path, and id back to their
@@ -76,8 +72,7 @@ class MusicInfo extends ChangeNotifier {
   // removes this widget from the stack since the homepage
   // gets rebuilt
   void stop() async {
-//    await PlayMaster.player.stop();
-    AudioManager.instance.stop();
+    await PlayMaster.player.stop();
     _playing = false;
     _song = Song.init();
     _pl = Playlist.init();

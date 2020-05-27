@@ -8,7 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 //import 'package:audioplayers/audioplayers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-//import 'package:just_audio/just_audio.dart';
+import 'package:just_audio/just_audio.dart';
 
 import 'music_list_display.dart';
 import 'main_music_display.dart';
@@ -27,7 +27,7 @@ enum PLType { temp, name, sub }
 //main class for the entire app. any static variables here are
 //intended to be used throughout the entire app.
 class PlayMaster extends StatelessWidget {
-//  static AudioPlayer player = AudioPlayer();
+  static AudioPlayer player = AudioPlayer();
 
   static double sliderValue = 0.0;
 

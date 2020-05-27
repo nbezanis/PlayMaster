@@ -1,6 +1,5 @@
-import 'package:audio_manager/audio_manager.dart';
 import 'package:flutter/material.dart';
-//import 'package:just_audio/just_audio.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -52,15 +51,15 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
     //use this to protect against double state calls
     int timeStamp = 0;
 
-//    completion = PlayMaster.player.fullPlaybackStateStream.listen((event) {
-//      if (event.state == AudioPlaybackState.completed) {
-//        //determine whether this is a repeat state call
-//        if (DateTime.now().millisecondsSinceEpoch - timeStamp < 500) {
-//          _handleSongCompletion(info);
-//        }
-//        timeStamp = DateTime.now().millisecondsSinceEpoch;
-//      }
-//    });
+    completion = PlayMaster.player.fullPlaybackStateStream.listen((event) {
+      if (event.state == AudioPlaybackState.completed) {
+        //determine whether this is a repeat state call
+        if (DateTime.now().millisecondsSinceEpoch - timeStamp < 500) {
+          _handleSongCompletion(info);
+        }
+        timeStamp = DateTime.now().millisecondsSinceEpoch;
+      }
+    });
   }
 
   //handles what to do after a song is completed
@@ -74,7 +73,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
       }
     } else {
       //if we're repeating the current song, reset the song and play
-//      PlayMaster.player.seek(Duration(microseconds: 0));
+      PlayMaster.player.seek(Duration(microseconds: 0));
       info.play();
     }
   }
@@ -615,25 +614,14 @@ class _MusicSliderState extends State<MusicSlider> {
   void initState() {
     super.initState();
 //    duration = widget.info.duration;
-//    position = PlayMaster.player.getPositionStream().listen((p) {
-//      if (!_sliding) {
-//        setState(() {
-//          _sliderValue = p.inMicroseconds > widget.info.duration.inMicroseconds
-//              ? widget.info.duration.inMicroseconds.toDouble()
-//              : p.inMicroseconds.toDouble();
-//        });
-//      }
-//    });
-
-    AudioManager.instance.onEvents((events, args) {
-      print('----------------------------------------------------------------');
-      print(events.toString());
-      print(args.toString());
-      print('----------------------------------------------------------------');
-
-//      if(events == AudioManagerEvents.){
-//
-//      }
+    position = PlayMaster.player.getPositionStream().listen((p) {
+      if (!_sliding) {
+        setState(() {
+          _sliderValue = p.inMicroseconds > widget.info.duration.inMicroseconds
+              ? widget.info.duration.inMicroseconds.toDouble()
+              : p.inMicroseconds.toDouble();
+        });
+      }
     });
   }
 
@@ -671,7 +659,7 @@ class _MusicSliderState extends State<MusicSlider> {
                   if (info.playing) {
                     info.play();
                   }
-//                  PlayMaster.player.seek(Duration(microseconds: value.floor()));
+                  PlayMaster.player.seek(Duration(microseconds: value.floor()));
                   _sliding = false;
                 },
                 onChanged: (value) {
