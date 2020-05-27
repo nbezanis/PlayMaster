@@ -1,3 +1,4 @@
+import 'package:audio_manager/audio_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
@@ -622,6 +623,17 @@ class _MusicSliderState extends State<MusicSlider> {
               : p.inMicroseconds.toDouble();
         });
       }
+    });
+
+    AudioManager.instance.onEvents((events, args) {
+      print('----------------------------------------------------------------');
+      print(events.toString());
+      print(args.toString());
+      print('----------------------------------------------------------------');
+
+//      if(events == AudioManagerEvents.){
+//
+//      }
     });
   }
 
