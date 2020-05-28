@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-//import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -601,31 +599,12 @@ class _MusicSliderState extends State<MusicSlider> {
   double _sliderValue = PlayMaster.sliderValue;
   var positionStream;
   bool _sliding = false;
-  bool _positionStarted = false;
+
   //init music slider in build function of main music display and see if that helps
   @override
   void initState() {
     super.initState();
-    Fluttertoast.showToast(
-        msg: "init state called",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIos: 3,
-        backgroundColor: PlayMaster.accentColor,
-        textColor: Colors.white,
-        fontSize: 16.0);
     positionStream = PlayMaster.player.onAudioPositionChanged.listen((p) {
-      if (!_positionStarted) {
-        _positionStarted = true;
-        Fluttertoast.showToast(
-            msg: "currently listening to position",
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIos: 3,
-            backgroundColor: PlayMaster.accentColor,
-            textColor: Colors.white,
-            fontSize: 16.0);
-      }
       if (!_sliding) {
         setState(() {
           _sliderValue =
@@ -699,14 +678,6 @@ class _MusicSliderState extends State<MusicSlider> {
 
   @override
   void dispose() {
-    Fluttertoast.showToast(
-        msg: "dispose called",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIos: 3,
-        backgroundColor: PlayMaster.accentColor,
-        textColor: Colors.white,
-        fontSize: 16.0);
     PlayMaster.sliderValue = _sliderValue;
     positionStream.cancel();
     super.dispose();

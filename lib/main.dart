@@ -8,7 +8,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-//import 'package:just_audio/just_audio.dart';
 
 import 'music_list_display.dart';
 import 'main_music_display.dart';
@@ -26,7 +25,7 @@ enum PLType { temp, name, sub }
 
 //main class for the entire app. any static variables here are
 //intended to be used throughout the entire app.
-class PlayMaster extends StatelessWidget {
+class PlayMaster extends StatefulWidget {
   static AudioPlayer player = AudioPlayer(mode: PlayerMode.MEDIA_PLAYER);
 
   static double sliderValue = 0.0;
@@ -107,15 +106,26 @@ class PlayMaster extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-//    PlayMaster.music.add(Song('/test error.mp3', 100, 100));
+  State<StatefulWidget> createState() {
+    return _PlayMasterState();
+  }
+}
+
+class _PlayMasterState extends State<PlayMaster> {
+  @override
+  void initState() {
+    super.initState();
+    //    PlayMaster.music.add(Song('/test error.mp3', 100, 100));
 //    PlayMaster.clearPrefs(); DEBUG
-//    AudioPlayer.setIosCategory(IosCategory.playback);
-    _initiateColorMap();
+    widget._initiateColorMap();
     PlayMaster.getStrFromPrefs('color').then((color) {
-      accentColor = colorMap[color ?? 'blue'];
-      getSupportingColors();
+      PlayMaster.accentColor = PlayMaster.colorMap[color ?? 'blue'];
+      PlayMaster.getSupportingColors();
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Play Master',
@@ -127,6 +137,11 @@ class PlayMaster extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    PlayMaster.player.dispose().then((value) => super.dispose());
   }
 }
 
