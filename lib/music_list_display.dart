@@ -1,6 +1,8 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'background_audio_manager.dart';
 import 'main.dart';
 import 'music_utils.dart';
 import 'app_utils.dart';
@@ -77,6 +79,10 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
             //set the id of the current playing song to this one if this song
             // isn't currently playing
             musicInfo.setSong(widget.song);
+//            AudioService.start(
+//                    backgroundTaskEntrypoint: backgroundTaskEntrypoint)
+//                .then((value) => print(value))
+//                .catchError((e) => print(e.toString()));
           }
         }
       },

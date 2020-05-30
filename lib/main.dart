@@ -8,7 +8,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:audio_service/audio_service.dart';
 
+import 'background_audio_manager.dart';
 import 'music_list_display.dart';
 import 'main_music_display.dart';
 import 'music_utils.dart';
@@ -23,10 +25,31 @@ enum Repeat { off, all, one }
 enum Select { all, none, choose }
 enum PLType { temp, name, sub }
 
+void backgroundTaskEntrypoint() async {
+  AudioServiceBackground.run(
+      () => BackgroundAudioManager(PlayMaster.music.elementAt(0)));
+}
+
 //main class for the entire app. any static variables here are
 //intended to be used throughout the entire app.
 class PlayMaster extends StatefulWidget {
   static AudioPlayer player = AudioPlayer(mode: PlayerMode.MEDIA_PLAYER);
+
+  static MediaControl playControl = MediaControl(
+    androidIcon: 'drawable/ic_action_play_arrow',
+    label: 'Play',
+    action: MediaAction.play,
+  );
+  static MediaControl pauseControl = MediaControl(
+    androidIcon: 'drawable/ic_action_pause',
+    label: 'Pause',
+    action: MediaAction.pause,
+  );
+  static MediaControl stopControl = MediaControl(
+    androidIcon: 'drawable/ic_action_stop',
+    label: 'Stop',
+    action: MediaAction.stop,
+  );
 
   static double sliderValue = 0.0;
 
@@ -129,19 +152,22 @@ class _PlayMasterState extends State<PlayMaster> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Play Master',
-      home: ChangeNotifierProvider(
-        create: (context) => MusicInfo(),
+      home: AudioServiceWidget(
         child: ChangeNotifierProvider(
-          create: (BuildContext context) => SelectInfo(),
-          child: HomePage(),
+          create: (context) => MusicInfo(),
+          child: ChangeNotifierProvider(
+            create: (BuildContext context) => SelectInfo(),
+            child: HomePage(),
+          ),
         ),
       ),
     );
   }
 
   @override
-  void dispose() {
-    PlayMaster.player.dispose().then((value) => super.dispose());
+  void dispose() async {
+    await PlayMaster.player.dispose();
+    super.dispose();
   }
 }
 
@@ -460,7 +486,8 @@ class _HomePageState extends State<HomePage> {
             size: 35.0,
           ),
           itemBuilder: (context) {
-            return ['Change Theme', 'Select'].map((choice) {
+            return ['Change Theme', 'Select', 'test audio', 'stop']
+                .map((choice) {
               return PopupMenuItem<String>(
                 value: choice,
                 child: Text(choice),
@@ -472,6 +499,13 @@ class _HomePageState extends State<HomePage> {
               _launchThemeChanger();
             } else if (choice == 'Select') {
               _launchSelector(selectInfo);
+            } else if (choice == 'test audio') {
+//              AudioService.start(
+//                      backgroundTaskEntrypoint: backgroundTaskEntrypoint)
+//                  .then((value) => print(value))
+//                  .catchError((e) => print(e.toString()));
+            } else if (choice == 'stop') {
+              AudioService.stop();
             }
           },
         ),

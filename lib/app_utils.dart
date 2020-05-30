@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:collection';
+import 'package:audio_service/audio_service.dart';
 
 import 'main.dart';
 import 'music_utils.dart';
+import 'background_audio_manager.dart';
 
 //this class is used along with provider to store info about which song is
 //playing
@@ -33,7 +35,12 @@ class MusicInfo extends ChangeNotifier {
     _pl.index = song.index;
     _song = song;
     _playing = true;
-    PlayMaster.player.setUrl(song.path, isLocal: true);
+    print('setSong');
+    await AudioService.start(backgroundTaskEntrypoint: backgroundTaskEntrypoint)
+        .then((value) => print(value))
+        .catchError((e) => print(e.toString()));
+    print('after audioservice.start');
+//    PlayMaster.player.setUrl(song.path, isLocal: true);
     if (song.id != -1) {
       play();
     }
@@ -46,12 +53,14 @@ class MusicInfo extends ChangeNotifier {
 
   //plays the audio of this widget
   void play() async {
-    await PlayMaster.player.resume();
+    AudioService.play();
+//    await PlayMaster.player.resume();
   }
 
   //pauses the audio of this widget
   void pause() async {
-    await PlayMaster.player.pause();
+    AudioService.pause();
+//    await PlayMaster.player.pause();
   }
 
   //stop the music and set name, path, and id back to their
@@ -59,7 +68,8 @@ class MusicInfo extends ChangeNotifier {
   // removes this widget from the stack since the homepage
   // gets rebuilt
   void stop() async {
-    await PlayMaster.player.stop();
+    AudioService.stop();
+//    await PlayMaster.player.stop();
     _playing = false;
     _song = Song.init();
     _pl = Playlist.init();
