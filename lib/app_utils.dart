@@ -36,7 +36,7 @@ class MusicInfo extends ChangeNotifier {
     _song = song;
     _playing = true;
 //    PlayMaster.player.setUrl(song.path, isLocal: true);
-    PlayMaster.rmxPlayer.setPlaylistItems([
+    await PlayMaster.rmxPlayer.setPlaylistItems([
       AudioTrack(
           assetUrl: 'file://${song.path}',
           title: song.name,
@@ -55,13 +55,13 @@ class MusicInfo extends ChangeNotifier {
 
   //plays the audio of this widget
   void play() async {
-    PlayMaster.rmxPlayer.play();
+    await PlayMaster.rmxPlayer.play();
 //    await PlayMaster.player.resume();
   }
 
   //pauses the audio of this widget
   void pause() async {
-    PlayMaster.rmxPlayer.pause();
+    await PlayMaster.rmxPlayer.pause();
 //    await PlayMaster.player.pause();
   }
 
@@ -70,7 +70,7 @@ class MusicInfo extends ChangeNotifier {
   // removes this widget from the stack since the homepage
   // gets rebuilt
   void stop() async {
-    PlayMaster.rmxPlayer.clearAllItems();
+    await PlayMaster.rmxPlayer.clearAllItems();
 //    await PlayMaster.player.stop();
     _playing = false;
     _song = Song.init();
