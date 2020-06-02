@@ -8,13 +8,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.4.1"
-  audio_manager:
-    dependency: "direct main"
-    description:
-      name: audio_manager
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.5.4+1"
   audioplayers:
     dependency: "direct main"
     description:
@@ -90,6 +83,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_plugin_playlist:
+    dependency: "direct main"
+    description:
+      name: flutter_plugin_playlist
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.5"
   flutter_svg:
     dependency: "direct main"
     description:

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter_plugin_playlist/flutter_plugin_playlist.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -28,6 +29,8 @@ enum PLType { temp, name, sub }
 //intended to be used throughout the entire app.
 class PlayMaster extends StatefulWidget {
   static AudioPlayer player = AudioPlayer(mode: PlayerMode.MEDIA_PLAYER);
+
+  static RmxAudioPlayer rmxPlayer = RmxAudioPlayer();
 
   static double sliderValue = 0.0;
 
@@ -116,6 +119,7 @@ class _PlayMasterState extends State<PlayMaster> {
   @override
   void initState() {
     super.initState();
+    PlayMaster.rmxPlayer.initialize();
     //    PlayMaster.music.add(Song('/test error.mp3', 100, 100));
 //    PlayMaster.clearPrefs(); DEBUG
     widget._initiateColorMap();
