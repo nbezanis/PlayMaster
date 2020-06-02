@@ -1,6 +1,6 @@
+import 'package:audio_manager/audio_manager.dart';
 import 'package:flutter/material.dart';
 import 'dart:collection';
-import 'package:audio_service/audio_service.dart';
 
 import 'main.dart';
 import 'music_utils.dart';
@@ -35,12 +35,8 @@ class MusicInfo extends ChangeNotifier {
     _pl.index = song.index;
     _song = song;
     _playing = true;
-    print('setSong');
-    await AudioService.start(backgroundTaskEntrypoint: backgroundTaskEntrypoint)
-        .then((value) => print(value))
-        .catchError((e) => print(e.toString()));
-    print('after audioservice.start');
 //    PlayMaster.player.setUrl(song.path, isLocal: true);
+    AudioManager.instance.start('file://${song.path}', song.name);
     if (song.id != -1) {
       play();
     }
@@ -53,13 +49,13 @@ class MusicInfo extends ChangeNotifier {
 
   //plays the audio of this widget
   void play() async {
-    AudioService.play();
+    AudioManager.instance.playOrPause();
 //    await PlayMaster.player.resume();
   }
 
   //pauses the audio of this widget
   void pause() async {
-    AudioService.pause();
+    AudioManager.instance.playOrPause();
 //    await PlayMaster.player.pause();
   }
 
@@ -68,7 +64,7 @@ class MusicInfo extends ChangeNotifier {
   // removes this widget from the stack since the homepage
   // gets rebuilt
   void stop() async {
-    AudioService.stop();
+    AudioManager.instance.stop();
 //    await PlayMaster.player.stop();
     _playing = false;
     _song = Song.init();
