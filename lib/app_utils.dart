@@ -36,9 +36,9 @@ class MusicInfo extends ChangeNotifier {
     _song = song;
     _playing = true;
 //    PlayMaster.player.setUrl(song.path, isLocal: true);
-    await PlayMaster.rmxPlayer.setPlaylistItems([
+    PlayMaster.rmxPlayer.setPlaylistItems([
       AudioTrack(
-          assetUrl: 'file://${song.path}',
+          assetUrl: '${song.path}',
           title: song.name,
           album: 'unknown',
           artist: 'unknown')
