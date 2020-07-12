@@ -25,10 +25,10 @@ enum Repeat { off, all, one }
 enum Select { all, none, choose }
 enum PLType { temp, name }
 
-void backgroundTaskEntrypoint() async {
-  AudioServiceBackground.run(
-      () => BackgroundAudioManager(PlayMaster.music.elementAt(0)));
-}
+//void backgroundTaskEntrypoint() async {
+//  AudioServiceBackground.run(
+//      () => BackgroundAudioManager(PlayMaster.music.elementAt(0)));
+//}
 
 //main class for the entire app. any static variables here are
 //intended to be used throughout the entire app.

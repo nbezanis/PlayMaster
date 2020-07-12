@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:play_master/main.dart';
 import 'package:provider/provider.dart';
 import 'dart:math';
 
@@ -16,10 +17,15 @@ class PlaylistListDisplay extends StatefulWidget {
 }
 
 class _PlaylistListDisplayState extends State<PlaylistListDisplay> {
+  IconData _plStateIcon = Icons.play_arrow;
+
   @override
   Widget build(BuildContext context) {
     var selectInfo = Provider.of<SelectInfo>(context);
     var musicInfo = Provider.of<MusicInfo>(context);
+    _plStateIcon = musicInfo.pl.id == widget.pl.id && musicInfo.playing
+        ? Icons.pause
+        : Icons.play_arrow;
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -94,11 +100,27 @@ class _PlaylistListDisplayState extends State<PlaylistListDisplay> {
               ),
               GestureDetector(
                 onTap: () {
+                  //if this playlist is currently playing music and the pause button was pressed, pause the music
+                  if (musicInfo.playing && musicInfo.pl.id == widget.pl.id) {
+                    musicInfo.pause();
+                    musicInfo.playing = false;
+                    musicInfo.update();
+                    return;
+                    //if this playlist isn't currently playing music and the play button was pressed, play the music
+                  } else if (!musicInfo.playing &&
+                      musicInfo.pl.id == widget.pl.id) {
+                    musicInfo.play();
+                    musicInfo.playing = true;
+                    musicInfo.update();
+                    return;
+                  }
+                  //if the play button was pressed and the playlist wasn't previously playing, play the playlist depending
+                  //in either shuffle or in order mode
                   if (!musicInfo.shuffle) {
                     //start the playlist at the first song
                     widget.pl.index = 0;
                     //reorder the playlist in case it was previously shuffled
-                    widget.pl.reorder(0);
+                    widget.pl.reorder(musicInfo.song.id);
                   } else {
                     //pick a random song to start with and shuffle the rest of the playlist
                     Random r = Random();
@@ -109,10 +131,9 @@ class _PlaylistListDisplayState extends State<PlaylistListDisplay> {
                   musicInfo.setSong(widget.pl.song);
                   musicInfo.pl = widget.pl;
                   musicInfo.playing = true;
-                  print(musicInfo.song);
                 },
                 child: Icon(
-                  Icons.play_arrow,
+                  _plStateIcon,
                   size: 30.0,
                 ),
               )
