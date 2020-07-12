@@ -28,10 +28,12 @@ class _PlaylistListDisplayState extends State<PlaylistListDisplay> {
         : Icons.play_arrow;
     return GestureDetector(
       onTap: () {
+        musicInfo.pl = widget.pl;
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => MainPlayListDisplay(widget.pl),
+            builder: (context) =>
+                MainPlayListDisplay(widget.pl, musicInfo, selectInfo),
           ),
         );
       },
