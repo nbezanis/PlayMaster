@@ -58,6 +58,41 @@ class PlaylistContainer extends StatelessWidget {
 //    if (selectInfo.selectedMusic.isEmpty) {
 //      selectInfo.selecting = true;
 //    }
+
+    void _addPlaylist() {
+      //shows dialog asking for name when pressed
+      createNameDialog(context).then((name) {
+        int plIdTotal;
+        //sends back the playlist that was created
+        SplayTreeSet<Song> songs = selectInfo.finishSongSelect();
+        //if the user didn't select anything, don't ceate a playlist
+        if (songs.length == 0) {
+          //show a toast prompting the user to select music
+          Fluttertoast.showToast(
+              msg: "Please select music and try again",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIos: 1,
+              backgroundColor: PlayMaster.accentColor,
+              textColor: Colors.white,
+              fontSize: 16.0);
+          selectInfo.selecting = true;
+          return;
+        }
+        //get id for playlist
+        PlayMaster.getIntFromPrefs('plIdTotal').then((val) {
+          plIdTotal = val ?? 0;
+          Navigator.of(context)
+              .pop(Playlist.name(songs.toList(), name, plIdTotal));
+          //increase id total
+          plIdTotal++;
+        }).then((val) {
+          //save id total in prefs
+          PlayMaster.putIntInPrefs('plIdTotal', plIdTotal);
+        });
+      });
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: PlayMaster.accentColor,
@@ -89,39 +124,7 @@ class PlaylistContainer extends StatelessWidget {
               height: 0,
               child: RaisedButton(
                 color: Colors.white,
-                onPressed: () {
-                  //shows dialog asking for name when pressed
-                  createNameDialog(context).then((name) {
-                    int plIdTotal;
-                    //sends back the playlist that was created
-                    SplayTreeSet<Song> songs = selectInfo.finishSongSelect();
-                    //if the user didn't select anything, don't ceate a playlist
-                    if (songs.length == 0) {
-                      //show a toast prompting the user to select music
-                      Fluttertoast.showToast(
-                          msg: "Please select music and try again",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.BOTTOM,
-                          timeInSecForIos: 1,
-                          backgroundColor: PlayMaster.accentColor,
-                          textColor: Colors.white,
-                          fontSize: 16.0);
-                      selectInfo.selecting = true;
-                      return;
-                    }
-                    //get id for playlist
-                    PlayMaster.getIntFromPrefs('plIdTotal').then((val) {
-                      plIdTotal = val ?? 0;
-                      Navigator.of(context)
-                          .pop(Playlist.name(songs.toList(), name, plIdTotal));
-                      //increase id total
-                      plIdTotal++;
-                    }).then((val) {
-                      //save id total in prefs
-                      PlayMaster.putIntInPrefs('plIdTotal', plIdTotal);
-                    });
-                  });
-                },
+                onPressed: _addPlaylist,
                 child: Text(
                   'Add',
                   style: TextStyle(fontSize: 18.0),
