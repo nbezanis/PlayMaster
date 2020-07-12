@@ -18,6 +18,7 @@ class MainPlaylistDisplay extends StatefulWidget {
 class _MainPlaylistDisplayState extends State<MainPlaylistDisplay>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
+  bool _draggable = false;
 
   Widget _getAppBarTitle(SelectInfo selectInfo, MusicInfo musicInfo) {
     return Row(
@@ -55,26 +56,48 @@ class _MainPlaylistDisplayState extends State<MainPlaylistDisplay>
   Widget build(BuildContext context) {
     MusicInfo musicInfo = Provider.of<MusicInfo>(context);
     SelectInfo selectInfo = Provider.of<SelectInfo>(context);
-    return AnimatedBuilder(
-        animation: _controller,
-        builder: (context, _) {
-          return Transform.translate(
-            offset: Offset(
-                MediaQuery.of(context).size.width * (1 - _controller.value),
-                0.0),
-            child: Scaffold(
-              appBar: AppBar(
-                backgroundColor: PlayMaster.accentColor,
-                title: _getAppBarTitle(selectInfo, musicInfo),
+    return GestureDetector(
+      onHorizontalDragStart: (details) {
+        _draggable =
+            details.globalPosition.dx / MediaQuery.of(context).size.width < 0.1;
+      },
+      onHorizontalDragUpdate: (details) {
+        if (_draggable) {
+          _controller.value = 1 -
+              (details.globalPosition.dx / MediaQuery.of(context).size.width);
+        }
+        print(details.globalPosition.dx / MediaQuery.of(context).size.width);
+      },
+      onHorizontalDragEnd: (details) async {
+        if (_controller.value < 0.4) {
+          //refactor to make this a function
+          await _controller.reverse();
+          musicInfo.mpdActive = false;
+        } else {
+          _controller.forward();
+        }
+      },
+      child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, _) {
+            return Transform.translate(
+              offset: Offset(
+                  MediaQuery.of(context).size.width * (1 - _controller.value),
+                  0.0),
+              child: Scaffold(
+                appBar: AppBar(
+                  backgroundColor: PlayMaster.accentColor,
+                  title: _getAppBarTitle(selectInfo, musicInfo),
+                ),
+                body: ListView.builder(
+                  itemCount: widget.pl.length,
+                  itemBuilder: (context, index) =>
+                      MusicListDisplay(widget.pl.songs[index]),
+                ),
               ),
-              body: ListView.builder(
-                itemCount: widget.pl.length,
-                itemBuilder: (context, index) =>
-                    MusicListDisplay(widget.pl.songs[index]),
-              ),
-            ),
-          );
-        });
+            );
+          }),
+    );
   }
 
   @override
