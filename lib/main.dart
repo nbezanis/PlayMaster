@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:file_picker/file_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:play_master/main_play_list_display.dart';
 import 'package:provider/provider.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -587,13 +588,18 @@ class _HomePageState extends State<HomePage> {
   Widget _getMainMusicDisplay(MusicInfo musicInfo) =>
       musicInfo.song.id != -1 ? MainMusicDisplay() : Container();
 
+  Widget _getMainPlaylistDisplay(SelectInfo selectInfo, MusicInfo musicInfo) =>
+      musicInfo.mpdActive
+          ? MainPlaylistDisplay(musicInfo.plViewing)
+          : Container();
+
   @override
   Widget build(BuildContext context) {
     var musicInfo = Provider.of<MusicInfo>(context);
     var selectInfo = Provider.of<SelectInfo>(context);
 
     List<Song> selectedSongs =
-        displaySongs ? PlayMaster.music.toList() : musicInfo.pl.songs;
+        displaySongs ? PlayMaster.music.toList() : musicInfo.plPlaying.songs;
     if (musicInfo.song.id != -1) {
       if (!musicInfo.shuffle) {
         //if the playlist isn't in shuffle mode, set the plalylist equal
@@ -601,20 +607,20 @@ class _HomePageState extends State<HomePage> {
         Playlist inOrderPl = Playlist.inOrder(
             selectedSongs,
             musicInfo.song.index,
-            musicInfo.pl.excludedIds,
+            musicInfo.plPlaying.excludedIds,
             PLType.temp,
-            musicInfo.pl.id);
+            musicInfo.plPlaying.id);
         inOrderPl.resetIndexes(musicInfo.song.id);
-        musicInfo.pl = inOrderPl;
+        musicInfo.plPlaying = inOrderPl;
 //        musicInfo.pl.reorder(musicInfo.song.id);
-      } else if (musicInfo.pl.songs[0].id == -1) {
+      } else if (musicInfo.plPlaying.songs[0].id == -1) {
         //if the playlist is in shuffle mode and the user does not currently
         //have a plalylist running (info.pl.songs[0].id == -1), create a playlist
         //and shuffle it before setting info.pl equal to it
-        Playlist shuffledPl = Playlist.id(
-            selectedSongs, musicInfo.song.id, PLType.temp, musicInfo.pl.id);
+        Playlist shuffledPl = Playlist.id(selectedSongs, musicInfo.song.id,
+            PLType.temp, musicInfo.plPlaying.id);
         shuffledPl.shuffle();
-        musicInfo.pl = shuffledPl;
+        musicInfo.plPlaying = shuffledPl;
       }
     }
     return Material(

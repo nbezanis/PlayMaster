@@ -9,30 +9,41 @@ import 'background_audio_manager.dart';
 //this class is used along with provider to store info about which song is
 //playing
 class MusicInfo extends ChangeNotifier {
-  Playlist _pl = Playlist.init();
+  Playlist _plPlaying = Playlist.init();
+  Playlist _plViewing = Playlist.init();
   Song _song = Song.init();
   bool _playing = false;
   bool _stopped = false;
   bool _shuffle = false;
+  //mdp = main playlist display
+  bool _mpdActive = false;
   Repeat _repeat = Repeat.off;
 
   Song get song => _song;
-  Playlist get pl => _pl;
+  Playlist get plPlaying => _plPlaying;
+  Playlist get plViewing => _plViewing;
   bool get playing => _playing;
   bool get stopped => _stopped;
   bool get shuffle => _shuffle;
+  bool get mpdActive => _mpdActive;
   Repeat get repeat => _repeat;
 
   set playing(bool playing) => _playing = playing;
-  set pl(Playlist pl) => _pl = pl;
+  set plPlaying(Playlist pl) => _plPlaying = pl;
+  set plViewing(Playlist pl) => _plViewing = pl;
   set repeat(Repeat repeat) => _repeat = repeat;
+  set mpdActive(bool active) {
+    _mpdActive = active;
+    notifyListeners();
+  }
+
   set shuffle(bool shuff) {
     _shuffle = shuff;
     notifyListeners();
   }
 
   void setSong(Song song) async {
-    _pl.index = song.index;
+    _plPlaying.index = song.index;
     _song = song;
     _playing = true;
 //    print('setSong');
@@ -72,7 +83,7 @@ class MusicInfo extends ChangeNotifier {
     await PlayMaster.player.stop();
     _playing = false;
     _song = Song.init();
-    _pl = Playlist.init();
+    _plPlaying = Playlist.init();
     PlayMaster.sliderValue = 0.0;
     notifyListeners();
   }

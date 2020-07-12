@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:play_master/main_music_display.dart';
 import 'package:provider/provider.dart';
 
 import 'app_utils.dart';
@@ -7,48 +6,52 @@ import 'music_utils.dart';
 import 'main.dart';
 import 'music_list_display.dart';
 
-//splitting this into 2 different classes because we need to use the providers in the build method
-class MainPlayListDisplay extends StatelessWidget {
+class MainPlaylistDisplay extends StatefulWidget {
   final Playlist pl;
-  final MusicInfo musicInfo;
-  final SelectInfo selectInfo;
 
-  MainPlayListDisplay(this.pl, this.musicInfo, this.selectInfo);
+  MainPlaylistDisplay(this.pl);
 
   @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: musicInfo,
-      child: ChangeNotifierProvider.value(
-          value: selectInfo, child: MainPlaylistDisplayContainer(pl)),
+  State<StatefulWidget> createState() => _MainPlaylistDisplayState();
+}
+
+class _MainPlaylistDisplayState extends State<MainPlaylistDisplay> {
+  Widget _getAppBarTitle(SelectInfo selectInfo, MusicInfo musicInfo) {
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: GestureDetector(
+            onTap: () {
+              musicInfo.mpdActive = false;
+            },
+            child: Icon(
+              Icons.arrow_back,
+              size: 30.0,
+            ),
+          ),
+        ),
+        Text(
+          widget.pl.name,
+          style: TextStyle(fontSize: 30.0),
+        ),
+      ],
     );
   }
-}
-
-class MainPlaylistDisplayContainer extends StatefulWidget {
-  final Playlist pl;
-
-  MainPlaylistDisplayContainer(this.pl);
 
   @override
-  State<StatefulWidget> createState() => _MainPlaylistDisplayContainerState();
-}
-
-class _MainPlaylistDisplayContainerState
-    extends State<MainPlaylistDisplayContainer> {
-  Widget _getMainMusicDisplay(MusicInfo musicInfo) =>
-      musicInfo.song.id != -1 ? MainMusicDisplay() : Container();
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     MusicInfo musicInfo = Provider.of<MusicInfo>(context);
+    SelectInfo selectInfo = Provider.of<SelectInfo>(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: PlayMaster.accentColor,
-        title: Text(
-          widget.pl.name,
-          style: TextStyle(fontSize: 30.0),
-        ),
+        title: _getAppBarTitle(selectInfo, musicInfo),
       ),
       body: ListView.builder(
         itemCount: widget.pl.length,
@@ -56,5 +59,10 @@ class _MainPlaylistDisplayContainerState
             MusicListDisplay(widget.pl.songs[index]),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

@@ -23,19 +23,13 @@ class _PlaylistListDisplayState extends State<PlaylistListDisplay> {
   Widget build(BuildContext context) {
     var selectInfo = Provider.of<SelectInfo>(context);
     var musicInfo = Provider.of<MusicInfo>(context);
-    _plStateIcon = musicInfo.pl.id == widget.pl.id && musicInfo.playing
+    _plStateIcon = musicInfo.plPlaying.id == widget.pl.id && musicInfo.playing
         ? Icons.pause
         : Icons.play_arrow;
     return GestureDetector(
       onTap: () {
-        musicInfo.pl = widget.pl;
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                MainPlayListDisplay(widget.pl, musicInfo, selectInfo),
-          ),
-        );
+        musicInfo.plViewing = widget.pl;
+        musicInfo.mpdActive = true;
       },
       child: SizedBox(
         width: double.infinity,
@@ -103,14 +97,15 @@ class _PlaylistListDisplayState extends State<PlaylistListDisplay> {
               GestureDetector(
                 onTap: () {
                   //if this playlist is currently playing music and the pause button was pressed, pause the music
-                  if (musicInfo.playing && musicInfo.pl.id == widget.pl.id) {
+                  if (musicInfo.playing &&
+                      musicInfo.plPlaying.id == widget.pl.id) {
                     musicInfo.pause();
                     musicInfo.playing = false;
                     musicInfo.update();
                     return;
                     //if this playlist isn't currently playing music and the play button was pressed, play the music
                   } else if (!musicInfo.playing &&
-                      musicInfo.pl.id == widget.pl.id) {
+                      musicInfo.plPlaying.id == widget.pl.id) {
                     musicInfo.play();
                     musicInfo.playing = true;
                     musicInfo.update();
@@ -131,7 +126,7 @@ class _PlaylistListDisplayState extends State<PlaylistListDisplay> {
                     widget.pl.shuffle();
                   }
                   musicInfo.setSong(widget.pl.song);
-                  musicInfo.pl = widget.pl;
+                  musicInfo.plPlaying = widget.pl;
                   musicInfo.playing = true;
                 },
                 child: Icon(
