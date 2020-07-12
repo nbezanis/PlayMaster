@@ -42,22 +42,18 @@ class _MainPlaylistDisplayContainerState
   @override
   Widget build(BuildContext context) {
     MusicInfo musicInfo = Provider.of<MusicInfo>(context);
-    return Material(
-      child: Stack(
-        children: [
-          Scaffold(
-            appBar: AppBar(
-              backgroundColor: PlayMaster.accentColor,
-              title: Text(widget.pl.name),
-            ),
-            body: ListView.builder(
-              itemCount: widget.pl.length,
-              itemBuilder: (context, index) =>
-                  MusicListDisplay(widget.pl.songs[index]),
-            ),
-          ),
-          _getMainMusicDisplay(musicInfo),
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: PlayMaster.accentColor,
+        title: Text(
+          widget.pl.name,
+          style: TextStyle(fontSize: 30.0),
+        ),
+      ),
+      body: ListView.builder(
+        itemCount: widget.pl.length,
+        itemBuilder: (context, index) =>
+            MusicListDisplay(widget.pl.songs[index]),
       ),
     );
   }

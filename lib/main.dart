@@ -190,7 +190,6 @@ class _HomePageState extends State<HomePage> {
   //used to set each music object's id
   int musicIdTotal = 0;
   int plIdTotal = 0;
-  List<Widget> stack = [];
 
   //returns a widget that allows user to switch between
   //the list of their songs and the list of their playlists
@@ -584,15 +583,15 @@ class _HomePageState extends State<HomePage> {
     _loadMusicFromPrefs(info);
   }
 
+  //show main music display if music is playing
+  Widget _getMainMusicDisplay(MusicInfo musicInfo) =>
+      musicInfo.song.id != -1 ? MainMusicDisplay() : Container();
+
   @override
   Widget build(BuildContext context) {
     var musicInfo = Provider.of<MusicInfo>(context);
     var selectInfo = Provider.of<SelectInfo>(context);
-    //use a stack so that we can display the main music display above
-    //the main app display. The stack should only ever have at most 2 widgets
-    //in it at any given time
-    stack.clear();
-    stack.add(_getBottomOfStack(selectInfo, musicInfo));
+
     List<Song> selectedSongs =
         displaySongs ? PlayMaster.music.toList() : musicInfo.pl.songs;
     if (musicInfo.song.id != -1) {
@@ -617,12 +616,14 @@ class _HomePageState extends State<HomePage> {
         shuffledPl.shuffle();
         musicInfo.pl = shuffledPl;
       }
-      //add main music display widget to stack if a song is playing
-      stack.add(MainMusicDisplay());
     }
     return Material(
       child: Stack(
-        children: stack,
+        children: [
+          _getBottomOfStack(selectInfo, musicInfo),
+          _getMainPlaylistDisplay(selectInfo, musicInfo),
+          _getMainMusicDisplay(musicInfo),
+        ],
       ),
     );
   }
