@@ -23,7 +23,7 @@ void main() => runApp(PlayMaster());
 
 enum Repeat { off, all, one }
 enum Select { all, none, choose }
-enum PLType { temp, name, sub }
+enum PLType { temp, name }
 
 void backgroundTaskEntrypoint() async {
   AudioServiceBackground.run(
@@ -599,8 +599,12 @@ class _HomePageState extends State<HomePage> {
       if (!musicInfo.shuffle) {
         //if the playlist isn't in shuffle mode, set the plalylist equal
         //to the list of the selected songs in order
-        Playlist inOrderPl = Playlist.inOrder(selectedSongs,
-            musicInfo.song.index, musicInfo.pl.excludedIds, PLType.temp);
+        Playlist inOrderPl = Playlist.inOrder(
+            selectedSongs,
+            musicInfo.song.index,
+            musicInfo.pl.excludedIds,
+            PLType.temp,
+            musicInfo.pl.id);
         inOrderPl.resetIndexes(musicInfo.song.id);
         musicInfo.pl = inOrderPl;
 //        musicInfo.pl.reorder(musicInfo.song.id);
@@ -608,8 +612,8 @@ class _HomePageState extends State<HomePage> {
         //if the playlist is in shuffle mode and the user does not currently
         //have a plalylist running (info.pl.songs[0].id == -1), create a playlist
         //and shuffle it before setting info.pl equal to it
-        Playlist shuffledPl =
-            Playlist.id(selectedSongs, musicInfo.song.id, PLType.temp);
+        Playlist shuffledPl = Playlist.id(
+            selectedSongs, musicInfo.song.id, PLType.temp, musicInfo.pl.id);
         shuffledPl.shuffle();
         musicInfo.pl = shuffledPl;
       }

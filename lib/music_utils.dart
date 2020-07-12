@@ -58,7 +58,8 @@ class Playlist {
     _type = PLType.name;
   }
   //for in order playlists only
-  Playlist.inOrder(this._songs, this._index, this._excludedIds, this._type) {
+  Playlist.inOrder(
+      this._songs, this._index, this._excludedIds, this._type, this._id) {
     for (int i = 0; i < _songs.length; i++) {
       if (!_excludedIds.contains(_songs[i].id)) {
         activeSongs.add(_songs[i]);
@@ -66,7 +67,7 @@ class Playlist {
     }
   }
   //for starting a playlist at a certain song
-  Playlist.id(this._songs, int id, this._type) {
+  Playlist.id(this._songs, int id, this._type, this._id) {
     for (int i = 0; i < _songs.length; i++) {
       if (_songs[i].id == id) {
         _index = i;

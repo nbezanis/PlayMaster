@@ -58,7 +58,8 @@ class _PlaylistListDisplayState extends State<PlaylistListDisplay> {
             widget.pl.name,
             style: TextStyle(fontSize: 20.0),
           ),
-          Text('${widget.pl.length} songs'),
+          Text(
+              '${widget.pl.length} ${widget.pl.length == 1 ? 'song' : 'songs'}'),
         ],
       ),
     ];
