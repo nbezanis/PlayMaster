@@ -18,7 +18,6 @@ class MainPlaylistDisplay extends StatefulWidget {
 class _MainPlaylistDisplayState extends State<MainPlaylistDisplay>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
-  bool _draggable = false;
 
   Widget _getAppBarTitle(SelectInfo selectInfo, MusicInfo musicInfo) {
     return Row(
@@ -57,20 +56,15 @@ class _MainPlaylistDisplayState extends State<MainPlaylistDisplay>
     MusicInfo musicInfo = Provider.of<MusicInfo>(context);
     SelectInfo selectInfo = Provider.of<SelectInfo>(context);
     return GestureDetector(
-      onHorizontalDragStart: (details) {
-        _draggable =
-            details.globalPosition.dx / MediaQuery.of(context).size.width < 0.1;
-      },
+      //set the offset of the screen equal to where the user drags it
       onHorizontalDragUpdate: (details) {
-        if (_draggable) {
-          _controller.value = 1 -
-              (details.globalPosition.dx / MediaQuery.of(context).size.width);
-        }
-        print(details.globalPosition.dx / MediaQuery.of(context).size.width);
+        _controller.value =
+            1 - (details.globalPosition.dx / MediaQuery.of(context).size.width);
       },
+      //if the screen is more than 100 pixels away form its origin, close the page
+      //otherwise, snap it back to its origin
       onHorizontalDragEnd: (details) async {
-        if (_controller.value < 0.4) {
-          //refactor to make this a function
+        if ((1 - _controller.value) * MediaQuery.of(context).size.width > 100) {
           await _controller.reverse();
           musicInfo.mpdActive = false;
         } else {
