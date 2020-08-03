@@ -55,12 +55,13 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
   //handles what to do after a song is completed
   void _handleSongCompletion(MusicInfo info) {
     if (info.repeat == Repeat.off || info.repeat == Repeat.all) {
-      bool success = info.pl.next();
-      if (!success && info.repeat == Repeat.all) {
-        info.setSong(info.pl.songs[0]);
-      } else if (success) {
-        info.setSong(info.pl.song);
-      }
+      bool success = info.pl.next(info.repeat);
+      info.setSong(info.pl.song);
+//      if (!success && info.repeat == Repeat.all) {
+//        info.setSong(info.pl.songs[0]);
+//      } else if (success) {
+//        info.setSong(info.pl.song);
+//      }
     } else {
       //if we're repeating the current song, reset the song and play
       PlayMaster.player.seek(Duration(microseconds: 0));
@@ -157,7 +158,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                       child: GestureDetector(
                         onTap: () {
                           //skips to the next song in the playlist
-                          info.pl.next();
+                          info.pl.next(info.repeat);
                           info.setSong(info.pl.song);
                         },
                         child: Icon(
@@ -380,7 +381,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                       ),
                       onTap: () {
                         //skips to the next song in the playlist
-                        info.pl.next();
+                        info.pl.next(info.repeat);
                         info.setSong(info.pl.song);
                       },
                     ),
@@ -476,7 +477,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                 //if the song that was swiped is the current song,
                 //skip to the next song
                 if (info.pl.activeSongs[index].id == info.song.id) {
-                  bool success = info.pl.next();
+                  bool success = info.pl.next(info.repeat);
                   info.setSong(info.pl.song);
                   //if this is the last song in the playlist,
                   //stop the music and close the music display

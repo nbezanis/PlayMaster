@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:io';
 import 'dart:math';
 import 'package:mp3_info/mp3_info.dart';
+import 'package:play_master/app_utils.dart';
 
 import 'main.dart';
 
@@ -44,8 +45,10 @@ class Song {
 
 class Playlist {
   List<Song> _songs;
+  //list of songs that is always in order
   List<Song> _displaySongs;
   HashSet<int> _excludedIds = HashSet<int>();
+  //index of the song currently playing
   int _index = 0;
   List<Song> _activeSongs = [];
   String _name = '';
@@ -130,9 +133,13 @@ class Playlist {
 
   //advances the playlist to the next song in the playlist, returns true if the
   //playlist can advance and false if not
-  bool next() {
+  bool next(Repeat repeat) {
     if (_index == _songs.length - 1) {
-      return false;
+      //if the song is the last in the playlist and the repeat mode is all, play the
+      //first song in the playlist
+      if (repeat == Repeat.all) _index = 0;
+
+      return repeat == Repeat.all;
     }
     bool found = false;
     for (int i = _index + 1; i < _songs.length; i++) {
