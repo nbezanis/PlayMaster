@@ -139,6 +139,12 @@ class Playlist {
     return found;
   }
 
+  //clears the list of excluded songs and sets active songs accordingly
+  void clearExcludedSongs() {
+    _excludedIds.clear();
+    activeSongs = _songs;
+  }
+
   Song nextSongFromSong(Song s) {
     int nextIndex = 0;
     if (s.index == _songs.length - 1) {
@@ -204,12 +210,12 @@ class Playlist {
   }
 
   //sets all songs' index to it's position in the list
-  void resetIndexes(int songId) {
+  void resetIndexes(int songPlayingId) {
     for (int i = 0; i < _songs.length; i++) {
       _songs[i].index = i;
       //set the index of the playlist to the index of the song that was
       //playing when the playlist was shuffled
-      if (_songs[i].id == songId) {
+      if (_songs[i].id == songPlayingId) {
         _index = i;
       }
     }

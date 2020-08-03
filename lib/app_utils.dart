@@ -29,7 +29,11 @@ class MusicInfo extends ChangeNotifier {
   Repeat get repeat => _repeat;
 
   set playing(bool playing) => _playing = playing;
-  set plPlaying(Playlist pl) => _plPlaying = pl;
+  set plPlaying(Playlist pl) {
+    pl.clearExcludedSongs();
+    _plPlaying = pl;
+  }
+
   set plViewing(Playlist pl) => _plViewing = pl;
   set repeat(Repeat repeat) => _repeat = repeat;
   set mpdActive(bool active) {

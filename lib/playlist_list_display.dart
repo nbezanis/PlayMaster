@@ -103,7 +103,7 @@ class _PlaylistListDisplayState extends State<PlaylistListDisplay> {
                     musicInfo.playing = false;
                     musicInfo.update();
                     return;
-                    //if this playlist isn't currently playing music and the play button was pressed, play the music
+                    //if this playlist is currently paused and the play button was pressed, play the music
                   } else if (!musicInfo.playing &&
                       musicInfo.plPlaying.id == widget.pl.id) {
                     musicInfo.play();
@@ -113,6 +113,7 @@ class _PlaylistListDisplayState extends State<PlaylistListDisplay> {
                   }
                   //if the play button was pressed and the playlist wasn't previously playing, play the playlist depending
                   //in either shuffle or in order mode
+//                  widget.pl.clearExcludedSongs();
                   if (!musicInfo.shuffle) {
                     //start the playlist at the first song
                     widget.pl.index = 0;
