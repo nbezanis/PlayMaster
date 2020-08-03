@@ -597,7 +597,7 @@ class _HomePageState extends State<HomePage> {
     var selectInfo = Provider.of<SelectInfo>(context);
 
     List<Song> selectedSongs =
-        displaySongs ? PlayMaster.music.toList() : musicInfo.pl.songs;
+        displaySongs ? PlayMaster.music.toList() : musicInfo.pl.displaySongs;
     if (musicInfo.song.id != -1) {
       if (!musicInfo.shuffle) {
         //if the playlist isn't in shuffle mode, set the plalylist equal

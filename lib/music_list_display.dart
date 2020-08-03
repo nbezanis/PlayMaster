@@ -81,7 +81,7 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
             musicInfo.setSong(widget.song);
             //make sure we're listening to the playlist we're viewing if this widget was pressed
             //in the main playlist display
-            if (musicInfo.mpdActive) musicInfo.pl = musicInfo.pl;
+//            if (musicInfo.mpdActive) musicInfo.pl = musicInfo.pl;
 //            AudioService.start(
 //                    backgroundTaskEntrypoint: backgroundTaskEntrypoint)
 //                .then((value) => print(value))
