@@ -44,6 +44,7 @@ class Song {
 
 class Playlist {
   List<Song> _songs;
+  List<Song> _displaySongs;
   HashSet<int> _excludedIds = HashSet<int>();
   int _index = 0;
   List<Song> _activeSongs = [];
@@ -53,13 +54,16 @@ class Playlist {
 
   Playlist(this._songs) {
     _type = PLType.temp;
+    _displaySongs = _songs;
   }
   Playlist.name(this._songs, this._name, this._id) {
     _type = PLType.name;
+    _displaySongs = _songs;
   }
   //for in order playlists only
-  Playlist.inOrder(
-      this._songs, this._index, this._excludedIds, this._type, this._id) {
+  Playlist.inOrder(this._songs, this._index, this._excludedIds, this._type,
+      this._id, this._name) {
+    _displaySongs = _songs;
     for (int i = 0; i < _songs.length; i++) {
       if (!_excludedIds.contains(_songs[i].id)) {
         activeSongs.add(_songs[i]);
@@ -67,7 +71,8 @@ class Playlist {
     }
   }
   //for starting a playlist at a certain song
-  Playlist.id(this._songs, int id, this._type, this._id) {
+  Playlist.id(this._songs, int id, this._type, this._id, this._name) {
+    _displaySongs = _songs;
     for (int i = 0; i < _songs.length; i++) {
       if (_songs[i].id == id) {
         _index = i;
@@ -82,6 +87,7 @@ class Playlist {
 
   int get index => _index;
   List<Song> get songs => _songs;
+  List<Song> get displaySongs => _displaySongs;
   int get length => _songs.length;
   List<Song> get activeSongs => _activeSongs;
   HashSet<int> get excludedIds => _excludedIds;
@@ -139,12 +145,6 @@ class Playlist {
     return found;
   }
 
-  //clears the list of excluded songs and sets active songs accordingly
-  void clearExcludedSongs() {
-    _excludedIds.clear();
-    activeSongs = _songs;
-  }
-
   Song nextSongFromSong(Song s) {
     int nextIndex = 0;
     if (s.index == _songs.length - 1) {
@@ -184,6 +184,12 @@ class Playlist {
         _index = i;
       }
     }
+  }
+
+  //clears the list of excluded songs and sets active songs accordingly
+  void clearExcludedSongs() {
+    _excludedIds.clear();
+    activeSongs = _songs;
   }
 
   //shuffles the playlist

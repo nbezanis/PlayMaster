@@ -589,9 +589,7 @@ class _HomePageState extends State<HomePage> {
       musicInfo.song.id != -1 ? MainMusicDisplay() : Container();
 
   Widget _getMainPlaylistDisplay(SelectInfo selectInfo, MusicInfo musicInfo) =>
-      musicInfo.mpdActive
-          ? MainPlaylistDisplay(musicInfo.plViewing)
-          : Container();
+      musicInfo.mpdActive ? MainPlaylistDisplay(musicInfo.pl) : Container();
 
   @override
   Widget build(BuildContext context) {
@@ -599,7 +597,7 @@ class _HomePageState extends State<HomePage> {
     var selectInfo = Provider.of<SelectInfo>(context);
 
     List<Song> selectedSongs =
-        displaySongs ? PlayMaster.music.toList() : musicInfo.plPlaying.songs;
+        displaySongs ? PlayMaster.music.toList() : musicInfo.pl.songs;
     if (musicInfo.song.id != -1) {
       if (!musicInfo.shuffle) {
         //if the playlist isn't in shuffle mode, set the plalylist equal
@@ -607,20 +605,21 @@ class _HomePageState extends State<HomePage> {
         Playlist inOrderPl = Playlist.inOrder(
             selectedSongs,
             musicInfo.song.index,
-            musicInfo.plPlaying.excludedIds,
+            musicInfo.pl.excludedIds,
             PLType.temp,
-            musicInfo.plPlaying.id);
+            musicInfo.pl.id,
+            musicInfo.pl.name);
         inOrderPl.resetIndexes(musicInfo.song.id);
-        musicInfo.plPlaying = inOrderPl;
+        musicInfo.pl = inOrderPl;
 //        musicInfo.pl.reorder(musicInfo.song.id);
-      } else if (musicInfo.plPlaying.songs[0].id == -1) {
+      } else if (!musicInfo.plPlaying) {
         //if the playlist is in shuffle mode and the user does not currently
         //have a plalylist running (info.pl.songs[0].id == -1), create a playlist
         //and shuffle it before setting info.pl equal to it
         Playlist shuffledPl = Playlist.id(selectedSongs, musicInfo.song.id,
-            PLType.temp, musicInfo.plPlaying.id);
+            PLType.temp, musicInfo.pl.id, musicInfo.pl.name);
         shuffledPl.shuffle();
-        musicInfo.plPlaying = shuffledPl;
+        musicInfo.pl = shuffledPl;
       }
     }
     return Material(

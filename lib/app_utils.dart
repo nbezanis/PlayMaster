@@ -9,10 +9,10 @@ import 'background_audio_manager.dart';
 //this class is used along with provider to store info about which song is
 //playing
 class MusicInfo extends ChangeNotifier {
-  Playlist _plPlaying = Playlist.init();
-  Playlist _plViewing = Playlist.init();
+  Playlist _pl = Playlist.init();
   Song _song = Song.init();
   bool _playing = false;
+  bool _plPlaying = false;
   bool _stopped = false;
   bool _shuffle = false;
   //mdp = main playlist display
@@ -20,21 +20,21 @@ class MusicInfo extends ChangeNotifier {
   Repeat _repeat = Repeat.off;
 
   Song get song => _song;
-  Playlist get plPlaying => _plPlaying;
-  Playlist get plViewing => _plViewing;
+  Playlist get pl => _pl;
   bool get playing => _playing;
+  bool get plPlaying => _plPlaying;
   bool get stopped => _stopped;
   bool get shuffle => _shuffle;
   bool get mpdActive => _mpdActive;
   Repeat get repeat => _repeat;
 
   set playing(bool playing) => _playing = playing;
-  set plPlaying(Playlist pl) {
-    pl.clearExcludedSongs();
-    _plPlaying = pl;
+  set pl(Playlist pl) {
+    if (!_plPlaying) pl.clearExcludedSongs();
+    _plPlaying = true;
+    _pl = pl;
   }
 
-  set plViewing(Playlist pl) => _plViewing = pl;
   set repeat(Repeat repeat) => _repeat = repeat;
   set mpdActive(bool active) {
     _mpdActive = active;
@@ -47,7 +47,7 @@ class MusicInfo extends ChangeNotifier {
   }
 
   void setSong(Song song) async {
-    _plPlaying.index = song.index;
+    _pl.index = song.index;
     _song = song;
     _playing = true;
 //    print('setSong');
@@ -87,7 +87,7 @@ class MusicInfo extends ChangeNotifier {
     await PlayMaster.player.stop();
     _playing = false;
     _song = Song.init();
-    _plPlaying = Playlist.init();
+    _plPlaying = false;
     PlayMaster.sliderValue = 0.0;
     notifyListeners();
   }
@@ -139,7 +139,7 @@ class SelectInfo extends ChangeNotifier {
 
   void deselectAll() {
     _type = Select.none;
-//    _selectedMusic.clear();
+    _selectedMusic.clear();
     notifyListeners();
   }
 
@@ -150,7 +150,7 @@ class SelectInfo extends ChangeNotifier {
   SplayTreeSet<Song> finishSongSelect() {
     _selecting = false;
     //make sure the select mode is set to none
-    deselectAll();
+    _type = Select.none;
     return _selectedMusic;
   }
 }

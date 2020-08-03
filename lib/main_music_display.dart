@@ -55,11 +55,11 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
   //handles what to do after a song is completed
   void _handleSongCompletion(MusicInfo info) {
     if (info.repeat == Repeat.off || info.repeat == Repeat.all) {
-      bool success = info.plPlaying.next();
+      bool success = info.pl.next();
       if (!success && info.repeat == Repeat.all) {
-        info.setSong(info.plPlaying.songs[0]);
+        info.setSong(info.pl.songs[0]);
       } else if (success) {
-        info.setSong(info.plPlaying.song);
+        info.setSong(info.pl.song);
       }
     } else {
       //if we're repeating the current song, reset the song and play
@@ -157,8 +157,8 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                       child: GestureDetector(
                         onTap: () {
                           //skips to the next song in the playlist
-                          info.plPlaying.next();
-                          info.setSong(info.plPlaying.song);
+                          info.pl.next();
+                          info.setSong(info.pl.song);
                         },
                         child: Icon(
                           Icons.skip_next,
@@ -338,12 +338,12 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                         setState(() {
                           if (info.shuffle) {
                             //reorder the playlist if the shuffle option is unselected
-                            info.plPlaying.index = 0;
-                            info.plPlaying.reorder(0);
+                            info.pl.index = 0;
+                            info.pl.reorder(0);
                             info.shuffle = false;
                           } else {
                             //shuffle the playlist if the shuffle option is selected
-                            info.plPlaying.shuffle();
+                            info.pl.shuffle();
                             info.shuffle = true;
                           }
                         });
@@ -357,8 +357,8 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                         height: 35.0,
                       ),
                       onTap: () {
-                        info.plPlaying.prev();
-                        info.setSong(info.plPlaying.song);
+                        info.pl.prev();
+                        info.setSong(info.pl.song);
                       },
                     ),
                     GestureDetector(
@@ -380,8 +380,8 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                       ),
                       onTap: () {
                         //skips to the next song in the playlist
-                        info.plPlaying.next();
-                        info.setSong(info.plPlaying.song);
+                        info.pl.next();
+                        info.setSong(info.pl.song);
                       },
                     ),
                     GestureDetector(
@@ -444,9 +444,9 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
             child: Padding(
               padding: EdgeInsets.fromLTRB(16.0, 10.0, 0.0, 0.0),
               child: Text(
-                info.plPlaying.nextSong == null
+                info.pl.nextSong == null
                     ? 'Last Track In Play List'
-                    : 'Next Track: ${info.repeat == Repeat.one ? info.song.name : info.plPlaying.nextSong.name}',
+                    : 'Next Track: ${info.repeat == Repeat.one ? info.song.name : info.pl.nextSong.name}',
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontSize: 20.0),
               ),
@@ -458,26 +458,26 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
   }
 
   Widget _getPlayList(MusicInfo info) {
-    info.plPlaying.activeSongs = info.plPlaying.songs;
+    info.pl.activeSongs = info.pl.songs;
     return MediaQuery.removePadding(
       context: context,
       removeTop: true,
       child: Expanded(
         child: ListView.builder(
-          itemCount: info.plPlaying.activeSongs.length,
+          itemCount: info.pl.activeSongs.length,
           itemBuilder: (context, index) => Dismissible(
-            key: Key(info.plPlaying.activeSongs[index].id.toString()),
+            key: Key(info.pl.activeSongs[index].id.toString()),
             direction: DismissDirection.endToStart,
             background: Container(color: Colors.red),
             onDismissed: (direction) {
               setState(() {
                 //exclude the song that was swiped
-                info.plPlaying.exclude(info.plPlaying.activeSongs[index]);
+                info.pl.exclude(info.pl.activeSongs[index]);
                 //if the song that was swiped is the current song,
                 //skip to the next song
-                if (info.plPlaying.activeSongs[index].id == info.song.id) {
-                  bool success = info.plPlaying.next();
-                  info.setSong(info.plPlaying.song);
+                if (info.pl.activeSongs[index].id == info.song.id) {
+                  bool success = info.pl.next();
+                  info.setSong(info.pl.song);
                   //if this is the last song in the playlist,
                   //stop the music and close the music display
                   if (!success) {
@@ -487,7 +487,7 @@ class _MainMusicDisplayState extends State<MainMusicDisplay>
                 }
               });
             },
-            child: MusicListDisplay(info.plPlaying.activeSongs[index]),
+            child: MusicListDisplay(info.pl.activeSongs[index]),
           ),
         ),
       ),

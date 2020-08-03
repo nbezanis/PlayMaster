@@ -23,12 +23,12 @@ class _PlaylistListDisplayState extends State<PlaylistListDisplay> {
   Widget build(BuildContext context) {
     var selectInfo = Provider.of<SelectInfo>(context);
     var musicInfo = Provider.of<MusicInfo>(context);
-    _plStateIcon = musicInfo.plPlaying.id == widget.pl.id && musicInfo.playing
+    _plStateIcon = musicInfo.pl.id == widget.pl.id && musicInfo.playing
         ? Icons.pause
         : Icons.play_arrow;
     return GestureDetector(
       onTap: () {
-        musicInfo.plViewing = widget.pl;
+        musicInfo.pl = widget.pl;
         musicInfo.mpdActive = true;
       },
       child: SizedBox(
@@ -97,15 +97,15 @@ class _PlaylistListDisplayState extends State<PlaylistListDisplay> {
               GestureDetector(
                 onTap: () {
                   //if this playlist is currently playing music and the pause button was pressed, pause the music
-                  if (musicInfo.playing &&
-                      musicInfo.plPlaying.id == widget.pl.id) {
+                  if (musicInfo.playing && musicInfo.pl.id == widget.pl.id) {
                     musicInfo.pause();
                     musicInfo.playing = false;
                     musicInfo.update();
                     return;
                     //if this playlist is currently paused and the play button was pressed, play the music
                   } else if (!musicInfo.playing &&
-                      musicInfo.plPlaying.id == widget.pl.id) {
+                      musicInfo.pl.id == widget.pl.id &&
+                      musicInfo.plPlaying) {
                     musicInfo.play();
                     musicInfo.playing = true;
                     musicInfo.update();
@@ -113,7 +113,6 @@ class _PlaylistListDisplayState extends State<PlaylistListDisplay> {
                   }
                   //if the play button was pressed and the playlist wasn't previously playing, play the playlist depending
                   //in either shuffle or in order mode
-//                  widget.pl.clearExcludedSongs();
                   if (!musicInfo.shuffle) {
                     //start the playlist at the first song
                     widget.pl.index = 0;
@@ -127,7 +126,7 @@ class _PlaylistListDisplayState extends State<PlaylistListDisplay> {
                     widget.pl.shuffle();
                   }
                   musicInfo.setSong(widget.pl.song);
-                  musicInfo.plPlaying = widget.pl;
+                  musicInfo.pl = widget.pl;
                   musicInfo.playing = true;
                 },
                 child: Icon(

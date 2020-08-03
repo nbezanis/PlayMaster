@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -86,7 +88,7 @@ class _MainPlaylistDisplayState extends State<MainPlaylistDisplay>
                 body: ListView.builder(
                   itemCount: widget.pl.length,
                   itemBuilder: (context, index) =>
-                      MusicListDisplay(widget.pl.songs[index]),
+                      MusicListDisplay(widget.pl.displaySongs[index]),
                 ),
               ),
             );
