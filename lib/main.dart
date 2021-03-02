@@ -25,12 +25,25 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:play_master/Bloc/media/media_bloc.dart';
+import 'package:play_master/utils/internal_database.dart';
+import 'package:play_master/utils/song.dart';
 import 'package:provider/provider.dart';
 
 import 'Bloc/screen/screen_bloc.dart';
 import 'Pages/home_page.dart';
 
-void main() => runApp(PlayMaster());
+void main() => runApp(
+      MultiBlocProvider(
+        providers: [
+          BlocProvider(
+              create: (BuildContext context) => ScreenBloc(HomeScreenState())),
+          BlocProvider(
+              create: (BuildContext context) => MediaBloc(InitialMediaState()))
+        ],
+        child: PlayMaster(),
+      ),
+    );
+
 //
 // enum Repeat { off, all, one }
 // enum Select { all, none, choose }
@@ -659,20 +672,23 @@ void main() => runApp(PlayMaster());
 // }
 
 class PlayMaster extends StatefulWidget {
+  static List<Song> allSongs = [];
+
   @override
   State<StatefulWidget> createState() => _PlayMasterState();
 }
 
 class _PlayMasterState extends State<PlayMaster> {
-  BlocProvider _screenBlocProvider;
-
-  BlocProvider _mediaBlocProvider;
-
   BlocListener _screenBlocListener;
 
   BlocListener _mediaBlocListener;
 
   Widget _currentPage;
+
+  void loadSongs() async {
+    Map<String, dynamic> songObjs = await InternalDatabase.getData('song');
+    if (songObjs != null) PlayMaster.allSongs = songObjs['allSongs'];
+  }
 
   void _listenForScreenEvents(BuildContext context, ScreenState state) {
     if (state is HomeScreenState) {
@@ -687,11 +703,6 @@ class _PlayMasterState extends State<PlayMaster> {
   @override
   void initState() {
     super.initState();
-    _screenBlocProvider = BlocProvider(
-        create: (BuildContext context) => ScreenBloc(HomeScreenState()));
-
-    _mediaBlocProvider = BlocProvider(
-        create: (BuildContext context) => MediaBloc(InitialMediaState()));
 
     _screenBlocListener =
         BlocListener<ScreenBloc, ScreenState>(listener: _listenForScreenEvents);
@@ -700,21 +711,24 @@ class _PlayMasterState extends State<PlayMaster> {
         BlocListener<MediaBloc, MediaState>(listener: _listenForMediaEvents);
 
     _currentPage = HomePage();
+
+    loadSongs();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [_screenBlocProvider, _mediaBlocProvider],
-      child: MultiBlocListener(
-        listeners: [_screenBlocListener, _mediaBlocListener],
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Play Master',
-          home: Stack(
-            children: [
-              _currentPage,
-            ],
+    return MultiBlocListener(
+      listeners: [_screenBlocListener, _mediaBlocListener],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Play Master',
+        home: Builder(
+          builder: (context) => Scaffold(
+            body: Stack(
+              children: [
+                _currentPage,
+              ],
+            ),
           ),
         ),
       ),
