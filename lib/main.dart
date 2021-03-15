@@ -20,12 +20,15 @@
 // import 'playlist_creator.dart';
 // import 'playlist_list_display.dart';
 //
+import 'dart:collection';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:play_master/Bloc/media/media_bloc.dart';
 import 'package:play_master/utils/internal_database.dart';
+import 'package:play_master/utils/playlist.dart';
 import 'package:play_master/utils/song.dart';
 import 'package:provider/provider.dart';
 
@@ -672,7 +675,8 @@ void main() => runApp(
 // }
 
 class PlayMaster extends StatefulWidget {
-  static List<Song> allSongs = [];
+  static SplayTreeSet<Song> allSongs = SplayTreeSet<Song>(Song.compare);
+  static Playlist mainPlaylist;
 
   @override
   State<StatefulWidget> createState() => _PlayMasterState();
@@ -685,9 +689,12 @@ class _PlayMasterState extends State<PlayMaster> {
 
   Widget _currentPage;
 
-  void loadSongs() async {
-    Map<String, dynamic> songObjs = await InternalDatabase.getData('song');
-    if (songObjs != null) PlayMaster.allSongs = songObjs['allSongs'];
+  //TODO implement
+  void _loadData() async {
+    // Map<String, dynamic> data = await InternalDatabase.getData('monk');
+    // Map<String, dynamic> songObjs = await InternalDatabase.getData('song');
+    // if (songObjs != null) PlayMaster.allSongs = songObjs['allSongs'];
+    // PlayMaster.mainPlaylist = Playlist('main', 0, PlayMaster.allSongs.toList());
   }
 
   void _listenForScreenEvents(BuildContext context, ScreenState state) {
@@ -712,7 +719,7 @@ class _PlayMasterState extends State<PlayMaster> {
 
     _currentPage = HomePage();
 
-    loadSongs();
+    _loadData();
   }
 
   @override

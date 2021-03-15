@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:play_master/Bloc/media/media_bloc.dart';
-import 'package:play_master/Bloc/screen/screen_bloc.dart';
+import 'package:play_master/widgets/widget_view_switcher.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -11,33 +9,55 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  BlocListener _screenBlocListener;
+  Widget _currentView;
 
-  BlocListener _mediaBlocListener;
-
-  void _listenForScreenEvents(BuildContext context, ScreenState state) {
-    if (state is HomeScreenState) {
-      setState(() {
-        // _currentPage = HomePage();
-      });
-    }
+  Widget _getSongs() {
+    return Text('songs');
   }
 
-  void _listenForMediaEvents(BuildContext context, MediaState state) {}
+  Widget _getPlaylists() {
+    return Text('playlists');
+  }
+
+  _switchView(int id) {
+    setState(() {
+      switch (id) {
+        case 0:
+          _currentView = _getSongs();
+          break;
+        case 1:
+          _currentView = _getPlaylists();
+          break;
+        default:
+          _currentView = _getSongs();
+      }
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-
-    _screenBlocListener =
-        BlocListener<ScreenBloc, ScreenState>(listener: _listenForScreenEvents);
-
-    _mediaBlocListener =
-        BlocListener<MediaBloc, MediaState>(listener: _listenForMediaEvents);
+    _currentView = _getSongs();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        title: WidgetViewSwitcher(
+          title1: 'Songs',
+          title2: 'Playlists',
+          width: MediaQuery.of(context).size.width * 0.6,
+          height: 56.0,
+          fontSize: 25.0,
+          onClicked: _switchView,
+        ),
+      ),
+      body: Container(
+        child: Center(
+          child: _currentView,
+        ),
+      ),
+    );
   }
 }
