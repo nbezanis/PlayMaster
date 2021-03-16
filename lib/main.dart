@@ -676,7 +676,7 @@ void main() => runApp(
 
 class PlayMaster extends StatefulWidget {
   static SplayTreeSet<Song> allSongs = SplayTreeSet<Song>(Song.compare);
-  static Playlist mainPlaylist;
+  static Playlist mainPlaylist = Playlist('main', 0, []);
 
   @override
   State<StatefulWidget> createState() => _PlayMasterState();
@@ -721,6 +721,7 @@ class _PlayMasterState extends State<PlayMaster> {
 
     _loadData();
     InternalDatabase.clearData('songs');
+    InternalDatabase.clearData('playlists');
   }
 
   @override

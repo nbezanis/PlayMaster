@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:play_master/main.dart';
 import 'package:play_master/utils/internal_database.dart';
+import 'package:play_master/utils/playlist.dart';
 import 'package:play_master/utils/song.dart';
 import 'package:play_master/widgets/music_list_display.dart';
 import 'package:play_master/widgets/widget_view_switcher.dart';
@@ -55,6 +56,10 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _currentView = _getSongs();
     });
+
+    PlayMaster.mainPlaylist.songs = PlayMaster.allSongs.toList();
+    InternalDatabase.mutateData(
+        'playlists', 'main', jsonDecode(PlayMaster.mainPlaylist.toJson()));
   }
 
   Widget _getSongs() {
@@ -77,6 +82,7 @@ class _HomePageState extends State<HomePage> {
           break;
         case 1:
           _currentView = _getPlaylists();
+          InternalDatabase.getData('playlists').then((value) => print(value));
           break;
         default:
           _currentView = _getSongs();

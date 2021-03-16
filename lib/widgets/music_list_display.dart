@@ -197,7 +197,7 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
           child: Row(
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 0.0),
+                padding: const EdgeInsets.only(right: 8.0),
                 child: Icon(Icons.music_note),
               ),
               Container(
