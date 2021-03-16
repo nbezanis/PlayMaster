@@ -720,6 +720,7 @@ class _PlayMasterState extends State<PlayMaster> {
     _currentPage = HomePage();
 
     _loadData();
+    InternalDatabase.clearData('songs');
   }
 
   @override

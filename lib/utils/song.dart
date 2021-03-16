@@ -8,11 +8,11 @@ class Song extends Selectable {
   String name;
   int id;
   Duration duration;
-  File _file;
+  // File _file;
 
   Song(this.path, this.id) {
     name = path.substring(path.lastIndexOf('/') + 1, path.indexOf('.mp3'));
-    _file = File(path);
+    // _file = File(path);
   }
 
   String toJson() {
