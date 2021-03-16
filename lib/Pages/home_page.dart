@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:play_master/main.dart';
 import 'package:play_master/utils/internal_database.dart';
 import 'package:play_master/utils/song.dart';
+import 'package:play_master/widgets/music_list_display.dart';
 import 'package:play_master/widgets/widget_view_switcher.dart';
 
 class HomePage extends StatefulWidget {
@@ -19,7 +20,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   Widget _currentView;
 
-  Future<List<File>> pickFiles() async {
+  Future<List<File>> _pickFiles() async {
     List<File> files;
     files = await FilePicker.getMultiFile(fileExtension: 'mp3');
     return files;
@@ -31,8 +32,8 @@ class _HomePageState extends State<HomePage> {
     return name;
   }
 
-  void _addSongs() async {
-    List<File> files = await pickFiles();
+  Future<void> _addSongs() async {
+    List<File> files = await _pickFiles();
 
     if (files == null) {
       return;
@@ -51,10 +52,17 @@ class _HomePageState extends State<HomePage> {
       PlayMaster.allSongs.add(s);
     }
     await InternalDatabase.mutateData('misc', 'idTotal', idTotal);
+    setState(() {
+      _currentView = _getSongs();
+    });
   }
 
   Widget _getSongs() {
-    return Text('songs');
+    return ListView.builder(
+      itemCount: PlayMaster.allSongs.length,
+      itemBuilder: (context, index) =>
+          MusicListDisplay(PlayMaster.allSongs.elementAt(index)),
+    );
   }
 
   Widget _getPlaylists() {
@@ -69,7 +77,6 @@ class _HomePageState extends State<HomePage> {
           break;
         case 1:
           _currentView = _getPlaylists();
-          InternalDatabase.getData('songs').then((obj) => print(obj));
           break;
         default:
           _currentView = _getSongs();
