@@ -41,7 +41,7 @@ void main() => runApp(
           BlocProvider(
               create: (BuildContext context) => ScreenBloc(HomeScreenState())),
           BlocProvider(
-              create: (BuildContext context) => MediaBloc(InitialMediaState()))
+              create: (BuildContext context) => MediaBloc(MediaStoppedState()))
         ],
         child: PlayMaster(),
       ),
@@ -676,7 +676,8 @@ void main() => runApp(
 
 class PlayMaster extends StatefulWidget {
   static SplayTreeSet<Song> allSongs = SplayTreeSet<Song>(Song.compare);
-  static Playlist mainPlaylist = Playlist('main', 0, []);
+  static Playlist mainPlaylist =
+      Playlist('main', 0, SplayTreeSet<Song>(Song.compare));
 
   @override
   State<StatefulWidget> createState() => _PlayMasterState();

@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
       _currentView = _getSongs();
     });
 
-    PlayMaster.mainPlaylist.songs = PlayMaster.allSongs.toList();
+    PlayMaster.mainPlaylist.songs = PlayMaster.allSongs;
     InternalDatabase.mutateData(
         'playlists', 'main', jsonDecode(PlayMaster.mainPlaylist.toJson()));
   }
