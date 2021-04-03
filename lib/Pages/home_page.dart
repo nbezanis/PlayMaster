@@ -21,10 +21,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   Widget _currentView;
 
-  Future<List<File>> _pickFiles() async {
-    List<File> files;
-    files = await FilePicker.getMultiFile(fileExtension: 'mp3');
-    return files;
+  Future<List<PlatformFile>> _pickFiles() async {
+    FilePickerResult result = await FilePicker.platform
+        .pickFiles(type: FileType.custom, allowedExtensions: ['svg', 'pdf']);
+    return result.files;
   }
 
   String _isolateSongName(String path) {
@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _addSongs() async {
-    List<File> files = await _pickFiles();
+    List<PlatformFile> files = await _pickFiles();
 
     if (files == null) {
       return;
@@ -43,7 +43,8 @@ class _HomePageState extends State<HomePage> {
     var miscData = await InternalDatabase.getData('misc');
     int idTotal = miscData['idTotal'] ?? 0;
     Directory appDocDir = await getApplicationDocumentsDirectory();
-    for (File file in files) {
+    for (PlatformFile platformFile in files) {
+      File file = File(platformFile.path);
       File songFile = await file
           .copy('${appDocDir.path}/${_isolateSongName(file.path)}.mp3');
       Song s = Song(songFile.absolute.path, idTotal);
