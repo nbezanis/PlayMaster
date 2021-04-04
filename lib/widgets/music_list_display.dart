@@ -171,8 +171,10 @@
 // }
 
 //this widget is used as an item in the user's list of widgets
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:play_master/utils/song.dart';
+import 'package:play_master/main.dart';
 
 class MusicListDisplay extends StatefulWidget {
   final Song song;
@@ -189,7 +191,13 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () async {
+        print('tapped');
+        AudioService.start(
+            backgroundTaskEntrypoint: entrypoint,
+            params: {'path': widget.song.path});
+        // await AudioService.prepareFromMediaId(widget.song.path);
+      },
       child: SizedBox(
         width: double.infinity,
         child: Container(

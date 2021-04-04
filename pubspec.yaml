@@ -21,10 +21,11 @@ dependencies:
     sdk: flutter
   provider: ^5.0.0
   path_provider: ^2.0.1
-  file_picker: ^3.0.1
+  file_picker: ^1.4.3+2
 #  flutter_svg: ^0.19.3
   fluttertoast: ^8.0.3
   mp3_info: ^0.1.4
+  just_audio: ^0.7.3
   audio_service: ^0.17.0
   flutter_bloc: ^7.0.0
   auto_size_text: ^2.1.0

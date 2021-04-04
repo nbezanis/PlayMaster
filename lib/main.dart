@@ -21,12 +21,14 @@
 // import 'playlist_list_display.dart';
 //
 import 'dart:collection';
+import 'dart:convert';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:play_master/Bloc/media/media_bloc.dart';
+import 'package:play_master/utils/audio_manager.dart';
 import 'package:play_master/utils/internal_database.dart';
 import 'package:play_master/utils/playlist.dart';
 import 'package:play_master/utils/song.dart';
@@ -34,6 +36,8 @@ import 'package:provider/provider.dart';
 
 import 'Bloc/screen/screen_bloc.dart';
 import 'Pages/home_page.dart';
+
+void entrypoint() => AudioServiceBackground.run(() => AudioManager());
 
 void main() => runApp(
       MultiBlocProvider(
@@ -43,7 +47,7 @@ void main() => runApp(
           BlocProvider(
               create: (BuildContext context) => MediaBloc(MediaStoppedState()))
         ],
-        child: PlayMaster(),
+        child: AudioServiceWidget(child: PlayMaster()),
       ),
     );
 
@@ -696,6 +700,9 @@ class _PlayMasterState extends State<PlayMaster> {
     // Map<String, dynamic> songObjs = await InternalDatabase.getData('song');
     // if (songObjs != null) PlayMaster.allSongs = songObjs['allSongs'];
     // PlayMaster.mainPlaylist = Playlist('main', 0, PlayMaster.allSongs.toList());
+    Map<String, dynamic> plObj = await InternalDatabase.getData('playlists');
+    PlayMaster.mainPlaylist = Playlist.fromJson(plObj['main']);
+    PlayMaster.allSongs = PlayMaster.mainPlaylist.songs;
   }
 
   void _listenForScreenEvents(BuildContext context, ScreenState state) {
@@ -721,8 +728,8 @@ class _PlayMasterState extends State<PlayMaster> {
     _currentPage = HomePage();
 
     _loadData();
-    InternalDatabase.clearData('songs');
-    InternalDatabase.clearData('playlists');
+    // InternalDatabase.clearData('songs');
+    // InternalDatabase.clearData('playlists');
   }
 
   @override

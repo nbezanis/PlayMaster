@@ -21,10 +21,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   Widget _currentView;
 
-  Future<List<PlatformFile>> _pickFiles() async {
-    FilePickerResult result = await FilePicker.platform
-        .pickFiles(type: FileType.custom, allowedExtensions: ['svg', 'pdf']);
-    return result.files;
+  Future<List<File>> _pickFiles() async {
+    List<File> files;
+    files = await FilePicker.getMultiFile(
+        allowedExtensions: ['mp3'], type: FileType.custom);
+    return files;
   }
 
   String _isolateSongName(String path) {
@@ -34,7 +35,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _addSongs() async {
-    List<PlatformFile> files = await _pickFiles();
+    List<File> files = await _pickFiles();
 
     if (files == null) {
       return;
@@ -43,8 +44,7 @@ class _HomePageState extends State<HomePage> {
     var miscData = await InternalDatabase.getData('misc');
     int idTotal = miscData['idTotal'] ?? 0;
     Directory appDocDir = await getApplicationDocumentsDirectory();
-    for (PlatformFile platformFile in files) {
-      File file = File(platformFile.path);
+    for (File file in files) {
       File songFile = await file
           .copy('${appDocDir.path}/${_isolateSongName(file.path)}.mp3');
       Song s = Song(songFile.absolute.path, idTotal);
@@ -83,7 +83,6 @@ class _HomePageState extends State<HomePage> {
           break;
         case 1:
           _currentView = _getPlaylists();
-          InternalDatabase.getData('playlists').then((value) => print(value));
           break;
         default:
           _currentView = _getSongs();
@@ -91,9 +90,31 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  Widget _loading() {
+    return Container(
+      child: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+
+  void _loadData() async {
+    if (PlayMaster.allSongs.isNotEmpty) return;
+    setState(() {
+      _currentView = _loading();
+    });
+    Map<String, dynamic> plObj = await InternalDatabase.getData('playlists');
+    PlayMaster.mainPlaylist = Playlist.fromJson(plObj['main']);
+    PlayMaster.allSongs = PlayMaster.mainPlaylist.songs;
+    setState(() {
+      _currentView = _getSongs();
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    _loadData();
     _currentView = _getSongs();
   }
 

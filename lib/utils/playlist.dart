@@ -58,7 +58,12 @@ class Playlist extends Selectable {
   }
 
   factory Playlist.fromJson(Map<String, dynamic> json) {
-    return Playlist(json['name'], json['id'], json['songs']);
+    SplayTreeSet<Song> songs = SplayTreeSet<Song>(Song.compare);
+    List<dynamic> jsonList = json['songs'];
+    jsonList.forEach((songObj) {
+      songs.add(Song.fromJson(jsonDecode(songObj)));
+    });
+    return Playlist(json['name'], json['id'], songs);
   }
 
   @override
