@@ -7,15 +7,15 @@ class WidgetViewSwitcher extends StatefulWidget {
   final double width;
   final double height;
   final double fontSize;
-  final Function(int) onClicked;
+  final Function(int)? onClicked;
 
   WidgetViewSwitcher(
-      {this.title1,
-      this.title2,
-      this.width,
-      this.height,
-      this.fontSize,
-      this.onClicked});
+      {this.title1 = "",
+      this.title2 = "",
+      this.width = 0.0,
+      this.height = 0.0,
+      this.fontSize = 0.0,
+      @required this.onClicked});
 
   @override
   _WidgetViewSwitcherState createState() => _WidgetViewSwitcherState();
@@ -23,8 +23,8 @@ class WidgetViewSwitcher extends StatefulWidget {
 
 class _WidgetViewSwitcherState extends State<WidgetViewSwitcher> {
   int _selectedWidget = 0;
-  double _barWidth;
-  double _displayWidth;
+  late double _barWidth;
+  late double _displayWidth;
 
   @override
   void initState() {
@@ -62,7 +62,7 @@ class _WidgetViewSwitcherState extends State<WidgetViewSwitcher> {
                   setState(() {
                     _selectedWidget = 0;
                   });
-                  widget.onClicked(0);
+                  widget.onClicked!(0);
                 },
               ),
               GestureDetector(
@@ -85,7 +85,7 @@ class _WidgetViewSwitcherState extends State<WidgetViewSwitcher> {
                   setState(() {
                     _selectedWidget = 1;
                   });
-                  widget.onClicked(1);
+                  widget.onClicked!(1);
                 },
               ),
             ],

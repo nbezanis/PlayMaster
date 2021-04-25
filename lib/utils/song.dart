@@ -5,9 +5,9 @@ import 'package:play_master/utils/selectable.dart';
 
 class Song extends Selectable {
   String path;
-  String name;
+  late String name;
   int id;
-  Duration duration;
+  late Duration duration;
   // File _file;
 
   Song(this.path, this.id) {

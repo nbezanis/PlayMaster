@@ -10,19 +10,23 @@ import 'package:play_master/utils/song.dart';
 import 'package:play_master/widgets/widget_view_switcher.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key}) : super(key: key);
+  HomePage();
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  Widget _currentView;
+  late Widget _currentView;
 
-  Future<List<File>> pickFiles() async {
+  Future<List<PlatformFile>> pickFiles() async {
     List<File> files;
-    files = await FilePicker.getMultiFile(fileExtension: 'mp3');
-    return files;
+//    files = await FilePicker.getMultiFile(allowedExtensions: ['mp3']);
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['mp3']
+    );
+    return result?.files ?? [];
   }
 
   String _isolateSongName(String path) {
@@ -32,7 +36,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _addSongs() async {
-    List<File> files = await pickFiles();
+    print('before');
+    List<PlatformFile> files = await pickFiles();
+    print('after');
 
     if (files == null) {
       return;
@@ -41,7 +47,8 @@ class _HomePageState extends State<HomePage> {
     var miscData = await InternalDatabase.getData('misc');
     int idTotal = miscData['idTotal'] ?? 0;
     Directory appDocDir = await getApplicationDocumentsDirectory();
-    for (File file in files) {
+    for (PlatformFile platformFile in files) {
+      File file = File(platformFile.path!);
       File songFile = await file
           .copy('${appDocDir.path}/${_isolateSongName(file.path)}.mp3');
       Song s = Song(songFile.absolute.path, idTotal);

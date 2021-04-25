@@ -676,18 +676,18 @@ void main() => runApp(
 
 class PlayMaster extends StatefulWidget {
   static SplayTreeSet<Song> allSongs = SplayTreeSet<Song>(Song.compare);
-  static Playlist mainPlaylist;
+  static late Playlist mainPlaylist;
 
   @override
   State<StatefulWidget> createState() => _PlayMasterState();
 }
 
 class _PlayMasterState extends State<PlayMaster> {
-  BlocListener _screenBlocListener;
+  late BlocListener _screenBlocListener;
 
-  BlocListener _mediaBlocListener;
+  late BlocListener _mediaBlocListener;
 
-  Widget _currentPage;
+  late Widget _currentPage;
 
   //TODO implement
   void _loadData() async {

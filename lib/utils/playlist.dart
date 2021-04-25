@@ -8,8 +8,8 @@ class Playlist extends Selectable {
   String name;
   int id;
   List<Song> songs;
-  List<Song> activeSongs;
-  HashSet<int> excludedIds;
+  List<Song> activeSongs = [];
+  HashSet<int> excludedIds = HashSet<int>();
 
   Playlist(this.name, this.id, this.songs);
 
