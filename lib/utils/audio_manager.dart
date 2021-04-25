@@ -14,19 +14,19 @@ class AudioManager extends BackgroundAudioTask {
   static ValueStream<PlayerState> get playbackStateStream => _state.stream;
 
   @override
-  Future<void> onStart(Map<String, dynamic> params) async {
-    onPrepareFromMediaId(params['path']);
+  Future<void> onStart(Map<String, dynamic>? params) async {
+    onPrepareFromMediaId(params?['path']);
     await _completer.future;
   }
 
   @override
-  Future<void> onPrepareFromMediaId(String path) {
+  Future<void> onPrepareFromMediaId(String path) async {
     _player.setFilePath(path);
     onPlay();
   }
 
   @override
-  Future<void> onPlay() {
+  Future<void> onPlay() async {
     //for notifications to show up
     // AudioServiceBackground.setState(playing: true);
     _state.add(PlayerState.playing);
@@ -37,7 +37,7 @@ class AudioManager extends BackgroundAudioTask {
   }
 
   @override
-  Future<void> onPause() {
+  Future<void> onPause() async {
     _state.add(PlayerState.paused);
     _player.pause();
   }
