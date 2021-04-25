@@ -694,17 +694,6 @@ class _PlayMasterState extends State<PlayMaster> {
 
   Widget _currentPage;
 
-  //TODO implement
-  void _loadData() async {
-    // Map<String, dynamic> data = await InternalDatabase.getData('monk');
-    // Map<String, dynamic> songObjs = await InternalDatabase.getData('song');
-    // if (songObjs != null) PlayMaster.allSongs = songObjs['allSongs'];
-    // PlayMaster.mainPlaylist = Playlist('main', 0, PlayMaster.allSongs.toList());
-    Map<String, dynamic> plObj = await InternalDatabase.getData('playlists');
-    PlayMaster.mainPlaylist = Playlist.fromJson(plObj['main']);
-    PlayMaster.allSongs = PlayMaster.mainPlaylist.songs;
-  }
-
   void _listenForScreenEvents(BuildContext context, ScreenState state) {
     if (state is HomeScreenState) {
       setState(() {
@@ -726,8 +715,6 @@ class _PlayMasterState extends State<PlayMaster> {
         BlocListener<MediaBloc, MediaState>(listener: _listenForMediaEvents);
 
     _currentPage = HomePage();
-
-    _loadData();
     // InternalDatabase.clearData('songs');
     // InternalDatabase.clearData('playlists');
   }

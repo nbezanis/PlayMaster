@@ -173,6 +173,7 @@
 //this widget is used as an item in the user's list of widgets
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:play_master/utils/audio_manager.dart';
 import 'package:play_master/utils/song.dart';
 import 'package:play_master/main.dart';
 
@@ -191,12 +192,24 @@ class _MusicListDisplayState extends State<MusicListDisplay> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () async {
-        print('tapped');
-        AudioService.start(
-            backgroundTaskEntrypoint: entrypoint,
-            params: {'path': widget.song.path});
-        // await AudioService.prepareFromMediaId(widget.song.path);
+      onTap: () {
+        print('AUDIO MANAGER STATE ${AudioManager.state}---------------------');
+        switch (AudioManager.state) {
+          case PlayerState.stopped:
+            print('stopped---------------------------------------------------');
+            AudioService.start(
+                backgroundTaskEntrypoint: entrypoint,
+                params: {'path': widget.song.path});
+            break;
+          case PlayerState.playing:
+            print('playing---------------------------------------------------');
+            AudioService.pause();
+            break;
+          case PlayerState.paused:
+            print('paused----------------------------------------------------');
+            AudioService.play();
+            break;
+        }
       },
       child: SizedBox(
         width: double.infinity,
